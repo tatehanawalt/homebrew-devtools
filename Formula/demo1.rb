@@ -2,20 +2,28 @@
 # @author Tate W. Hanawalt - tate@tatehanawalt.com
 #
 # this is a demo brew formula in the tatehanawalt/devtools homebrew tap
-#
+
+require_relative "../lib/private"
+
 class Demo1 < Formula
   version "0.0.0"
   desc "Brew install demo 1"
   homepage "https://www.TateHanawalt.com"
-  url "https://api.github.com/repos/tatehanawalt/.th_sys/tarball/0.0.1", :using => :curl
-  sha256 "d5ef43b1a1a6a1d75bc19aadfaf56374c91bbe19040ef967ece77bd73508f08c"
+  url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.1/0.0.1.tar.gz", :using => :curl
+  sha256 "c294de88385e86260a6f858219aeb10038e460ebe713f98a44bd5f916b1cf2bf"
   head "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
+
   def install
     lib.install Dir["*"]
     bin.install_symlink lib/"demo1.zsh" => "demo1"
     man1.install lib/"demo1.1"
   end
 end
+
+# List the release download urls
+# export REPO=.th_sys
+# export ORG=tatehanawalt
+# curl -s https://api.github.com/repos/$ORG/$REPO/releases/latest
 #
 # Download with:
 # curl -L https://api.github.com/repos/<org>/<repo>/tarball/<version> --output <version>.tar.gz
@@ -56,3 +64,5 @@ end
 #
 # Upgrade head:
 # brew upgrade demo1 --fetch-HEAD
+#
+# when using a private repo, a github api token set to env var HOMEBREW_GITHUB_API_TOKEN is required
