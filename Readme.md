@@ -19,6 +19,7 @@ brew untap <user/formula>
 ```
   /usr/local/opt/
   /usr/local/Cellar
+  /usr/local/Homebrew/Library/Taps
 ```
 
 #### TAPS:

@@ -9,6 +9,8 @@ class Demo1 < Formula
 
   def install
     lib.install Dir["*"]
+    ENV.deparallelize
+    bin.install_symlink lib/demo1.zsh => demo1
   end
 
 end
