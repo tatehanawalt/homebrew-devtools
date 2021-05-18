@@ -20,19 +20,11 @@ class Demo1 < Formula
   # pass skip to disable post-install stdlib checking
   cxxstdlib_check :skip
 
-  # Options can be used as arguments to `brew install`.
-  # To switch features on/off: `"with-something"` or `"with-otherthing"`.
-  option :universal
-
-
-
   stable do
     # Stable-only dependencies should be nested inside a `stable` block rather than
     # using a conditional. It is preferrable to also pull the URL and checksum into
     # the block if one is necessary.
-
     puts "\nSTABLE SECTION:"
-
     url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.1/0.0.1.tar.gz", :using => :curl
     sha256 "c294de88385e86260a6f858219aeb10038e460ebe713f98a44bd5f916b1cf2bf"
     #url "https://example.com/foo-1.0.tar.gz"
@@ -45,18 +37,8 @@ class Demo1 < Formula
     # Optionally, specify a repository to be used. Brew then generates a
     # `--HEAD` option. Remember to also test it.
     puts "\nHEAD SECTION:"
-
     url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
   end
-
-  devel do
-    # The optional devel block is only executed if the user passes `--devel`.
-    # Use this to specify a not-yet-released version of a software.
-    puts "\nDEVEL SECTION:"
-
-    url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
-  end
-
 
   def install
     puts "\nINSTALL SECTION:"
@@ -71,7 +53,15 @@ class Demo1 < Formula
     puts "  BIN:                            #{self.bin}"
     puts "  BOTTLE_HASH:                    #{self.bottle_hash}"
     puts "  BOTTLE_TAB_ATTRIBUTES:          #{self.bottle_tab_attributes}"
-    puts "  BUILD:                          #{self.build}"
+
+    puts "  BUILD: #{build}"
+    puts "    - ANY_ARGS_OR_OPTIONS?:       #{build.any_args_or_options?}"
+    puts "    - BOTTLE?:                    #{build.bottle?}"
+    puts "    - HEAD?:                      #{build.head?}"
+    puts "    - STABLE?:                    #{build.stable?}"
+
+    puts
+
     puts "  BUILD_PATH:                     #{self.buildpath}"
     puts "  CAVEATS:                        #{self.caveats}"
     puts "  CURRENT_INSTALLED_ALIAS_TARGET: #{self.current_installed_alias_target}"
@@ -186,17 +176,9 @@ class Demo1 < Formula
     puts "  VERBOSE?:                       #{self.verbose?}"
     # puts "  WITH_CONTEXT:                   #{self.with_context}"
 
-
     lib.install Dir["*"]
     bin.install_symlink lib/"demo1.zsh" => "demo1"
     man1.install lib/"demo1.1"
-
-    # bash_completion.install "watson.completion" => "watson"
-    # zsh_completion.install lib/"_demo1" => "_demo1"
-
-    system "ls", "-la"
-    system "pwd"
-
   end
 
   def post_install
@@ -209,15 +191,36 @@ class Demo1 < Formula
     EOS
   end
 
+  # Define this method to provide a plist.
+  # Looking for another example? Check out Apple's handy manpage =>
+  # https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man5/plist.5.html
+  # def plist; <<-EOS.undent
+  #   <?xml version="1.0" encoding="UTF-8"?>
+    #<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1 .0.dtd">
+  #   <plist version="1.0">
+  #   <dict>
+  #     <key>Label</key>
+  #       <string>#{plist_name}</string>
+  #     <key>ProgramArguments</key>
+  #     <array>
+  #       <string>#{bin}/example</string>
+  #       <string>--do-this</string>
+  #     </array>
+  #     <key>RunAtLoad</key>
+  #     <true/>
+  #     <key>KeepAlive</key>
+  #     <true/>
+  #     <key>StandardErrorPath</key>
+  #     <string>/dev/null</string>
+  #     <key>StandardOutPath</key>
+  #     <string>/dev/null</string>
+  #   </plist>
+  #   EOS
+  # end
+
 end
 
-# link_overwrite "bin/foo", "lib/bar"
-# link_overwrite "share/man/man1/baz-*"
-# plist_options startup: true
-# plist_options manual: "foo"
-# plist_options startup: true, manual: "foo start"
-# skip_clean "bin/foo", "lib/bar" # skip cleaning paths in a formula
-
+__END__
 
 # A very good example intended to showcase and present the features / use cases of a formulae -> https://github.com/syhw/homebrew/blob/master/Library/Contributions/example-formula.rb
 
@@ -271,3 +274,32 @@ end
 # brew upgrade demo1 --fetch-HEAD
 #
 # when using a private repo, a github api token set to env var HOMEBREW_GITHUB_API_TOKEN is required
+
+
+# BELOW THIS LINE IS ZOMBIE DOCS:
+# ================================================================================================
+
+
+# link_overwrite "bin/foo", "lib/bar"
+# link_overwrite "share/man/man1/baz-*"
+# plist_options startup: true
+# plist_options manual: "foo"
+# plist_options startup: true, manual: "foo start"
+# skip_clean "bin/foo", "lib/bar" # skip cleaning paths in a formula
+
+# devel do
+#   # The optional devel block is only executed if the user passes `--devel`.
+#   # Use this to specify a not-yet-released version of a software.
+#   puts "\nDEVEL SECTION:"
+#   url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
+# end
+
+# bash_completion.install "watson.completion" => "watson"
+# zsh_completion.install lib/"_demo1" => "_demo1"
+# system "ls", "-la"
+# system "pwd"
+
+
+# Options can be used as arguments to `brew install`.
+# To switch features on/off: `"with-something"` or `"with-otherthing"`.
+# option :universal
