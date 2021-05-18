@@ -11,7 +11,7 @@ class Demo1 < Formula
   def install
     lib.install Dir["*"]
     bin.install_symlink lib/"demo1.zsh" => "demo1"
-    man1.install "demo1.1"
+    man1.install lib/"demo1.1"
   end
 
 end
