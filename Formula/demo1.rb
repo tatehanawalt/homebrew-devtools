@@ -2,6 +2,7 @@
 # @author Tate W. Hanawalt - tate@tatehanawalt.com
 #
 # this is a demo brew formula in the tatehanawalt/devtools homebrew tap
+#
 class Demo1 < Formula
   version "0.0.0"
   desc "Brew install demo 1"
@@ -15,7 +16,7 @@ class Demo1 < Formula
     man1.install lib/"demo1.1"
   end
 end
-
+#
 # Download with:
 # curl -L https://api.github.com/repos/<org>/<repo>/tarball/<version> --output <version>.tar.gz
 #
@@ -48,3 +49,10 @@ end
 # uninstall the tap `brew untap tatehanawalt/devtools`
 # clean the brew cache: `brew cleanup`
 # re-install the tap: `brew tap tatehanawalt/devtools`
+#
+# Install the latest by:
+# 1. unlink or uninstall existing formula: brew uninstall demo1
+# 2. install head: brew install demo1 --HEAD
+#
+# Upgrade head:
+# brew upgrade demo1 --fetch-HEAD
