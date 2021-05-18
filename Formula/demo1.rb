@@ -7,22 +7,55 @@ require_relative "../lib/private"
 
 class Demo1 < Formula
 
-  bottle :unneeded # formula that can be installed without compilation
-  cxxstdlib_check :skip # pass skip to disable post-install stdlib checking
-
-  # link_overwrite "bin/foo", "lib/bar"
-  # link_overwrite "share/man/man1/baz-*"
-  # plist_options startup: true
-  # plist_options manual: "foo"
-  # plist_options startup: true, manual: "foo start"
-  # skip_clean "bin/foo", "lib/bar" # skip cleaning paths in a formula
-
   version "0.0.0"
   desc "Brew install demo 1"
   homepage "https://www.TateHanawalt.com"
-  url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.1/0.0.1.tar.gz", :using => :curl
-  sha256 "c294de88385e86260a6f858219aeb10038e460ebe713f98a44bd5f916b1cf2bf"
-  head "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
+
+  # when version is static but formula needs recompiling for another reason. 0 is default & unwritten.
+  revision 0
+
+  # formula that can be installed without compilation
+  bottle :unneeded
+
+  # pass skip to disable post-install stdlib checking
+  cxxstdlib_check :skip
+
+  # Options can be used as arguments to `brew install`.
+  # To switch features on/off: `"with-something"` or `"with-otherthing"`.
+  option :universal
+
+
+
+  stable do
+    # Stable-only dependencies should be nested inside a `stable` block rather than
+    # using a conditional. It is preferrable to also pull the URL and checksum into
+    # the block if one is necessary.
+
+    puts "\nSTABLE SECTION:"
+
+    url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.1/0.0.1.tar.gz", :using => :curl
+    sha256 "c294de88385e86260a6f858219aeb10038e460ebe713f98a44bd5f916b1cf2bf"
+    #url "https://example.com/foo-1.0.tar.gz"
+    #sha1 "cafebabe78901234567890123456789012345678"
+    #depends_on "libxml2"
+    #depends_on "libffi"
+  end
+
+  head do
+    # Optionally, specify a repository to be used. Brew then generates a
+    # `--HEAD` option. Remember to also test it.
+    puts "\nHEAD SECTION:"
+
+    url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
+  end
+
+  devel do
+    # The optional devel block is only executed if the user passes `--devel`.
+    # Use this to specify a not-yet-released version of a software.
+    puts "\nDEVEL SECTION:"
+
+    url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
+  end
 
 
   def install
@@ -176,22 +209,21 @@ class Demo1 < Formula
     EOS
   end
 
-
-
-
-  def on_linux
-    puts "\nON LINUX SECTION:"
-  end
-  def on_macos
-    puts "\nON MACOS SECTION:"
-  end
-
-
 end
+
+# link_overwrite "bin/foo", "lib/bar"
+# link_overwrite "share/man/man1/baz-*"
+# plist_options startup: true
+# plist_options manual: "foo"
+# plist_options startup: true, manual: "foo start"
+# skip_clean "bin/foo", "lib/bar" # skip cleaning paths in a formula
+
+
+# A very good example intended to showcase and present the features / use cases of a formulae -> https://github.com/syhw/homebrew/blob/master/Library/Contributions/example-formula.rb
 
 # debug mode: --debug
 # verbose mode: --verbose
-# add --interactive for interactive
+# add --interactive for interactive # try env | grep HOMEBREW
 
 # List the release download urls
 # export REPO=.th_sys
