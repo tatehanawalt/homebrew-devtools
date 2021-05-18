@@ -1,28 +1,5 @@
-# Brew Formulas Repository
+## devtools
 
-#### Brew notes:
+##### These are my personal tests with developing a brew tap to experiment with different code sources as brew installable projects.
 
-
-##### List Taps:
-```
-brew tap
-brew search <user>
-brew tap-info <tap> --json
-brew list --full-name
-brew config
-brew info <formula>
-brew install --verbose --debug <formula>
-brew untap <user/formula>
-```
-
-#### OSX paths:
-```
-  /usr/local/opt/
-  /usr/local/Cellar
-  /usr/local/Homebrew/Library/Taps
-```
-
-#### TAPS:
-``
-/usr/local/Homebrew/Library/Taps
-```
+##### Eventually this will contain formulae to install my personal config/dev utilities but for now its a sandbox 

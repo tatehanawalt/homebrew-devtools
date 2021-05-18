@@ -3,8 +3,6 @@
 #
 # this is a demo brew formula in the tatehanawalt/devtools homebrew tap
 
-require_relative "../lib/private"
-
 class Demo1 < Formula
 
   version "0.0.0"
@@ -20,22 +18,13 @@ class Demo1 < Formula
   # pass skip to disable post-install stdlib checking
   cxxstdlib_check :skip
 
-  stable do
-    # Stable-only dependencies should be nested inside a `stable` block rather than
-    # using a conditional. It is preferrable to also pull the URL and checksum into
-    # the block if one is necessary.
+  stable do # brew install demo1
     puts "\nSTABLE SECTION:"
     url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.1/0.0.1.tar.gz", :using => :curl
     sha256 "c294de88385e86260a6f858219aeb10038e460ebe713f98a44bd5f916b1cf2bf"
-    #url "https://example.com/foo-1.0.tar.gz"
-    #sha1 "cafebabe78901234567890123456789012345678"
-    #depends_on "libxml2"
-    #depends_on "libffi"
   end
 
-  head do
-    # Optionally, specify a repository to be used. Brew then generates a
-    # `--HEAD` option. Remember to also test it.
+  head do # brew install --HEAD demo1
     puts "\nHEAD SECTION:"
     url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
   end
@@ -53,15 +42,12 @@ class Demo1 < Formula
     puts "  BIN:                            #{self.bin}"
     puts "  BOTTLE_HASH:                    #{self.bottle_hash}"
     puts "  BOTTLE_TAB_ATTRIBUTES:          #{self.bottle_tab_attributes}"
-
     puts "  BUILD: #{build}"
     puts "    - ANY_ARGS_OR_OPTIONS?:       #{build.any_args_or_options?}"
     puts "    - BOTTLE?:                    #{build.bottle?}"
     puts "    - HEAD?:                      #{build.head?}"
     puts "    - STABLE?:                    #{build.stable?}"
-
     puts
-
     puts "  BUILD_PATH:                     #{self.buildpath}"
     puts "  CAVEATS:                        #{self.caveats}"
     puts "  CURRENT_INSTALLED_ALIAS_TARGET: #{self.current_installed_alias_target}"
@@ -170,12 +156,13 @@ class Demo1 < Formula
     # puts "  ON_LINUX:                       #{self.on_linux}"
     # puts "  ON_MACOS:                       #{self.on_macos}"
     puts ""
+
     # puts "  CURRENT:                        #{current}"
     puts "  DEBUG?:                         #{self.debug?}"
     puts "  QUIET?:                         #{self.quiet?}"
     puts "  VERBOSE?:                       #{self.verbose?}"
-    # puts "  WITH_CONTEXT:                   #{self.with_context}"
 
+    # puts "  WITH_CONTEXT:                   #{self.with_context}"
     lib.install Dir["*"]
     bin.install_symlink lib/"demo1.zsh" => "demo1"
     man1.install lib/"demo1.1"
@@ -191,115 +178,6 @@ class Demo1 < Formula
     EOS
   end
 
-  # Define this method to provide a plist.
-  # Looking for another example? Check out Apple's handy manpage =>
-  # https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man5/plist.5.html
-  # def plist; <<-EOS.undent
-  #   <?xml version="1.0" encoding="UTF-8"?>
-    #<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1 .0.dtd">
-  #   <plist version="1.0">
-  #   <dict>
-  #     <key>Label</key>
-  #       <string>#{plist_name}</string>
-  #     <key>ProgramArguments</key>
-  #     <array>
-  #       <string>#{bin}/example</string>
-  #       <string>--do-this</string>
-  #     </array>
-  #     <key>RunAtLoad</key>
-  #     <true/>
-  #     <key>KeepAlive</key>
-  #     <true/>
-  #     <key>StandardErrorPath</key>
-  #     <string>/dev/null</string>
-  #     <key>StandardOutPath</key>
-  #     <string>/dev/null</string>
-  #   </plist>
-  #   EOS
-  # end
-
 end
 
 __END__
-
-# A very good example intended to showcase and present the features / use cases of a formulae -> https://github.com/syhw/homebrew/blob/master/Library/Contributions/example-formula.rb
-
-# debug mode: --debug
-# verbose mode: --verbose
-# add --interactive for interactive # try env | grep HOMEBREW
-
-# List the release download urls
-# export REPO=.th_sys
-# export ORG=tatehanawalt
-# curl -s https://api.github.com/repos/$ORG/$REPO/releases/latest
-#
-# Download with:
-# curl -L https://api.github.com/repos/<org>/<repo>/tarball/<version> --output <version>.tar.gz
-#
-# FOR EXAMPLE,
-#
-# export VERSION=0.0.1
-# export REPO=.th_sys
-# export ORG=tatehanawalt
-#
-# curl -L "https://api.github.com/repos/${ORG}/${REPO}/tarball/${VERSION}" --output "${VERSION}.tar.gz"
-#
-# OR
-#
-# VERSION=0.0.0 && REPO=.th_sys && ORG=tatehanawalt && curl -L "https://api.github.com/repos/${ORG}/${REPO}/tarball/${VERSION}" --output "${VERSION}.tar.gz"
-#
-# Next, get the shasum of the tarball:
-#
-# shasum -a 256 ${VERSION}.tar.gz
-#
-# you can also untar with:
-#
-# tar -xvzf ${VERSION}.tar.gz
-#
-# Increment the formula VERSION
-#
-# Then commit the tap.
-#
-# To keep the existing version, commit the tap with the original version, THEN:
-#
-# uninstall the tap `brew untap tatehanawalt/devtools`
-# clean the brew cache: `brew cleanup`
-# re-install the tap: `brew tap tatehanawalt/devtools`
-#
-# Install the latest by:
-# 1. unlink or uninstall existing formula: brew uninstall demo1
-# 2. install head: brew install demo1 --HEAD
-#
-# Upgrade head:
-# brew upgrade demo1 --fetch-HEAD
-#
-# when using a private repo, a github api token set to env var HOMEBREW_GITHUB_API_TOKEN is required
-
-
-# BELOW THIS LINE IS ZOMBIE DOCS:
-# ================================================================================================
-
-
-# link_overwrite "bin/foo", "lib/bar"
-# link_overwrite "share/man/man1/baz-*"
-# plist_options startup: true
-# plist_options manual: "foo"
-# plist_options startup: true, manual: "foo start"
-# skip_clean "bin/foo", "lib/bar" # skip cleaning paths in a formula
-
-# devel do
-#   # The optional devel block is only executed if the user passes `--devel`.
-#   # Use this to specify a not-yet-released version of a software.
-#   puts "\nDEVEL SECTION:"
-#   url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
-# end
-
-# bash_completion.install "watson.completion" => "watson"
-# zsh_completion.install lib/"_demo1" => "_demo1"
-# system "ls", "-la"
-# system "pwd"
-
-
-# Options can be used as arguments to `brew install`.
-# To switch features on/off: `"with-something"` or `"with-otherthing"`.
-# option :universal
