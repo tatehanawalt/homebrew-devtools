@@ -6,6 +6,16 @@
 require_relative "../lib/private"
 
 class Demo1 < Formula
+
+  def initialize()
+    super
+    # puts "this is an initialization method"
+    # @cust_id = id
+    # @cust_name = name
+    # @cust_addr = addr
+  end
+
+
   version "0.0.0"
   desc "Brew install demo 1"
   homepage "https://www.TateHanawalt.com"
@@ -14,6 +24,10 @@ class Demo1 < Formula
   head "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
 
   def install
+    ohai "this is the install section, access token: #{ENV['HOMEBREW_GITHUB_API_TOKEN']}"
+
+    puts "\n\nthis is an install section \n\n"
+
     lib.install Dir["*"]
     bin.install_symlink lib/"demo1.zsh" => "demo1"
     man1.install lib/"demo1.1"
