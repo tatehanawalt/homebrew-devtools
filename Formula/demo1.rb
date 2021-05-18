@@ -7,13 +7,13 @@ require_relative "../lib/private"
 
 class Demo1 < Formula
 
-  def initialize()
-    super
+  # def initialize()
+    # super
     # puts "this is an initialization method"
     # @cust_id = id
     # @cust_name = name
     # @cust_addr = addr
-  end
+  # end
 
 
   version "0.0.0"
@@ -24,13 +24,19 @@ class Demo1 < Formula
   head "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
 
   def install
-    ohai "this is the install section, access token: #{ENV['HOMEBREW_GITHUB_API_TOKEN']}"
+    @test_val = ENV["HOMEBREW_GITHUB_API_TOKEN"]
+    ohai "this is the install section, access token:"
+    ohai "test_val: #{@test_val}"
+    puts "\n\nthis is an install section #{@test_val}\n\n"
 
-    puts "\n\nthis is an install section \n\n"
 
     lib.install Dir["*"]
     bin.install_symlink lib/"demo1.zsh" => "demo1"
     man1.install lib/"demo1.1"
+
+    # bash_completion.install "watson.completion" => "watson"
+    zsh_completion.install lib/"_demo1" => "_demo1"
+
   end
 end
 
