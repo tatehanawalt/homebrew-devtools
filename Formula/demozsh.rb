@@ -10,7 +10,6 @@
 class Demozsh < Formula
 
   bottle :unneeded                        # formula that can be installed without compilation
-  depends_on "zsh" => :install            # dependencies
   desc "Brew install demozsh"             # formula description
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
@@ -29,9 +28,16 @@ class Demozsh < Formula
 
   def install
     puts "INSTALL SECTION:"
-    cd "demozsh" do
+    if build.head?
+      puts "\n\ndemozsh HEAD SECTION!\n\n"
+      cd "demozsh" do
+        lib.install ["_demozsh", "demozsh.zsh", "doc/man/demozsh.1"]
+      end
+    else
+      puts "\n\ndemozsh STABLE SECTION!\n\n"
       lib.install ["_demozsh", "demozsh.zsh", "doc/man/demozsh.1"]
     end
+
     zsh_completion.install lib/"_demozsh"
     bin.install lib/"demozsh.zsh" => "demozsh"
     man1.install lib/"demozsh.1"
