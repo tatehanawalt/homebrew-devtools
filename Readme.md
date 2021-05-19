@@ -1,6 +1,6 @@
-# <div align="center">TATE HANAWALT DEVTOOLS</div>
+# <div align="center">  TATE HANAWALT DEVTOOLS  </div>
 
-## <div align="center">CLI's, Utilities, and Demos distributed through [BREW](https://brew.sh/)</div>  
+## <div align="center">  CLI's, Utilities, and Demos distributed through [BREW](https://brew.sh/)  </div>
 
 
 
@@ -8,7 +8,7 @@
 
 
 
-### Installing Tools:
+## Installing Tools:
 
 
 1. Tap the repo:
@@ -19,13 +19,13 @@ brew tap tatehanawalt/devtools
 
 2. Install any tools using either the **STABLE** or **HEAD** methods outlined below.
 
-#### STABLE:
+### STABLE:
 
 Install stable distribution with the standard brew install command:
 ```shell
 brew install <package_name>
 ```
-#### HEAD:
+### HEAD:
 
 **Head** deploys the latest code directly from the projects source. You will get the latest elements of the tools but the tools may not always work to the standards offered from the stable installatioin method
 
@@ -34,9 +34,10 @@ Install tools using the **head** method by adding the `--HEAD` flag in the insta
 ```shell
 brew install --HEAD <package_name>
 ```
-<hr>
 
-## Tools:
+
+
+## <div align="center">  Tools:  </div>
 
 ##### Demogolang:
 
@@ -53,13 +54,14 @@ Description: Tool details on the way...Usage: Usage cominig soon...Install Stabl
 ##### Demonodejs:
 
 Description: Tool details on the way...Usage: Usage cominig soon...Install Stable: `brew intstall demonodejs`Written In: `nodejs`
-<hr>
 
-### Contributing Guide: NA...
 
-<hr>
+## <div align="center">  Contributing Guide:</div>
 
-### Contributors: 
+
+
+## <div align="center"> Contributors: </div>
+
 - contributor1
 - contributor2
 - this is coming soooon....
