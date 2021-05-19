@@ -46,19 +46,19 @@ brew install --HEAD <package_name>
 
 ##### Demogolang:
 
-Description: Tool details on the way...Usage: Usage cominig soon...Install Stable: `brew intstall demogolang`Written In: `golang`
+Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall demogolang`<br>Written In: `golang`<br>
 ##### Democ:
 
-Description: Tool details on the way...Usage: Usage cominig soon...Install Stable: `brew intstall democ`Written In: `c`
+Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall democ`<br>Written In: `c`<br>
 ##### Democpp:
 
-Description: Tool details on the way...Usage: Usage cominig soon...Install Stable: `brew intstall democpp`Written In: `cpp`
+Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall democpp`<br>Written In: `cpp`<br>
 ##### Demozsh:
 
-Description: Tool details on the way...Usage: Usage cominig soon...Install Stable: `brew intstall demozsh`Written In: `zsh`
+Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall demozsh`<br>Written In: `zsh`<br>
 ##### Demonodejs:
 
-Description: Tool details on the way...Usage: Usage cominig soon...Install Stable: `brew intstall demonodejs`Written In: `nodejs`
+Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall demonodejs`<br>Written In: `nodejs`<br>
 
 
 ## <div align="center">Contributing Guide</div><br>
