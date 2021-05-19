@@ -16,20 +16,20 @@ Everything is currently in development. Nothing is actually stable right now. Ev
 
 
 
-1. Tap the repo:
+#### 1. Tap the repo:
 ```shell
 brew tap tatehanawalt/devtools
 ```
 
 
-2. Install any tools using either the **STABLE** or **HEAD** methods outlined below.
+#### 2. Install any tools using either the **STABLE** or **HEAD** methods outlined below.
 
-##### STABLE:<br>
+###### STABLE:<br>
 Install stable distribution with the standard brew install command:
 ```shell
 brew install <package_name>
 ```
-##### HEAD:<br>
+###### HEAD:<br>
 Head deploys the latest code directly from the projects source. You will get the latest elements of the tools but the tools may not always work to the standards offered from the stable installatioin method
 
 Install tools using the **head** method by adding the `--HEAD` flag in the install command just before the `<package_name>`. For example:
