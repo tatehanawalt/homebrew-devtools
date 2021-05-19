@@ -1,6 +1,8 @@
 # <div align="center">TATE HANAWALT DEVTOOLS</div>
 
-## <div align="center">CLI's, Utilities, and Demos distributed through [BREW](https://brew.sh/)</div>
+## <div align="center">CLI's, Utilities, and Demos distributed through [BREW](https://brew.sh/)</div>  
+
+
 
 ### :x: Everything is currently in development. Nothing is actually  stable right now. Even if it appears stable from README content below... 
 
