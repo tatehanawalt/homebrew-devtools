@@ -24,14 +24,12 @@ brew tap tatehanawalt/devtools
 
 2. Install any tools using either the **STABLE** or **HEAD** methods outlined below.
 
-### STABLE:
-
+##### STABLE:<br>
 Install stable distribution with the standard brew install command:
 ```shell
 brew install <package_name>
 ```
-### HEAD:
-
+##### HEAD:<br>
 Head deploys the latest code directly from the projects source. You will get the latest elements of the tools but the tools may not always work to the standards offered from the stable installatioin method
 
 Install tools using the **head** method by adding the `--HEAD` flag in the install command just before the `<package_name>`. For example:
@@ -63,12 +61,11 @@ Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Insta
 <br>
 
 ## <div align="center">Contributing</div><br><br>
-
+<br>
 
 <br>
 
-## <div align="center">Contributors</div><br><br>
-
+## <div align="center">Contributors</div><br>
 
 - contributor1
 - contributor2
