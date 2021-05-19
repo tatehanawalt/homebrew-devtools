@@ -4,9 +4,8 @@
 
 ## <div align="center">CLI's, Utilities, and Demos distributed through [BREW](https://brew.sh/)</div><br>
 
-<div align="center">:x: :x: :x: :x: :x: :x:</div>
-
-##### Everything is currently in development. Nothing is actually stable right now. Even if it appears stable from README content below... 
+:x: **Note:**<br>
+Everything is currently in development. Nothing is actually stable right now. Even if it appears stable from README content below... 
 <br>
 
 ## <div align="center">Installing</div><br>
