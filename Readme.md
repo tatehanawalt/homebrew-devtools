@@ -32,7 +32,7 @@ brew install <package_name>
 ```
 ### HEAD:
 
-**Head** deploys the latest code directly from the projects source. You will get the latest elements of the tools but the tools may not always work to the standards offered from the stable installatioin method
+Head deploys the latest code directly from the projects source. You will get the latest elements of the tools but the tools may not always work to the standards offered from the stable installatioin method
 
 Install tools using the **head** method by adding the `--HEAD` flag in the install command just before the `<package_name>`. For example:
 
@@ -42,8 +42,9 @@ brew install --HEAD <package_name>
 
 <br>
 
-## <div align="center">Tools</div>
 
+
+## <div align="center">Tools</div><br>
 <br>
 
 ##### Demogolang:
