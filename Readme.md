@@ -2,7 +2,7 @@
 
 # <div align="center">TATE HANAWALT DEVTOOLS</div><br>
 
-## <div align="center">CLI's, Utilities, and Demos distributed through [BREW](https://brew.sh/)</div><br>
+## <div align="center">Tools and Projects available through [BREW](https://brew.sh/)</div><br>
 
 <br>
 
