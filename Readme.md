@@ -12,9 +12,7 @@ Everything is currently in development. Nothing is actually stable right now. Ev
 
 <br>
 
-## <div align="center">Installing</div><br>
-
-
+## <div align="center">Installing</div>
 
 #### 1. Tap the repo:
 ```shell
