@@ -1,5 +1,5 @@
 #==============================================================================
-#title   :demppython
+#title   :dempoython
 #version :0.0.0
 #desc    :python cli built as part of the homebrew demo/dev tools project
 #usage   :See the repo README file for usage
@@ -7,10 +7,10 @@
 #auth    :Dan Henderson(dphender@mtu.edu), Tate Hanawalt(tate@tatehanawalt.com)
 #date    :1621396284
 #==============================================================================
-class Demppython < Formula
+class Demopython < Formula
 
   bottle :unneeded                        # formula installed without compilation
-  desc "Brew install demopython"             # formula description
+  desc "Brew install demopython"          # formula description
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
   version "0.0.0"                         # Formulae version
@@ -25,21 +25,15 @@ class Demppython < Formula
   end
 
   def install
-
-    # if build.head?
-    #   cd "demozsh" do
-    #     lib.install ["_demozsh", "demozsh.zsh", "doc/man/demozsh.1"]
-    #   end
-    # else
-    #   lib.install ["_demozsh", "demozsh.zsh", "doc/man/demozsh.1"]
-    # end
-    # zsh_completion.install lib/"_demozsh"
-    # bin.install lib/"demozsh.zsh" => "demozsh"
-    # man1.install lib/"demozsh.1"
-
-
+    if build.head?
+      cd "demopython" do
+        lib.install ["main.py"]
+      end
+    else
+      lib.install ["main.py"]
+    end
+    bin.install_symlink lib/"main.py" => "demopython"
   end
-
 end
 
 __END__

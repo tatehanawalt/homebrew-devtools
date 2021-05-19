@@ -1,3 +1,4 @@
+
 #==============================================================================
 #title   :gen_devtools_readme.zsh
 #version :0.0.0
@@ -7,6 +8,10 @@
 #auth    :Tate Hanawalt(tate@tatehanawalt.com)
 #date    :1621396284
 #==============================================================================
+
+echo $ZSH_VERSION
+echo $BASH_VERSION
+
 
 #==============================================================================
 # This doc gen could use a LOT of work. Its very sloppy but it gets the job
@@ -46,6 +51,7 @@ README_FILE="$ROOT_PROJECT_PATH/README.md"
 
 printf "README_FILE: ${README_FILE}\n"
 
+exit 0
 # printf "<br>\n\n" > "$README_FILE"
 printf "" > $README_FILE # Initialize the blank readme doc
 
@@ -120,5 +126,3 @@ printf "<br>\n\n" >> "$README_FILE"
 printf "## <div align=\"center\">Contributors</div><br>\n\n" >> "$README_FILE"
 printf "- %s\n" $contributors >> "$README_FILE"
 printf "\nThis readme is genarted by the zsh shell script in this taps `bin` directory"
-
-#!/usr/bin/env zsh
