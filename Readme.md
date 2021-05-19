@@ -42,8 +42,6 @@ brew install --HEAD <package_name>
 
 <br>
 
-
-
 ## <div align="center">Tools</div><br><br>
 
 
@@ -62,13 +60,15 @@ Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Insta
 ##### Demonodejs:
 
 Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall demonodejs`<br>Written In: `nodejs`<br>
+<br>
+
+## <div align="center">Contributing</div><br><br>
 
 
-## <div align="center">Contributing Guide</div><br>
+<br>
 
+## <div align="center">Contributors</div><br><br>
 
-
-## <div align="center">Contributors</div><br>
 
 - contributor1
 - contributor2
