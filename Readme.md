@@ -4,7 +4,8 @@
 
 
 <hr>
-!x Everything is currently in development. Nothing is actually  stable right now. Even if it appears stable from README content below... 
+
+##### :x: Everything is currently in development. Nothing is actually  stable right now. Even if it appears stable from README content below... 
 
 <hr>
 
