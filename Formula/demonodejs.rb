@@ -1,4 +1,4 @@
-# demo1                         @author Tate W. Hanawalt               tate@tatehanawalt.com
+# demozsh                         @author Tate W. Hanawalt               tate@tatehanawalt.com
 #
 # this is a demo brew formula in the tatehanawalt/devtools homebrew tap for a zsh based cli
 # with zsh completions
@@ -20,11 +20,11 @@ class Demonodejs < Formula
   # ------------------------------------------------------------------------------------------
 
   # versions download differentiators
-  head do # brew install --HEAD demo1
+  head do # brew install --HEAD demozsh
     puts "HEAD SECTION:"
     url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
   end
-  stable do # brew install demo1
+  stable do # brew install demozsh
     puts "STABLE SECTION:"
     url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.1/0.0.1.tar.gz", :using => :curl
     sha256 "c294de88385e86260a6f858219aeb10038e460ebe713f98a44bd5f916b1cf2bf"

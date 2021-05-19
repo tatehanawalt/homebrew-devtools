@@ -13,10 +13,16 @@ brew tap tatehanawalt/devtools
 
 #### Second Install:
 
-##### Demo1
+##### Demonodejs
+nodejs based brew demo
+```
+brew install demonodejs
+```
+
+##### Demozsh
 ZSH based brew demo
 ```
-brew install demo1
+brew install demozsh
 ```
 
 ##### Demo2
