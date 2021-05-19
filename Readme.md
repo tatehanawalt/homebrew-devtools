@@ -1,19 +1,19 @@
 # <div align="center">TATE HANAWALT DEVTOOLS</div>
 
-## <div align="center">CLI's, Utilities, and Demos distributed through [BREW](https://brew.sh/)</div><br>
+## <div align="center">CLI's, Utilities, and Demos distributed through [BREW](https://brew.sh/)</div>
 
 ### :x: Everything is currently in development. Nothing is actually  stable right now. Even if it appears stable from README content below... 
 
-<br>
+
 
 ### Installing Tools:
-<br>
+
 
 1. Tap the repo:
 ```shell
 brew tap tatehanawalt/devtools
 ```
-<br>
+
 
 2. Install any tools using either the **STABLE** or **HEAD** methods outlined below.
 
@@ -38,19 +38,19 @@ brew install --HEAD <package_name>
 
 ##### Demogolang:
 
-Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall demogolang`<br>Written In: `golang`<br>
+Description: Tool details on the way...Usage: Usage cominig soon...Install Stable: `brew intstall demogolang`Written In: `golang`
 ##### Democ:
 
-Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall democ`<br>Written In: `c`<br>
+Description: Tool details on the way...Usage: Usage cominig soon...Install Stable: `brew intstall democ`Written In: `c`
 ##### Democpp:
 
-Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall democpp`<br>Written In: `cpp`<br>
+Description: Tool details on the way...Usage: Usage cominig soon...Install Stable: `brew intstall democpp`Written In: `cpp`
 ##### Demozsh:
 
-Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall demozsh`<br>Written In: `zsh`<br>
+Description: Tool details on the way...Usage: Usage cominig soon...Install Stable: `brew intstall demozsh`Written In: `zsh`
 ##### Demonodejs:
 
-Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall demonodejs`<br>Written In: `nodejs`<br>
+Description: Tool details on the way...Usage: Usage cominig soon...Install Stable: `brew intstall demonodejs`Written In: `nodejs`
 <hr>
 
 ### Contributing Guide: NA...
@@ -58,7 +58,7 @@ Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Insta
 <hr>
 
 ### Contributors: 
-- contributor1<br>
-- contributor2<br>
-- this is coming soooon....<br>
-- hopefully...<br>
+- contributor1
+- contributor2
+- this is coming soooon....
+- hopefully...
