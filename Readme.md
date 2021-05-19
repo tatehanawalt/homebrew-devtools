@@ -40,9 +40,11 @@ Install tools using the **head** method by adding the `--HEAD` flag in the insta
 brew install --HEAD <package_name>
 ```
 
+<br>
 
+## <div align="center">Tools</div>
 
-## <div align="center">Tools<br></div>
+<br>
 
 ##### Demogolang:
 
