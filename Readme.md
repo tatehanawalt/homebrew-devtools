@@ -1,4 +1,7 @@
-# <div align="center">  TATE HANAWALT DEVTOOLS  </div>
+
+
+<br>  
+# <div align="center">TATE HANAWALT DEVTOOLS  </div>
 
 ## <div align="center">CLI's, Utilities, and Demos distributed through [BREW](https://brew.sh/)</div><br>
 <br>
