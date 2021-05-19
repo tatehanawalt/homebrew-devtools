@@ -13,6 +13,12 @@ brew tap tatehanawalt/devtools
 
 #### Second Install:
 
+##### Demogolang
+GO based brew demo
+```
+brew install demogolang
+```
+
 ##### Demonodejs
 nodejs based brew demo
 ```
@@ -23,10 +29,4 @@ brew install demonodejs
 ZSH based brew demo
 ```
 brew install demozsh
-```
-
-##### Demo2
-GO based brew demo
-```
-brew install demo2
 ```
