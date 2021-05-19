@@ -8,7 +8,8 @@
 
 
 
-## Installing Tools:
+## <div align="center">Installing</div><br>
+
 
 
 1. Tap the repo:
@@ -37,7 +38,7 @@ brew install --HEAD <package_name>
 
 
 
-## <div align="center">  Tools:  </div>
+## <div align="center">Tools<br></div>
 
 ##### Demogolang:
 
@@ -56,11 +57,11 @@ Description: Tool details on the way...Usage: Usage cominig soon...Install Stabl
 Description: Tool details on the way...Usage: Usage cominig soon...Install Stable: `brew intstall demonodejs`Written In: `nodejs`
 
 
-## <div align="center">  Contributing Guide:</div>
+## <div align="center">Contributing Guide</div><br>
 
 
 
-## <div align="center"> Contributors: </div>
+## <div align="center">Contributors</div><br>
 
 - contributor1
 - contributor2
