@@ -8,7 +8,7 @@
 #date    :1621396284
 #==============================================================================
 class Demogolang < Formula
-
+  
   depends_on "go" => :build               # dependencies
   desc "Brew install demogolang"          # formula description
   homepage "https://www.TateHanawalt.com" # my website
