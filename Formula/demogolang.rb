@@ -1,18 +1,24 @@
-# demogolang                         @author Tate W. Hanawalt               tate@tatehanawalt.com
-#
-# This is a demo brew formula in the tatehanawalt/devtools homebrew tap for a go based cli
-# ==========================================================================================
+#==============================================================================
+#title   :demogolang
+#version :0.0.0
+#desc    :golang cli built as part of the homebrew demo/dev tools project
+#usage   :See the repo README file for usage
+#exit    :0=success, 1=input error 2=execution error
+#auth    :Tate Hanawalt(tate@tatehanawalt.com)
+#date    :1621396284
+#==============================================================================
 class Demogolang < Formula
 
   # ------------------------------------------------------------------------------------------
   # Formula vars/params
   # ------------------------------------------------------------------------------------------
+
   # bottle :unneeded                      # formula that can be
   depends_on "go" => :build               # dependencies
   desc "Brew install demogolang"          # formula description
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
-  version "0.0.0"                                                  # Formulae version
+  version "0.0.0"                         # Formulae version
 
   # ------------------------------------------------------------------------------------------
   # Formulae Methods:

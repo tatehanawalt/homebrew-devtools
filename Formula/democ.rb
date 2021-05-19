@@ -1,17 +1,16 @@
 #==============================================================================
-#title   :demozsh
+#title   :democ
 #version :0.0.0
-#desc    :zsh cli built as part of the homebrew demo/dev tools project
+#desc    :C cli built as part of the homebrew demo/dev tools project
 #usage   :See the repo README file for usage
 #exit    :0=success, 1=input error 2=execution error
 #auth    :Tate Hanawalt(tate@tatehanawalt.com)
 #date    :1621396284
 #==============================================================================
-class Demozsh < Formula
+class Democ < Formula
 
-  bottle :unneeded                        # formula that can be installed without compilation
-  depends_on "zsh" => :install            # dependencies
-  desc "Brew install demozsh"             # formula description
+  depends_on "gcc" => :install            # dependencies
+  desc "Brew install democ"               # formula description
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
   version "0.0.0"                         # Formulae version
@@ -29,12 +28,12 @@ class Demozsh < Formula
 
   def install
     puts "INSTALL SECTION:"
-    cd "demozsh" do
-      lib.install ["_demozsh", "demozsh.zsh", "doc/man/demozsh.1"]
+    cd "democ" do
+      system "gcc", "main.c", "-o", "democ"
+      lib.install ["democ", "doc/man/democ.1"]
     end
-    zsh_completion.install lib/"_demozsh"
-    bin.install lib/"demozsh.zsh" => "demozsh"
-    man1.install lib/"demozsh.1"
+    bin.install_symlink lib/"democ" => "democ"
+    man1.install lib/"democ.1"
   end
 
 end
