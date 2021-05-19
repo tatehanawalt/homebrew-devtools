@@ -16,20 +16,19 @@ class Demogolang < Formula
   version "0.0.0"                         # Formulae version
 
   head do
-    puts "HEAD SECTION:"
     url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
   end
 
   stable do
-    puts "STABLE SECTION:"
     url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.0/demogolang.tar.gz", :using => :curl
     sha256 "efee5e17d0f42b3fc5255c93e784cb9dee6efb03b17494f9a43172d1a2b34437"
   end
 
   def install
-    puts "INSTALL SECTION:"
-    cd "demogolang" do
+    if build.head?
       system "go", "build", "-ldflags", "-s -w -X 'main.Version=#{version}'"
+      lib.install ["demogolang", "doc/man/demogolang.1"]
+    else
       lib.install ["demogolang", "doc/man/demogolang.1"]
     end
     bin.install_symlink lib/"demogolang" => "demogolang"
