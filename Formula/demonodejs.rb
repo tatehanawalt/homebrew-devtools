@@ -23,8 +23,8 @@ class Demonodejs < Formula
 
   stable do
     puts "STABLE SECTION:"
-    url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.1/0.0.1.tar.gz", :using => :curl
-    sha256 "c294de88385e86260a6f858219aeb10038e460ebe713f98a44bd5f916b1cf2bf"
+    url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.0/demonodejs.tar.gz", :using => :curl
+    sha256 "ca1dee1ef729c57e523e6341aa057fb649eb54ba36115257e7670ce356bbc81c"
   end
 
   def install
