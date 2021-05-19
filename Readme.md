@@ -1,6 +1,6 @@
 ## TATE HANAWALT DEVTOOLS
 
-##### Utils / shell scripts distributed through [BREW](https://brew.sh/)
+#### CLI's, Utilities, and Demos distributed through [BREW](https://brew.sh/)
 
 
 <hr>
