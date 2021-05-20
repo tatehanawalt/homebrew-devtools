@@ -33,7 +33,7 @@ class Demopython < Formula
       lib.install ["main.py", "doc/man/demopython.1"]
     end
     bin.install lib/"main.py" => "demopython"
-    man1.install lib/"demozsh.1"
+    man1.install lib/"demopython.1"
   end
 end
 
