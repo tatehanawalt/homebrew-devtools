@@ -27,12 +27,13 @@ class Demopython < Formula
   def install
     if build.head?
       cd "demopython" do
-        lib.install ["main.py"]
+        lib.install ["main.py", "doc/man/demopython.1"]
       end
     else
-      lib.install ["main.py"]
+      lib.install ["main.py", "doc/man/demopython.1"]
     end
-    bin.install_symlink lib/"main.py" => "demopython"
+    bin.install lib/"main.py" => "demopython"
+    man1.install lib/"demozsh.1"
   end
 end
 
