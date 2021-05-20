@@ -1,15 +1,14 @@
 #==============================================================================
-#title   :demogolang
-#version :0.0.0
-#desc    :golang cli built as part of the homebrew demo/dev tools project
-#usage   :See the repo README file for usage
-#exit    :0=success, 1=input error 2=execution error
-#auth    :Tate Hanawalt(tate@tatehanawalt.com)
-#date    :1621396284
+# title   :demogolang
+# version :0.0.0
+# desc    :golang cli built as part of the homebrew demo/dev tools project
+# usage   :See the repo README file for usage
+# exit    :0=success, 1=input error 2=execution error
+# auth    :Tate Hanawalt(tate@tatehanawalt.com)
+# date    :1621396284
 #==============================================================================
 class Demogolang < Formula
-
-  depends_on "go" => :build             # dependencies
+  depends_on "go" => :build # dependencies
   desc "Brew install demogolang"          # formula description
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
@@ -37,7 +36,6 @@ class Demogolang < Formula
     bin.install_symlink lib/"demogolang" => "demogolang"
     man1.install lib/"demogolang.1"
   end
-
 end
 
 __END__

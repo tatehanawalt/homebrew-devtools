@@ -1,14 +1,13 @@
 #==============================================================================
-#title   :democ
-#version :0.0.0
-#desc    :C cli built as part of the homebrew demo/dev tools project
-#usage   :See the repo README file for usage
-#exit    :0=success, 1=input error 2=execution error
-#auth    :Tate Hanawalt(tate@tatehanawalt.com)
-#date    :1621396284
+# title   :democ
+# version :0.0.0
+# desc    :C cli built as part of the homebrew demo/dev tools project
+# usage   :See the repo README file for usage
+# exit    :0=success, 1=input error 2=execution error
+# auth    :Tate Hanawalt(tate@tatehanawalt.com)
+# date    :1621396284
 #==============================================================================
 class Democ < Formula
-
   depends_on "gcc" => :install            # dependencies
   desc "Brew install democ"               # formula description
   homepage "https://www.TateHanawalt.com" # my website
@@ -35,7 +34,6 @@ class Democ < Formula
     bin.install_symlink lib/"democ" => "democ"
     man1.install lib/"democ.1"
   end
-
 end
 
 __END__

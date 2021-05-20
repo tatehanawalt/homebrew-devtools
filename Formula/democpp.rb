@@ -1,14 +1,13 @@
 #==============================================================================
-#title   :democpp
-#version :0.0.0
-#desc    :C++ cli built as part of the homebrew demo/dev tools project
-#usage   :See the repo README file for usage
-#exit    :0=success, 1=input error 2=execution error
-#auth    :Tate Hanawalt(tate@tatehanawalt.com)
-#date    :1621396284
+# title   :democpp
+# version :0.0.0
+# desc    :C++ cli built as part of the homebrew demo/dev tools project
+# usage   :See the repo README file for usage
+# exit    :0=success, 1=input error 2=execution error
+# auth    :Tate Hanawalt(tate@tatehanawalt.com)
+# date    :1621396284
 #==============================================================================
 class Democpp < Formula
-
   depends_on "g++" => :install            # dependencies
   desc "Brew install democpp"             # formula description
   homepage "https://www.TateHanawalt.com" # my website
@@ -35,7 +34,6 @@ class Democpp < Formula
     bin.install_symlink lib/"democpp" => "democpp"
     man1.install lib/"democpp.1"
   end
-
 end
 
 __END__

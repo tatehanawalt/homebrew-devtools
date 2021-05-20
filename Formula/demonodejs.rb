@@ -1,14 +1,13 @@
 #==============================================================================
-#title   :demonodejs
-#version :0.0.0
-#desc    :nodejs cli built as part of the homebrew demo/dev tools project
-#usage   :See the repo README file for usage
-#exit    :0=success, 1=input error 2=execution error
-#auth    :Tate Hanawalt(tate@tatehanawalt.com)
-#date    :1621396284
+# title   :demonodejs
+# version :0.0.0
+# desc    :nodejs cli built as part of the homebrew demo/dev tools project
+# usage   :See the repo README file for usage
+# exit    :0=success, 1=input error 2=execution error
+# auth    :Tate Hanawalt(tate@tatehanawalt.com)
+# date    :1621396284
 #==============================================================================
 class Demonodejs < Formula
-
   bottle :unneeded                        # formula that can be installed without compilation
   desc "Brew install demonodejs"          # formula description
   homepage "https://www.TateHanawalt.com" # my website
@@ -35,7 +34,6 @@ class Demonodejs < Formula
     bin.install lib/"main.js" => "demonodejs"
     man1.install lib/"demonodejs.1"
   end
-
 end
 
 __END__

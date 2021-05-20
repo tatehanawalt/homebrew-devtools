@@ -1,14 +1,13 @@
 #==============================================================================
-#title   :demozsh
-#version :0.0.0
-#desc    :zsh cli built as part of the homebrew demo/dev tools project
-#usage   :See the repo README file for usage
-#exit    :0=success, 1=input error 2=execution error
-#auth    :Tate Hanawalt(tate@tatehanawalt.com)
-#date    :1621396284
+# title   :demozsh
+# version :0.0.0
+# desc    :zsh cli built as part of the homebrew demo/dev tools project
+# usage   :See the repo README file for usage
+# exit    :0=success, 1=input error 2=execution error
+# auth    :Tate Hanawalt(tate@tatehanawalt.com)
+# date    :1621396284
 #==============================================================================
 class Demozsh < Formula
-
   bottle :unneeded                        # formula that can be installed without compilation
   desc "Brew install demozsh"             # formula description
   homepage "https://www.TateHanawalt.com" # my website
@@ -36,7 +35,6 @@ class Demozsh < Formula
     bin.install lib/"demozsh.zsh" => "demozsh"
     man1.install lib/"demozsh.1"
   end
-
 end
 
 __END__
