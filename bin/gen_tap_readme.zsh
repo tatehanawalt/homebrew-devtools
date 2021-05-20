@@ -1,4 +1,4 @@
-
+#!/usr/bin/env zsh
 #==============================================================================
 #title   :gen_devtools_readme.zsh
 #version :0.0.0
@@ -8,41 +8,35 @@
 #auth    :Tate Hanawalt(tate@tatehanawalt.com)
 #date    :1621396284
 #==============================================================================
-
-echo $ZSH_VERSION
-echo $BASH_VERSION
-
-
-#==============================================================================
-# This doc gen could use a LOT of work. Its very sloppy but it gets the job
-# done right now but yeah its a dumbster fire
+# This script needs a loooooooot of work.....
 #==============================================================================
 
+# Check if this script was called in a git repository
 ROOT_PROJECT_PATH=$(git rev-parse --show-toplevel)
-
 if [ -z "$ROOT_PROJECT_PATH" ]; then
   printf "ERROR - devtools gen_tap_readme.zsh got nothing from git rev-parse --show-toplevel\n"
   return 1
 fi
 
+# Get the name of the repository if the above step succeeded
 REPO_NAME=$(basename "$ROOT_PROJECT_PATH")
 printf "REPO_NAME=%s\n" "$REPO_NAME"
-
 if [[ "$REPO_NAME" != "homebrew-devtools" ]]; then
   printf "ERROR - devtools gen_tap_readme.zsh repo name is not the homebrew-devtools repo\n"
   return 1
 fi
 
-# Expected Formulas directory
+# Check that the brew formulas are where we expect them (<repo>/Formulas/*)
 FORMULA_DIR="$ROOT_PROJECT_PATH/Formula"
-
 if [ ! -d "$FORMULA_DIR" ]; then
   printf "ERROR - \$FORMULA_DIR path is not a directory at $FORMULA_DIR\n"
   exit 1
 fi
 
-# Mor variables
+# The full set of formulas
 FORMULAS=( ${(@f)"$(find $FORMULA_DIR -type f -maxdepth 1 | grep '.*\.rb$')"} )
+
+# The path of the repositor README.md file
 README_FILE="$ROOT_PROJECT_PATH/README.md"
 
 #==============================================================================
