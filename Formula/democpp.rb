@@ -1,11 +1,12 @@
 #==============================================================================
 # title   :democpp
-# version :0.0.0
 # desc    :C++ cli built as part of the homebrew demo/dev tools project
-# usage   :See the repo README file for usage
-# exit    :0=success, 1=input error 2=execution error
-# auth    :Tate Hanawalt(tate@tatehanawalt.com)
+# version :0.0.0
 # date    :1621396284
+# auth    :Tate Hanawalt(tate@tatehanawalt.com)
+#==============================================================================
+# exit    :0=success, 1=input error 2=execution error
+# usage   :See the repo README file for usage
 #==============================================================================
 class Democpp < Formula
   depends_on "g++" => :install            # dependencies
