@@ -2,10 +2,11 @@
 # title   :democ
 # version :0.0.0
 # desc    :C cli built as part of the homebrew demo/dev tools project
-# usage   :See the repo README file for usage
-# exit    :0=success, 1=input error 2=execution error
 # auth    :Tate Hanawalt(tate@tatehanawalt.com)
 # date    :1621396284
+#==============================================================================
+# usage   :See the repo README file for usage
+# exit    :0=success, 1=input error 2=execution error
 #==============================================================================
 class Democ < Formula
   depends_on "gcc" => :install            # dependencies
