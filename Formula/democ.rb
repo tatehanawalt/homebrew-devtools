@@ -16,18 +16,15 @@ class Democ < Formula
   version "0.0.0"                         # Formulae version
 
   head do
-    puts "HEAD SECTION:"
     url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
   end
 
   stable do
-    puts "STABLE SECTION:"
     url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.1/0.0.1.tar.gz", :using => :curl
     sha256 "c294de88385e86260a6f858219aeb10038e460ebe713f98a44bd5f916b1cf2bf"
   end
 
   def install
-    puts "INSTALL SECTION:"
     cd "democ" do
       system "gcc", "main.c", "-o", "democ"
       lib.install ["democ", "doc/man/democ.1"]

@@ -2,10 +2,11 @@
 # title   :demonodejs
 # version :0.0.0
 # desc    :nodejs cli built as part of the homebrew demo/dev tools project
-# usage   :See the repo README file for usage
-# exit    :0=success, 1=input error 2=execution error
 # auth    :Tate Hanawalt(tate@tatehanawalt.com)
 # date    :1621396284
+#==============================================================================
+# exit    :0=success, 1=input error 2=execution error
+# usage   :See the repo README file for usage
 #==============================================================================
 class Demonodejs < Formula
   bottle :unneeded                        # formula that can be installed without compilation
