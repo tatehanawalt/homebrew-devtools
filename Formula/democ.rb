@@ -13,7 +13,7 @@ class Democ < Formula
   desc "Brew install democ"               # formula description
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
-  version "0.0.0"                         # Formulae version
+  version "0.0.4"                         # Formulae version
 
   head do
     url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"

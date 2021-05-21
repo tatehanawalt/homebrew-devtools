@@ -20,8 +20,8 @@ class Demozsh < Formula
   end
 
   stable do
-    url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.0/demozsh.tar.gz", :using => :curl
-    sha256 "cbb19c8defe3d76cff134f43abe1385be3d494aa8fa8a6aa5e10fb59288db7f7"
+    url "https://github.com/tatehanawalt/th_sys/releases/download/0.0.4/demozsh.tar.gz", :using => :curl
+    sha256 "c4d93067c46d0c76a432f7b2d1880310467cc5314bfe694791e845ec2810af4d"
   end
 
   def install
