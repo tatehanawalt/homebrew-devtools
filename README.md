@@ -1,10 +1,12 @@
 <br>
-
 # <div align="center">TATE HANAWALT DEVTOOLS</div><br>
 
 ## <div align="center">Tools and Projects available through [BREW](https://brew.sh/)</div><br>
 
 <br>
+
+[![GitHub Super-Linter](https://github.com/tatehanawalt/homebrew-devtools/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
 
 :x: Note:
 
