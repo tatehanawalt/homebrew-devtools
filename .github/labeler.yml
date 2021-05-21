@@ -5,4 +5,4 @@ brew:
 ops:
   - ./bin/**/*
 documentation:
-  - *.md
+  - ./*.md
