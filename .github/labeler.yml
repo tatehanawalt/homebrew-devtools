@@ -4,3 +4,5 @@ brew:
   - Formula/**/*
 ops:
   - bin/**/*
+docs:
+  - *.md
