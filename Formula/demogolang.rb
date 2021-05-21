@@ -20,8 +20,8 @@ class Demogolang < Formula
   end
 
   stable do
-    url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.0/demogolang.tar.gz", :using => :curl
-    sha256 "efee5e17d0f42b3fc5255c93e784cb9dee6efb03b17494f9a43172d1a2b34437"
+    url "https://github.com/tatehanawalt/th_sys/releases/download/0.0.4/demogolang.tar.gz", :using => :curl
+    sha256 "6b159cbe3b15b4332708f8b65738ed2825f6c4ad31ab04e3bc3f9f334a7704ca"
   end
 
   def install
