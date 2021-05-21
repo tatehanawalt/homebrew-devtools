@@ -1,0 +1,6 @@
+formula:
+  - Formula/**/*
+brew:
+  - Formula/**/*
+ops:
+  - bin/**/*
