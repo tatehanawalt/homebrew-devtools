@@ -1,3 +1,6 @@
+# Add 'repo' label to any root file changes
+repo:
+  - ./*
 formula:
   - Formula/**/*
 brew:
@@ -5,4 +8,4 @@ brew:
 ops:
   - ./bin/**/*
 documentation:
-  - **/*.md
+  - ./*.md
