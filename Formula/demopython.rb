@@ -20,8 +20,8 @@ class Demopython < Formula
   end
 
   stable do
-    url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.0/demopython.tar.gz", :using => :curl
-    sha256 "cbb19c8defe3d76cff134f43abe1385be3d494aa8fa8a6aa5e10fb59288db7f7"
+    url "https://github.com/tatehanawalt/th_sys/releases/download/0.0.4/demopython.tar.gz", :using => :curl
+    sha256 "2303c97efa30a663302153ff8c69e40cfbed7d5d86a8d7272580e105df1a3897"
   end
 
   def install

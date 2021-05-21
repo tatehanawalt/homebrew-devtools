@@ -20,8 +20,8 @@ class Democpp < Formula
   end
 
   stable do
-    url "https://github.com/tatehanawalt/.th_sys/releases/download/0.0.1/0.0.1.tar.gz", :using => :curl
-    sha256 "c294de88385e86260a6f858219aeb10038e460ebe713f98a44bd5f916b1cf2bf"
+    url "https://github.com/tatehanawalt/th_sys/releases/download/0.0.4/demogolang.tar.gz", :using => :curl
+    sha256 "6b159cbe3b15b4332708f8b65738ed2825f6c4ad31ab04e3bc3f9f334a7704ca"
   end
 
   def install
