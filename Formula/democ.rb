@@ -25,12 +25,17 @@ class Democ < Formula
   end
 
   def install
+
     if build.head?
-        system "gcc", "main.c", "-o", "main"
+        cd "democ" do
+            system "gcc", "main.c", "-o", "main"
+            bin.install "main" => "democ"
+            man1.install "doc/man/democ.1"
+        end
+        return
     end
-    lib.install ["main", "doc/man/democ.1"]
-    bin.install_symlink lib/"main" => "democ"
-    man1.install lib/"democ.1"
+    bin.install "main" => "democ"
+    man1.install "doc/man/democ.1"
   end
 end
 

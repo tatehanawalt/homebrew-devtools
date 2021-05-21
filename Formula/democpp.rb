@@ -26,11 +26,15 @@ class Democpp < Formula
 
   def install
       if build.head?
-          system "g++", "main.cpp", "-o", "main"
+          cd "democpp" do
+              system "g++", "main.cpp", "-o", "main"
+              bin.install "main" => "democpp"
+              man1.install "doc/man/democpp.1"
+          end
+          return
       end
-      lib.install ["main", "doc/man/democpp.1"]
-      bin.install_symlink lib/"main" => "democpp"
-      man1.install lib/"democpp.1"
+      bin.install "main" => "democpp"
+      man1.install "doc/man/democpp.1"
   end
 end
 
