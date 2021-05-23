@@ -9,7 +9,7 @@
 # exit    :0=success, 1=input error 2=execution error
 #==============================================================================
 class Democ < Formula
-  depends_on "gcc" => :install            # dependencies
+  depends_on "llvm" => :install            # dependencies
   desc "Brew install democ"               # formula description
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
@@ -24,7 +24,7 @@ class Democ < Formula
   def install
     if build.head?
         cd "democ" do
-            system "gcc", "main.c", "-o", "main"
+            system "clang", "main.c", "-o", "main"
             bin.install "main" => "democ"
             man1.install "doc/man/democ.1"
         end

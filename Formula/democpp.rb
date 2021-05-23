@@ -9,7 +9,7 @@
 # usage   :See the repo README file for usage
 #==============================================================================
 class Democpp < Formula
-  depends_on "gcc" => :install            # dependencies
+  depends_on "llvm" => :install            # dependencies
   desc "Brew install democpp"             # formula description
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
@@ -24,7 +24,7 @@ class Democpp < Formula
   def install
       if build.head?
           cd "democpp" do
-              system "g++", "main.cpp", "-o", "main"
+              system "clang++", "main.cpp", "-o", "main"
               bin.install "main" => "democpp"
               man1.install "doc/man/democpp.1"
           end
