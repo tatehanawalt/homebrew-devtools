@@ -17,16 +17,17 @@ class Devenv < Formula
     url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
   end
   def install
-    puts "\n\n"
     puts "install DEVENV brew formula install:\n"
     puts "name:         #{name}\n"
     puts "plist_name:   #{plist_name}\n"
     puts "plist_path:   #{plist_path}\n"
     puts "service_name: #{service_name}\n"
     puts "service_name: #{HOMEBREW_PREFIX}\n"
-    pkgshare.install "dev.zprofile"
-    pkgshare.install "styles.less"
-    pkgshare.install "dev.zshrc"
+    cd @name do
+      pkgshare.install "dev.zprofile"
+      pkgshare.install "styles.less"
+      pkgshare.install "dev.zshrc"
+    end
   end
   def caveats
     <<~EOS
@@ -41,7 +42,6 @@ class Devenv < Formula
 
     EOS
   end
-
   #  plist_options manual: "opensearch"
   #  service do
   #    run opt_bin/"opensearch"
@@ -49,7 +49,6 @@ class Devenv < Formula
   #    log_path var/"log/opensearch.log"
   #    error_log_path var/"log/opensearch.log"
   #  end
-
   test do
     # (testpath/".zshrc").write "source #{HOMEBREW_PREFIX}/share/#{name}/#{name}.zsh\n"
     # system "zsh", "--login", "-i", "-c", "${#name} help"

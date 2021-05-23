@@ -14,16 +14,13 @@ class Demozsh < Formula
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
   version "0.0.0"                         # Formulae version
-
   head do
     url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
   end
-
   stable do
     url "https://github.com/tatehanawalt/th_sys/releases/download/0.0.4/demozsh.tar.gz", :using => :curl
     sha256 "c4d93067c46d0c76a432f7b2d1880310467cc5314bfe694791e845ec2810af4d"
   end
-
   def install
     if build.head?
       cd "demozsh" do
@@ -37,5 +34,4 @@ class Demozsh < Formula
     man1.install lib/"demozsh.1"
   end
 end
-
 __END__

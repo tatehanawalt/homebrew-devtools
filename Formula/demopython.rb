@@ -14,16 +14,13 @@ class Demopython < Formula
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
   version "0.0.0"                         # Formulae version
-
   head do
     url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
   end
-
   stable do
     url "https://github.com/tatehanawalt/th_sys/releases/download/0.0.4/demopython.tar.gz", :using => :curl
     sha256 "2303c97efa30a663302153ff8c69e40cfbed7d5d86a8d7272580e105df1a3897"
   end
-
   def install
     if build.head?
       cd "demopython" do

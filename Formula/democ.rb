@@ -14,18 +14,14 @@ class Democ < Formula
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
   version "0.0.4"                         # Formulae version
-
   head do
     url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
   end
-
   stable do
     url "https://github.com/tatehanawalt/th_sys/releases/download/0.0.4/democ.tar.gz", :using => :curl
     sha256 "e6631356c9d0b2c9873a4ef7fee6a265a566a2a90fe0ce903bb0e5fcd1408076"
   end
-
   def install
-
     if build.head?
         cd "democ" do
             system "gcc", "main.c", "-o", "main"

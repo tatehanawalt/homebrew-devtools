@@ -14,16 +14,13 @@ class Demonodejs < Formula
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
   version "0.0.0"                         # Formulae version
-
   head do
     url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
   end
-
   stable do
     url "https://github.com/tatehanawalt/th_sys/releases/download/0.0.4/demonodejs.tar.gz", :using => :curl
     sha256 "c1a8326d00fc512ab2ed05958d87755e0d899979e3ece9110a0fd4143af1aaff"
   end
-
   def install
     if build.head?
       cd "demonodejs" do
