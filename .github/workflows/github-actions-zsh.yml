@@ -2,6 +2,7 @@ name: EXEC ZSH
 on: [push]
 jobs:
   exec-zsh-job:
+    runs-on: ubuntu-latest
     steps:
       - name: Run build script
         run: ./action.zsh
