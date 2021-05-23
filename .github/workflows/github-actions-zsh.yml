@@ -1,0 +1,8 @@
+name: EXEC ZSH
+on: [push]
+jobs:
+  exec-zsh-job:
+    steps:
+      - name: Run build script
+        run: ./action.zsh
+        shell: zsh
