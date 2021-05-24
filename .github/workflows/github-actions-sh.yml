@@ -1,5 +1,4 @@
 name: bashtest
-description: 'Exploring options for ci/cd/cd from a bash primary git action'
 
 # Event Triggers:
 # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
