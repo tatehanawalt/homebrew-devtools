@@ -8,7 +8,7 @@ if [ ${#@} -gt 0 ]; then
 fi
 printf "\n"
 printf "ENV:\n"
-env
+env | sort
 printf "\n\n"
 
 exit 0
