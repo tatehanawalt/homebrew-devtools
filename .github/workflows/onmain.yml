@@ -1,6 +1,21 @@
-# name: onmain
+name: main-check
 
-# https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+on:
+  push: # called push but also fires when merging
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+jobs:
+  main-init:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: 'parseaction'
+        run: ./.github/scripts/parseaction.sh
+        shell: bash
+
 # on:
   # Trigger the workflow on push or pull request, but only for the main branch
   # push:
@@ -15,12 +30,3 @@
   # release:
   #   types:
   #     - created
-
-# jobs:
-#   onmain:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v2
-#       - name: 'onmain'
-#         run: ./.github/scripts/parseaction.sh
-#         shell: bash
