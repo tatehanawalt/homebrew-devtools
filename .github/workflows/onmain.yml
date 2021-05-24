@@ -1,15 +1,13 @@
 name: main
-description: 'Merged with main git action'
+
 on:
-  # Trigger the workflow on push or pull request, but only for the main branch
-  push:
+  push: # Trigger the workflow on push or pull request, but only for the main branch
     branches:
       - main
   pull_request:
     branches:
       - main
-  # Also trigger on page_build, as well as release created events
-  page_build:
+  page_build: # Also trigger on page_build, as well as release created events
   release:
     types: # This configuration does not affect the page_build event above
       - created
