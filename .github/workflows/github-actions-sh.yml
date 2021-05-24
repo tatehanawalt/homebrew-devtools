@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: run test bash script
         run: ./.github/scripts/action.sh
         shell: bash
 
