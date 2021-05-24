@@ -2,8 +2,8 @@ name: bashtest
 
 # Event Triggers:
 # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
-on: [push]
 
+on: [push]
 jobs:
   exec-bash-job:
     runs-on: ubuntu-latest

@@ -1,7 +1,7 @@
-name: onmain
+# name: onmain
 
 # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
-on:
+# on:
   # Trigger the workflow on push or pull request, but only for the main branch
   # push:
   #   branches:
@@ -16,11 +16,11 @@ on:
   #   types:
   #     - created
 
-jobs:
-  onmain:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: 'onmain'
-        run: ./.github/scripts/parseaction.sh
-        shell: bash
+# jobs:
+#   onmain:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: 'onmain'
+#         run: ./.github/scripts/parseaction.sh
+#         shell: bash
