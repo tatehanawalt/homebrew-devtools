@@ -1,9 +1,9 @@
-name: EXEC ZSH
+name: zshtest
 on: [push]
 jobs:
   exec-zsh-job:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
-      - name: Run build script
+      - name: run test zsh script
         run: ./action.zsh
         shell: zsh
