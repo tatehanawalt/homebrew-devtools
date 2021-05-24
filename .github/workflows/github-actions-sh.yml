@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: 'action'
-        run: ./.github/scripts/action.sh
+        run: ./.github/scripts/parseaction.sh
         shell: bash
 
 # Permissions:

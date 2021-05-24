@@ -1,24 +1,26 @@
 name: onmain
 
+# https://docs.github.com/en/actions/reference/events-that-trigger-workflows
 on:
   # Trigger the workflow on push or pull request, but only for the main branch
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-  # Also trigger on page_build, as well as release created events
-  page_build:
-  # This configuration does not affect the page_build event above
-  release:
-    types:
-      - created
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - main
+  # # Also trigger on page_build, as well as release created events
+  # page_build:
+  # # This configuration does not affect the page_build event above
+  # release:
+  #   types:
+  #     - created
+
 jobs:
   onmain:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: 'onmain'
-        run: ./.github/scripts/onmain.sh
+        run: ./.github/scripts/parseaction.sh
         shell: bash
