@@ -1,0 +1,24 @@
+name: main
+description: 'Merged with main git action'
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  # Also trigger on page_build, as well as release created events
+  page_build:
+  release:
+    types: # This configuration does not affect the page_build event above
+      - created
+jobs:
+  exec-bash-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: run test bash script
+        run: ./.github/scripts/onmain.sh
+        shell: bash
