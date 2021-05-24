@@ -1,12 +1,14 @@
 #!/bin/sh
 printf "\n\n"
 
-printf "SH ACTION $0 - ARGS:\n"
-printf "\t- %s\n" "$@"
-printf "\n\n"
-
+printf "SH ONMAIN $0 - ARGS:\n"
+if [ ${#@} -gt 0 ]; then
+  printf "\t- %s\n" "$@"
+  printf "\n"
+fi
+printf "\n"
 printf "ENV:\n"
-printf "\t- %s\n" $(env) | sort
+env | sort
 printf "\n\n"
 
 exit 0
