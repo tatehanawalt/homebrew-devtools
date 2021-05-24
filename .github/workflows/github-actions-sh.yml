@@ -5,5 +5,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: run test bash script
-        run: ${{ github.workspace }}/action.sh
+        run: ./action.sh
         shell: bash
