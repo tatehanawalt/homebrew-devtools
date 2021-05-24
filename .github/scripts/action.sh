@@ -6,7 +6,9 @@ printf " - %s\n" "$@"
 printf "\n\n"
 
 printf "ENV:\n"
-printf " - %s\n" env
+env
+printf "\n\n"
+printf " - %s\n" $(env)
 printf "\n\n"
 
 exit 0
