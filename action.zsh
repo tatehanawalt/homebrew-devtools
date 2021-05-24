@@ -2,3 +2,4 @@
 
 printf "\n\n"
 printf "ZSH ACTION\n"
+return 0
