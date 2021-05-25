@@ -36,6 +36,9 @@ diff_files=$(git diff --name-only dev)
 printf "\n\nDIFF_FILES:\n"
 printf " - %s\n" $diff_files
 printf "\n\n"
+
+lint_files=()
+
 for f_path in $diff_files; do
   full_path="$GITHUB_WORKSPACE/$f_path"
 
@@ -43,14 +46,21 @@ for f_path in $diff_files; do
 
   if [ -z "$full_path" ]; then
     printf "full_path length is 0..." 1>&2;
+    lint_files+=($full_path)
     return 2
   fi
 
-  if [ -f "$full_path" ]
-
-
+  if [ -f "$full_path" ]; then
+    modified_ext=$(echo $full_path | sed 's/.*\.//g')
+    printf "Modified Extension: $modified_ext\n"
+  else
+    # File was removed...
+  fi
 done
 
 
+
+printf "\n\nLINT FILES:\n"
+printf " - %s\n" $lint_files
 
 exit 0
