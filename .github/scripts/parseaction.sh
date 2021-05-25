@@ -34,6 +34,7 @@ lint_fs_file () {
       lint_exit_code=0
       ;;
     rb)
+      ubocop $1
       lint_results=$(rubocop $1)
       lint_exit_code=$?
       ;;
