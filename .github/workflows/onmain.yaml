@@ -1,5 +1,4 @@
 name: main-check
-
 on:
   push: # called push but also fires when merging
     branches:
@@ -18,20 +17,3 @@ jobs:
       - name: parseaction
         run: .github/scripts/parseaction.sh
         shell: bash
-
-
-
-# on:
-  # Trigger the workflow on push or pull request, but only for the main branch
-  # push:
-  #   branches:
-  #     - main
-  # pull_request:
-  #   branches:
-  #     - main
-  # # Also trigger on page_build, as well as release created events
-  # page_build:
-  # # This configuration does not affect the page_build event above
-  # release:
-  #   types:
-  #     - created
