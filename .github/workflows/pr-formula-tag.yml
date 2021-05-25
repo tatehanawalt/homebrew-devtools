@@ -35,6 +35,7 @@ jobs:
           DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
           DIFF_FORMULA: "${{ steps.diff_formula.outputs.DIFF_FORMULA }}"
           LABELS: ${{ steps.list_labels.outputs.RESULT }}
+          LABELS2: "${{ steps.list_labels.outputs.RESULT2 }}"
 #      - name: formula_tag_pr
 #        run: ./.github/scripts/label.sh
 #        shell: bash

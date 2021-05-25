@@ -44,14 +44,26 @@ RESULT=$(echo $output | jq --arg field_name $search_field -r 'map(.[$field_name]
 
 echo "RESULT:"
 echo "$RESULT"
+
+
 ESCAPED=$(echo $RESULT | sed 's/ /\\ /g')
 echo "$ESCAPED"
 echo "ESCAPED:"
 echo $ESCAPED
+printf "%s\n" ${ESCAPED}
 #printf "%q" $ESCAPED
+
+ESCAPED="${RESULT//'%'/'%25'}"
+ESCAPED="${ESCAPED//$'\n'/'%0A'}"
+ESCAPED="${ESCAPED//$'\r'/'%0D'}"
+
+
+
+printf "%s" "$ESCAPED"
 echo
 
-echo "::set-output name=RESULT::$ESCAPED"
+echo "::set-output name=RESULT::${ESCAPED}"
+echo "::set-output name=RESULT2::$ESCAPED"
 
 
 
