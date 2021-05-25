@@ -20,4 +20,4 @@ formulas=$(echo "$formulas")
 echo "formulas:"
 printf "\t%s\n" $formulas
 
-echo "::set-output name=DIFF_BRANCH::$(printf "$formulas" | tr '\n' ',')"
+echo "::set-output name=DIFF_FORMULA::$(printf "$formulas" | tr '\n' ',')"
