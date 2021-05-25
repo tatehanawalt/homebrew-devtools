@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# GITHUB_WORKSPACE=/usr/local/Homebrew/Library/Taps/tatehanawalt/homebrew-devtools
 # GITHUB_WORKSPACE=/usr/local/Homebrew/Library/Taps/tatehanawalt/homebrew-devtools ./parseaction.sh
 
 COMPARE_BRANCH=dev
@@ -55,7 +56,7 @@ done
 
 lint_files=$(printf "$lint_files" | sort -u)
 printf "LINT FILES: %d\n" "${#lint_files[@]}"
-for lint_file in ${lint_files[@]}; do
+for lint_file in "${lint_files[@]}"; do
   echo "\t$lint_file"
 done
 
