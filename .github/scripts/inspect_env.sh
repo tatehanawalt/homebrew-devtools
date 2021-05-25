@@ -22,17 +22,31 @@
 # DO NOT MODIFY IFS!
 IFS="
 "
+prefix="\t"
+in_log=0
+
+# IF RUN BY CI vs Locally
+if [ "$CI" = "yes" ]; then
+  prefix=""
+fi
 
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
-in_log=0
 log() {
   if [ $in_log -ne 0 ]; then
-    echo "::endgroup::";
+    if [ "$CI" = "true" ]; then
+      echo "::endgroup::";
+    else
+      echo
+    fi
     in_log=0
   fi
   if [ ! -z "$1" ]; then
-    echo "::group::$1";
+    if [ "$CI" = "true" ]; then
+      echo "::endgroup::";
+    else
+      echo "$1:"
+    fi
     in_log=1
   fi
 }
@@ -45,11 +59,11 @@ inspect_fields() {
   max_field_len=0
   for key in ${fields}; do
     [ ${#key} -gt $max_field_len ] && max_field_len=${#key}
-    printf "%s=%s\n" $key $(eval "echo \"\$$key\"")
+    printf "$prefix%s=%s\n" $key $(eval "echo \"\$$key\"")
   done
   log "${1}_TABLE"
   for key in ${fields}; do
-    printf "%-${max_field_len}s - %s\n" $key $(eval "echo \"\$$key\"")
+    printf "$prefix%-${max_field_len}s - %s\n" $key $(eval "echo \"\$$key\"")
   done
   log
 }
@@ -58,14 +72,21 @@ inspect_fields ENV $(printf "%s" "$(env)" | sed 's/=.*//g' | tr '\n' ',')
 [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS
 
 if [ ! -z "$INSPECT_GROUPS" ]; then
-  # log inspect_groups
-  groups=$(printf "%s" "$INSPECT_GROUPS" | sed '/^$/d' | tr ' ' '\n' | sed 's/[[:space:]]*$//g')
-  echo "inspect_groups:"
+  groups=$(printf "%s" "$INSPECT_GROUPS" | sed '/^$/d' | tr ' ' '\n' | sed 's/[[:space:]]*$//g' | sed 's/^[[:space:]]*//g' )
+
+  log INSPECT_GROUPS
   for group in $groups; do
     group=$(printf "%s" "$group" | xargs)
     gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
-    printf "\tkey:\t%s\tgroup: %s\n" $gkey "$group"
-    [ ! -z "$gkey" ] && inspect_fields $gkey $(printf "%s" "$group" | sed 's/.*=//')
+    printf "$prefix%s\n" "$gkey"
+  done
+  log
+
+  for group in $groups; do
+    group=$(printf "%s" "$group" | xargs)
+    gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
+    inspect_fields $gkey $(printf "%s" "$group" | sed 's/.*=//')
+    #[ ! -z "$gkey" ] && inspect_fields $gkey $(printf "%s" "$group" | sed 's/.*=//')
   done
 fi
 
