@@ -64,8 +64,6 @@ do
   echo "extension: $line"
 done
 
-exit 3
-
 
 # lint_files=$(printf "$lint_files" | sort -u)
 # printf "LINT FILES: %d\n" "${#lint_files[@]}"
@@ -73,26 +71,9 @@ exit 3
 #   printf "\t$lint_file\n"
 # done
 
-
-IFS=\n
-lint_extensions=($(printf "$lint_extensions" | sort -u))
-printf "LINT EXTENSIONS: %d\n" ${#lint_extensions[@]}
-echo ${lint_extensions[@]} | while read line
+printf "$lint_extensions" | sort -u | while read ext || [[ -n $line ]];
 do
-  echo "line: $line"
-done
-
-
-exit 3
-
-for lint_ext in "${lint_extensions[@]}"; do
-  echo "\t$lint_ext"
-done
-
-printf "\n\nLINT_START=$(date +%s)\n"
-
-
-for ext in ${lint_extensions[@]}; do
+  # for ext in ${lint_extensions[@]}; do
   echo "$ext"
   case "$ext" in
     md)
