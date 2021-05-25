@@ -1,4 +1,7 @@
 #!/bin/sh
+
+# GITHUB_WORKSPACE=/usr/local/Homebrew/Library/Taps/tatehanawalt/homebrew-devtools ./parseaction.sh
+
 COMPARE_BRANCH=dev
 if [ -z "$COMPARE_BRANCH" ]; then
   printf "\$COMPARE_BRANCH length is 0..." 1>&2;
@@ -50,7 +53,7 @@ for f_path in $diff_files; do
   fi
 done
 
-lint_files=($(printf "$lint_files" | sort -u))
+lint_files=$(printf "$lint_files" | sort -u)
 printf "LINT FILES: %d\n" "${#lint_files[@]}"
 for lint_file in ${lint_files[@]}; do
   echo "\t$lint_file"
