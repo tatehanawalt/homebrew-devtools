@@ -1,6 +1,9 @@
 #!/bin/sh
 
 # Used as a debugging script to see what an environment looks like
+#
+# Specify INSPECT_ENV_FIELDS=<field>,<field2>... to see a list of specific
+# fields
 
 ENV_MAP=$(env)
 MAX_KEY_LEN=0
@@ -31,11 +34,9 @@ echo "::endgroup::"
 if [ ! -z "$INSPECT_ENV_FIELDS" ]; then
   INSPECT_ENV_FIELDS=$(echo "$INSPECT_ENV_FIELDS" | tr ',' '\n' | sort -u)
   echo "::group::INSPECT_ENV_FIELDS"
-  echo "INSPECT_ENV:"
-  echo
   for key in ${INSPECT_ENV_FIELDS}; do
-    printf "\t%s\n" "$key"
     [ ${#key} -gt $MAX_KEY_LEN ] && MAX_KEY_LEN=${#key}
+    printf "\t%s=%s\n" "$key" $(eval "echo \"\${$key}\"")
   done
   echo "::endgroup::"
   echo "::group::INSPECT_ENV_FIELDS_TABLE"
