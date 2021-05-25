@@ -67,6 +67,16 @@ for ext in $lint_extensions; do
 done
 
 
+function lint_fs_file() {
+
+  printf "\nLINTING FILE: $1"
+
+
+}
+
+
+
+
 for ext in $lint_extensions; do
   echo "EXTENSION=$ext"
   case "$ext" in
@@ -77,8 +87,11 @@ for ext in $lint_extensions; do
 #      done
       ;;
     rb)
-      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
-      for lint_file in ${lint_set[@]}; do
+      lint_set=$(echo "$lint_files" | grep "$ext" | sort -u)
+      for lint_file in $lint_set; do
+        lint_fs_file $lint_file
+        continue
+
         printf "\tLINTING=%s\n" "$lint_file"
         lint_results=$(rubocop $lint_file)
         lint_exit_code=$?
@@ -97,8 +110,8 @@ for ext in $lint_extensions; do
 #      done
       ;;
     yml)
-      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
-      for lint_file in ${lint_set[@]}; do
+      lint_set=$(echo "$lint_files" | grep "$ext" | sort -u)
+      for lint_file in $lint_set; do
         printf "\tLINTING=%s\n" "$lint_file"
         lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $lint_file)
         lint_exit_code=$?
@@ -111,7 +124,7 @@ for ext in $lint_extensions; do
       done
       ;;
     yaml)
-      lint_set=$(echo "$lint_files" | sort -u | grep "$ext")
+      lint_set=$(echo "$lint_files" | grep "$ext" | sort -u)
       for lint_file in $lint_set; do
         printf "\tLINT_FILE=%s\n" "$lint_file"
         lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $lint_file)
@@ -129,6 +142,7 @@ for ext in $lint_extensions; do
       exit 2
       ;;
   esac
+  printf "\n\n"
 done
 
 exit 0
