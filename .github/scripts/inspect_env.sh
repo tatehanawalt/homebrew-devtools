@@ -5,6 +5,10 @@
 # Specify INSPECT_ENV_FIELDS=<field>,<field2>... to see a list of specific
 # fields
 
+# DO NOT MODIFY IFS!
+IFS="
+"
+
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 log() { echo "::endgroup::"; [ ! -z "$1" ] && echo "::group::$1"; }
@@ -14,13 +18,7 @@ log() { echo "::endgroup::"; [ ! -z "$1" ] && echo "::group::$1"; }
 inspect_fields() {
   log $1
   shift
-  fields=$(printf "%s" "$1" | \
-    sed 's/^,//' | \
-    sed 's/,$//' | \
-    tr ',' '\n' | \
-    sort -u | \
-    sed '/^[[:space:]]*$/d')
-
+  fields=$(printf "%s" "$1" | sed 's/^,//' |sed 's/,$//' |tr ',' '\n' |sort -u )
   max_field_len=0
   for key in ${fields}; do
     [ ${#key} -gt $max_field_len ] && max_field_len=${#key}
@@ -33,9 +31,6 @@ inspect_fields() {
   log
 }
 
-# DO NOT MODIFY IFS!
-IFS="
-"
 inspect_fields ENV $(printf "%s" "$(env)" | sed 's/=.*//g' | tr '\n' ',')
 [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS
 exit 0
