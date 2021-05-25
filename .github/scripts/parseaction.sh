@@ -64,14 +64,24 @@ for ext in ${lint_extensions[@]}; do
 
   case "$ext" in
     md)
-
       ;;
     rb)
+      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
+      printf "lint_set: %s\n" "${lint_set[@]}"
+
+
       ;;
     sh)
       ;;
-    yml|yaml)
+    yml)
+      printf "\nyml... rename this!\n"
+      ;;
+    yaml)
       printf "\nYAML!\n"
+
+      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
+      printf "lint_set: %s\n" "$lint_set}"
+
       ;;
   esac
 
