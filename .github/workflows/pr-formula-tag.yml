@@ -1,4 +1,4 @@
-name: formula-tag
+name: pr-formula-tag
 
 on: [pull_request]
 
@@ -23,3 +23,8 @@ jobs:
           DIFF_BRANCH: "${{ steps.diff.outputs.DIFF_BRANCH }}"
           DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
           DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
+      - name: diff_formula
+        run: ./.github/scripts/diff_formula.sh
+        shell: bash
+        env:
+          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
