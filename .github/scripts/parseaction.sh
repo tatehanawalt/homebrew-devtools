@@ -77,18 +77,18 @@ for ext in $lint_extensions; do
 #      done
       ;;
     rb)
-#      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
-#      for lint_file in ${lint_set[@]}; do
-#        printf "\tLINTING=%s\n" "$lint_file"
-#        lint_results=$(rubocop $lint_file)
-#        lint_exit_code=$?
-#        printf "\tEXIT_CODE=$lint_exit_code\n"
-#        printf "$lint_results\n" | sed 's/^/\t/'
-#        if [ $lint_exit_code -ne 0 ]; then
-#          printf "\n\n"
-#          exit 2
-#        fi
-#      done
+      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
+      for lint_file in ${lint_set[@]}; do
+        printf "\tLINTING=%s\n" "$lint_file"
+        lint_results=$(rubocop $lint_file)
+        lint_exit_code=$?
+        printf "\tEXIT_CODE=$lint_exit_code\n"
+        printf "$lint_results\n" | sed 's/^/\t/'
+        if [ $lint_exit_code -ne 0 ]; then
+          printf "\n\n"
+          exit 2
+        fi
+      done
       ;;
     sh)
 #      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
@@ -97,18 +97,18 @@ for ext in $lint_extensions; do
 #      done
       ;;
     yml)
-#      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
-#      for lint_file in ${lint_set[@]}; do
-#        printf "\tLINTING=%s\n" "$lint_file"
-#        lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $lint_file)
-#        lint_exit_code=$?
-#        printf "\tEXIT_CODE=$lint_exit_code\n"
-#        printf "$lint_results\n" | sed 's/^/\t/'
-#        if [ $lint_exit_code -ne 0 ]; then
-#          printf "\n\n"
-#          exit 2
-#        fi
-#      done
+      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
+      for lint_file in ${lint_set[@]}; do
+        printf "\tLINTING=%s\n" "$lint_file"
+        lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $lint_file)
+        lint_exit_code=$?
+        printf "\tEXIT_CODE=$lint_exit_code\n"
+        printf "$lint_results\n" | sed 's/^/\t/'
+        if [ $lint_exit_code -ne 0 ]; then
+          printf "\n\n"
+          exit 2
+        fi
+      done
       ;;
     yaml)
       lint_set=$(echo "$lint_files" | sort -u | grep "$ext")
