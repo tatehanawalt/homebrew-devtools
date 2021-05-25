@@ -27,8 +27,7 @@ printf "\n\n"
 
 
 
-which git
-git --no-pager diff --name-only
+git --no-pager diff --name-only dev
 
 
 
