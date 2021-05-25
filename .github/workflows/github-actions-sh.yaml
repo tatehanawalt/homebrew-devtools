@@ -1,19 +1,44 @@
-name: bashtest
+
+name: devtools
 on: [push]
 jobs:
   exec-bash-job:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      - name: Install Rubocop gem
-        run: gem install rubocop
+      - name: 'diff_files'
+        run: ./.github/scripts/diff_files.sh
+        shell: bash
+        env:
+            COMPARE_BRANCH: main
       - name: 'action'
         run: ./.github/scripts/parseaction.sh
         shell: bash
+#      - uses: actions/setup-ruby@v1
+#        with:
+#          ruby-version: 2.6
+#      - name: Install Rubocop gem
+#        run: gem install rubocop
+#      - name: 'action'
+#        run: ./.github/scripts/parseaction.sh
+#        shell: bash
 
+# DO NOT DELETE - this is the on push lint runner
+# name: bashtest
+# on: [push]
+# jobs:
+#   exec-bash-job:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: actions/setup-ruby@v1
+#         with:
+#           ruby-version: 2.6
+#       - name: Install Rubocop gem
+#         run: gem install rubocop
+#       - name: 'action'
+#         run: ./.github/scripts/parseaction.sh
+#         shell: bash
 
 # Event Triggers:
 # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
