@@ -19,13 +19,9 @@
 #   user_env=DIFF_BRANCH,DIFF_FILES,DIFF_DIRS,DIFF_FORMULA,LABELS
 # '
 
-
-
 # DO NOT MODIFY IFS!
 IFS="
 "
-
-
 
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
@@ -61,12 +57,14 @@ inspect_fields() {
 inspect_fields ENV $(printf "%s" "$(env)" | sed 's/=.*//g' | tr '\n' ',')
 [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS
 
-
 if [ ! -z "$INSPECT_GROUPS" ]; then
   groups=$(printf "$INSPECT_GROUPS" | tr -d ' ')
   for group in ${groups}; do
-    gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
-    [ ! -z "$gkey" ] && inspect_fields $gkey $(printf "%s" "$group" | sed 's/.*=//')
+
+    echo "group: $group"
+
+    # gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
+    # [ ! -z "$gkey" ] && inspect_fields $gkey $(printf "%s" "$group" | sed 's/.*=//')
   done
 fi
 
