@@ -58,14 +58,17 @@ inspect_fields ENV $(printf "%s" "$(env)" | sed 's/=.*//g' | tr '\n' ',')
 [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS
 
 if [ ! -z "$INSPECT_GROUPS" ]; then
-  groups=$(printf "$INSPECT_GROUPS" | tr -d ' ')
+  log inspect_groups
+  groups=$(printf "%s" "$INSPECT_GROUPS" | sed '/^$/d')
+  echo "inspect_groups:"
   for group in ${groups}; do
+    printf "%s" $group | xargs
 
-    echo "group: $group"
-
+    #tr -d ' '
     # gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
     # [ ! -z "$gkey" ] && inspect_fields $gkey $(printf "%s" "$group" | sed 's/.*=//')
   done
+  log
 fi
 
 exit 0
