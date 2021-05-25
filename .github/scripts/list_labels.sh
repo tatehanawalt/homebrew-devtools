@@ -45,7 +45,7 @@ RESULT=$(echo $output | jq --arg field_name $search_field -r 'map(.[$field_name]
 echo "RESULT:"
 echo "$RESULT"
 
-echo "::set-output name=RESULT::${RESULT}"
+echo "::set-output name=RESULT::'${RESULT}'"
 
 
 
