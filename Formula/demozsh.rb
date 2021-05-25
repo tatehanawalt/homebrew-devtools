@@ -10,7 +10,7 @@
 # ==============================================================================
 # frozen_string_literal: true
 
-# Demozsh Formula
+# Demozsh Formula - brew formula for an example zsh script
 class Demozsh < Formula
   desc 'Brew install demozsh'
   homepage 'https://www.TateHanawalt.com'
