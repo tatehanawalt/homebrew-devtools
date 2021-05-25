@@ -1,28 +1,28 @@
 #!/bin/sh
 if [ -z "$COMPARE_BRANCH" ]; then
-  printf "COMPARE_BRANCH length is 0... set COMPARE_BRANCH=<branch_name>\n"
+  echo "COMPARE_BRANCH length is 0... set COMPARE_BRANCH=<branch_name>"
   exit 2
 fi
 if [ -z "$GITHUB_WORKSPACE" ]; then
-  printf "GITHUB_WORKSPACE length is 0...\n"
+  echo "GITHUB_WORKSPACE length is 0"
   exit 2
 fi
 if [ ! -d "$GITHUB_WORKSPACE" ]; then
-  printf "GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE\n"
+  echo "GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
   exit 2
 fi
-echo "COMPARE_BRANCH=$COMPARE_BRANCH\n"
+echo "COMPARE_BRANCH=$COMPARE_BRANCH"
 cd $GITHUB_WORKSPACE
 has_dif_branch=$(git branch --list "$COMPARE_BRANCH")
 if [ -z "$has_dif_branch" ]; then
   git fetch origin "$COMPARE_BRANCH"
   git branch "$COMPARE_BRANCH" FETCH_HEAD
   fetch_exit_code=$?
-  printf "FETCH_EXIT_CODE=$fetch_exit_code\n"
+  echo "FETCH_EXIT_CODE=$fetch_exit_code"
 fi
 has_dif_branch=$(git branch --list "$COMPARE_BRANCH")
 if [ -z "$has_dif_branch" ]; then
-  printf "FETCH_HEAD for branch $COMPARE_BRANCH\n"
+  echo "FETCH_HEAD for branch $COMPARE_BRANCH"
   exit 2
 fi
 DIFF_FILES=$(git diff --name-only "$COMPARE_BRANCH")
