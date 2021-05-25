@@ -54,21 +54,24 @@ for f_path in $diff_files; do
   fi
 done
 
-echo "$lint_files"
 
 printf "$lint_files" | while read line || [[ -n $line ]];
 do
-    echo "line: $line"
+  echo "file: $line"
+done
+printf "$lint_extensions" | sort -u | while read line || [[ -n $line ]];
+do
+  echo "extension: $line"
 done
 
 exit 3
 
 
-lint_files=$(printf "$lint_files" | sort -u)
-printf "LINT FILES: %d\n" "${#lint_files[@]}"
-for lint_file in "${lint_files[@]}"; do
-  printf "\t$lint_file\n"
-done
+# lint_files=$(printf "$lint_files" | sort -u)
+# printf "LINT FILES: %d\n" "${#lint_files[@]}"
+# for lint_file in "${lint_files[@]}"; do
+#   printf "\t$lint_file\n"
+# done
 
 
 IFS=\n
