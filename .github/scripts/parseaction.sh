@@ -46,7 +46,7 @@ for f_path in $diff_files; do
     continue
   fi
   if [ -f "$full_path" ]; then
-    lint_files="$lint_files$full_path\n"
+    lint_files="${lint_files[@]}$full_path\n"
     modified_ext=$(echo "$full_path" | sed 's/.*\.//g')
     if [ ! -z "$modified_ext" ]; then
       lint_extensions="$lint_extensions$modified_ext\n"
@@ -54,15 +54,35 @@ for f_path in $diff_files; do
   fi
 done
 
+
+
+printf "${lint_files[@]}" | while read line || [[ -n $line ]];
+do
+    echo "line: $line"
+done
+
+exit 3
+
+
 lint_files=$(printf "$lint_files" | sort -u)
 printf "LINT FILES: %d\n" "${#lint_files[@]}"
 for lint_file in "${lint_files[@]}"; do
-  echo "\t$lint_file"
+  printf "\t$lint_file\n"
 done
 
+
+IFS=\n
 lint_extensions=($(printf "$lint_extensions" | sort -u))
 printf "LINT EXTENSIONS: %d\n" ${#lint_extensions[@]}
-for lint_ext in ${lint_extensions[@]}; do
+echo ${lint_extensions[@]} | while read line
+do
+  echo "line: $line"
+done
+
+
+exit 3
+
+for lint_ext in "${lint_extensions[@]}"; do
   echo "\t$lint_ext"
 done
 
