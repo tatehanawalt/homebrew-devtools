@@ -9,6 +9,8 @@
 # usage   :See the repo README file for usage
 # ==============================================================================
 # frozen_string_literal: true
+
+# Demozsh Formula
 class Demozsh < Formula
 
   desc 'Brew install demozsh'
