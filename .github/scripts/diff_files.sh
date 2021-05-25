@@ -32,6 +32,11 @@ if [ -z "$has_dif_branch" ]; then
 fi
 
 DIFF_FILES=$(git diff --name-only "$COMPARE_BRANCH")
-for f_path in $DIFF_FILES; do
-  printf "%s\n" "$f_path"
-done
+printf "DIFF_FILES:\n"
+printf "\t%s\n" $DIFF_FILES | sort -u
+
+
+
+# for f_path in $DIFF_FILES; do
+#   printf "\t%s\n" "$f_path"
+# done
