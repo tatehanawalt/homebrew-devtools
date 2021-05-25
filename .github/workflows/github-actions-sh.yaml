@@ -1,18 +1,26 @@
 name: devtools
 on: [push]
+
+env:
+  COMPARE_BRANCH: main
+
 jobs:
   lint-tag:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: 'diff_files'
+      - id: diff
         run: ./.github/scripts/diff_files.sh
         shell: bash
         env:
-            COMPARE_BRANCH: main
+            COMPARE_BRANCH: ${{ env.COMPARE_BRANCH }}
+        outputs:
+          diff: ${{ steps.diff.outputs.action_fruit }}
       - name: 'inspect_env'
         run: ./.github/scripts/inspect_env.sh
         shell: bash
+        env:
+          DIFF: ${{ steps.diff.outputs.diff }}
 #      - name: 'action'
 #        run: ./.github/scripts/parseaction.sh
 #        shell: bash

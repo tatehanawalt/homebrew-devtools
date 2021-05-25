@@ -35,7 +35,9 @@ DIFF_FILES=$(git diff --name-only "$COMPARE_BRANCH")
 printf "DIFF_FILES:\n"
 printf "\t%s\n" $DIFF_FILES | sort -u
 
+echo "::set-output name=action_fruit::strawberry"
 
+exit 0
 
 # for f_path in $DIFF_FILES; do
 #   printf "\t%s\n" "$f_path"
