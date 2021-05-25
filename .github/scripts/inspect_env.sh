@@ -65,9 +65,8 @@ if [ ! -z "$INSPECT_GROUPS" ]; then
     group=$(printf "%s" "$group" | xargs)
     gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
     printf "\tkey:\t%s\tgroup: %s\n" $gkey "$group"
-    # [ ! -z "$gkey" ] && inspect_fields $gkey $(printf "%s" "$group" | sed 's/.*=//')
+    [ ! -z "$gkey" ] && inspect_fields $gkey $(printf "%s" "$group" | sed 's/.*=//')
   done
-  log
 fi
 
 exit 0
