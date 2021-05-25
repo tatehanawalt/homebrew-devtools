@@ -49,4 +49,4 @@ fi
 
 log
 
-#exit 0
+exit 0
