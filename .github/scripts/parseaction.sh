@@ -64,7 +64,7 @@ lint_fs_file () {
 cd $GITHUB_WORKSPACE
 has_dif_branch=$(git branch --list "$COMPARE_BRANCH")
 if [ -z "$has_dif_branch" ]; then
-  git fetch origin $COMPARE_BRANCH &>/dev/null
+  git fetch origin $COMPARE_BRANCH
   git branch dev FETCH_HEAD
   fetch_exit_code=$?
   printf "fetch_exit_code=$fetch_exit_code\n"
