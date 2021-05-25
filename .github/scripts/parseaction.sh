@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# GITHUB_WORKSPACE=/usr/local/Homebrew/Library/Taps/tatehanawalt/homebrew-devtools
-# GITHUB_WORKSPACE=/usr/local/Homebrew/Library/Taps/tatehanawalt/homebrew-devtools ./parseaction.sh
-
 COMPARE_BRANCH=dev
 if [ -z "$COMPARE_BRANCH" ]; then
   printf "\$COMPARE_BRANCH length is 0..." 1>&2;
@@ -63,13 +60,6 @@ printf "$lint_extensions" | sort -u | while read line || [[ -n $line ]];
 do
   echo "extension: $line"
 done
-
-
-# lint_files=$(printf "$lint_files" | sort -u)
-# printf "LINT FILES: %d\n" "${#lint_files[@]}"
-# for lint_file in "${lint_files[@]}"; do
-#   printf "\t$lint_file\n"
-# done
 
 printf "$lint_extensions" | sort -u | while read ext || [[ -n $line ]];
 do
@@ -160,3 +150,10 @@ exit 0
 # if [ ! -z "$GITHUB_HEAD_REF" ] && [ ! -z "$GITHUB_REF" ]; then
 #   printf "\nPR ACTION\n"
 # fi
+# lint_files=$(printf "$lint_files" | sort -u)
+# printf "LINT FILES: %d\n" "${#lint_files[@]}"
+# for lint_file in "${lint_files[@]}"; do
+#   printf "\t$lint_file\n"
+# done
+# GITHUB_WORKSPACE=/usr/local/Homebrew/Library/Taps/tatehanawalt/homebrew-devtools
+# GITHUB_WORKSPACE=/usr/local/Homebrew/Library/Taps/tatehanawalt/homebrew-devtools ./parseaction.sh
