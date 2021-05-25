@@ -8,6 +8,7 @@
 # exit    :0=success, 1=input error 2=execution error
 # usage   :See the repo README file for usage
 # ==============================================================================
+
 class Demozsh < Formula
   desc 'Brew install demozsh'
   homepage 'https://www.TateHanawalt.com'
