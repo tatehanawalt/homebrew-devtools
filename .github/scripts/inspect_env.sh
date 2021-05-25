@@ -62,6 +62,8 @@ if [ ! -z "$INSPECT_GROUPS" ]; then
   groups=$(printf "%s" "$INSPECT_GROUPS" | sed '/^$/d' | sed 's/[[:space:]]*$//g')
   echo "inspect_groups:"
 
+  IFS=" "
+
   for group in ${groups}; do
     group=$(printf "%s" "$group" | xargs)
     gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
