@@ -37,7 +37,6 @@ class Demozsh < Formula
       end
       return
     end
-
     zsh_completion.install "_demozsh"
     bin.install 'demozsh.zsh' => 'demozsh'
     man1.install 'demozsh.1'
