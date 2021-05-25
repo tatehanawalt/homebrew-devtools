@@ -17,8 +17,9 @@ for file in $DIFF_FILES; do
 
   if (echo "$file" | grep -Eq ^Formula/.*.rb$); then
     echo "matched"
-  else
-    echo "did not match"
+    formula=$(echo "$file" | sed 's/^Formula\///' | sed 's/.rb$//')
+    echo "formula: $formula"
+    formulas="$formulas$formula\n"
   fi
 
 done
