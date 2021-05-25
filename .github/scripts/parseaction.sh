@@ -66,6 +66,8 @@ has_dif_branch=$(git branch --list "$COMPARE_BRANCH")
 if [ -z "$has_dif_branch" ]; then
   git fetch origin $COMPARE_BRANCH &>/dev/null
   git branch dev FETCH_HEAD
+  fetch_exit_code=$?
+  printf "fetch_exit_code=$fetch_exit_code\n"
 fi
 has_dif_branch=$(git branch --list "$COMPARE_BRANCH")
 if [ -z "$has_dif_branch" ]; then
