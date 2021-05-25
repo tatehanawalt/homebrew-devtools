@@ -64,7 +64,6 @@ inspect_fields() {
     keyval=$(eval "echo \"\$$key\"")
     printf "$prefix%s=%s\n" $key "$keyval"
   done
-
   log "${1}_TABLE"
   for key in ${fields}; do
     keyval=$(eval "echo \"\$$key\"")
@@ -82,20 +81,16 @@ inspect_fields() {
   log
 }
 
-
-
-
 inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
 [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS
 
 if [ ! -z "$INSPECT_GROUPS" ]; then
   groups=$(printf "%s" "$INSPECT_GROUPS" | sed 's/^[[:space:]]*//g' | sed '/^$/d' )
-
   log inspect_groups
   for group in $groups; do
     group=$(printf "%s" "$group" | xargs)
     gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
-    printf "$prefix%s\n" "$gkey"
+    printf "\t%s\n" "$gkey"
   done
   log
   for group in $groups; do
