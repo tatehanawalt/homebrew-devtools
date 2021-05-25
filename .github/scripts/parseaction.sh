@@ -29,8 +29,8 @@ if [ -z "$has_dif_branch" ]; then
 fi
 
 diff_files=$(git diff --name-only "$COMPARE_BRANCH")
-lint_files=()
-lint_extensions=()
+declare -a lint_files
+declare -a lint_extensions
 
 for f_path in $diff_files; do
   full_path="$GITHUB_WORKSPACE/$f_path"
@@ -58,6 +58,13 @@ done
 
 lint_extensions=($(printf "$lint_extensions" | sort -u))
 printf "LINT EXTENSIONS: %d\n" ${#lint_extensions[@]}
+for lint_ext in ${lint_extensions[@]}; do
+  echo "\t$lint_ext"
+done
+
+printf "\n\nLINT_START=$(date +%s)\n"
+
+
 for ext in ${lint_extensions[@]}; do
   echo "$ext"
   case "$ext" in
