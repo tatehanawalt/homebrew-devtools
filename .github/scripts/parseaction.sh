@@ -56,8 +56,7 @@ done
 
 echo "$lint_files"
 
-exit 3
-printf "${lint_files[@]}" | while read line || [[ -n $line ]];
+printf "$lint_files" | while read line || [[ -n $line ]];
 do
     echo "line: $line"
 done
