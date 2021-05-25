@@ -1,8 +1,7 @@
-
 name: devtools
 on: [push]
 jobs:
-  exec-bash-job:
+  lint-tag:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -11,9 +10,12 @@ jobs:
         shell: bash
         env:
             COMPARE_BRANCH: main
-      - name: 'action'
-        run: ./.github/scripts/parseaction.sh
+      - name: 'inspect_env'
+        run: ./.github/scripts/inspect_env.sh
         shell: bash
+#      - name: 'action'
+#        run: ./.github/scripts/parseaction.sh
+#        shell: bash
 #      - uses: actions/setup-ruby@v1
 #        with:
 #          ruby-version: 2.6
@@ -60,7 +62,6 @@ jobs:
 # Or you can specify for read/write all
 # permissions: read-all|write-all
 # -----------------------------------------------------------------------------
-
 
 # ENV:
 # -----------------------------------------------------------------------------
