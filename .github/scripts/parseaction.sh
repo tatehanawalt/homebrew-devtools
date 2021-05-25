@@ -30,7 +30,7 @@ printf "\n\n"
 
 git fetch origin dev
 git branch dev FETCH_HEAD
-diff_files=($(git diff --name-only dev))
+diff_files=$(git diff --name-only dev))
 
 printf "\n\nDIFF_FILES:\n"
 printf " - %s\n" $diff_files
