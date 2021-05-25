@@ -26,12 +26,15 @@ printf "%s\n" "$ENV_MAP"
 log ENV_TABLE
 for entry in ${ENV_MAP}; do
   key=$(echo "$entry" | sed 's/=.*//')
+  [ ${#key} -gt $MAX_KEY_LEN ] && MAX_KEY_LEN=${#key}
+done
+for entry in ${ENV_MAP}; do
+  key=$(echo "$entry" | sed 's/=.*//')
   printf "%-${MAX_KEY_LEN}s - %s\n" "$key" $(eval "echo \"\${$key}\"")
 done
 
 if [ ! -z "$INSPECT_ENV_FIELDS" ]; then
   INSPECT_ENV_FIELDS=$(echo "$INSPECT_ENV_FIELDS" | tr ',' '\n' | sort -u)
-
   log INSPECT_ENV_FIELDS
   for key in ${INSPECT_ENV_FIELDS}; do
     [ ${#key} -gt $MAX_KEY_LEN ] && MAX_KEY_LEN=${#key}
@@ -45,3 +48,5 @@ if [ ! -z "$INSPECT_ENV_FIELDS" ]; then
 fi
 
 log
+
+#exit 0
