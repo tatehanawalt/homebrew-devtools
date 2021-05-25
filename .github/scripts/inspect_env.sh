@@ -37,6 +37,7 @@ fi
 log() {
   if [ $in_log -ne 0 ]; then
     if [ $in_ci -eq 0 ]; then
+      echo
       echo "::endgroup::";
     else
       echo
@@ -48,6 +49,7 @@ log() {
   if [ ! -z "$1" ]; then
     if [ $in_ci -eq 0 ]; then
       echo "::group::$1";
+      echo
     else
       echo "$1:"
     fi
