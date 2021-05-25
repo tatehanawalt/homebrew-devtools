@@ -29,8 +29,8 @@ if [ -z "$has_dif_branch" ]; then
 fi
 
 diff_files=$(git diff --name-only "$COMPARE_BRANCH")
-declare -a lint_files
-declare -a lint_extensions
+lint_files=""
+lint_extensions=""
 
 for f_path in $diff_files; do
   full_path="$GITHUB_WORKSPACE/$f_path"
