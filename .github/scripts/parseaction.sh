@@ -30,7 +30,7 @@ lint_fs_file () {
   lint_results=""
   lint_exit_code=0
   case "$ext" in
-    .gitignore);;
+    gitignore);;
     md)
       lint_exit_code=0
       ;;
