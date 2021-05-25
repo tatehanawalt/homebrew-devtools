@@ -36,7 +36,7 @@ printf "DIFF_FILES:\n"
 printf "\t%s\n" $DIFF_FILES | sort -u
 echo $DIFF_FILES | tr ' ' ','
 
-echo "::set-output name=DIFF::$(echo $DIFF_FILES | tr ' ' ',')"
+echo "::set-output name=DIFF_FILES::$(echo $DIFF_FILES | tr ' ' ',')"
 
 exit 0
 
