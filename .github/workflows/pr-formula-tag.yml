@@ -21,7 +21,7 @@ jobs:
         run: ./.github/scripts/diff_formula.sh
         shell: bash
         env:
-          DIFF_FILES: "${{ steps.diff_formula.outputs.DIFF_FILES }}"
+          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
       - name: inspect_env
         run: ./.github/scripts/inspect_env.sh
         shell: bash
