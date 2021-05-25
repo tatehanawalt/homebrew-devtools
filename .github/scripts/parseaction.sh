@@ -53,6 +53,7 @@ done
 
 printf "\n\nHERE....\n\n"
 
+
 printf "$lint_files" | while read line || [[ -n $line ]];
 do
   echo "file: $line"
@@ -68,13 +69,13 @@ do
   echo "$ext"
 
   case "$ext" in
-#    md)
+    md)
 #      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
 #      for lint_file in ${lint_set[@]}; do
 #        printf "\t%s\n" "$lint_file"
 #      done
-#      ;;
-#    rb)
+      ;;
+    rb)
 #      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
 #      for lint_file in ${lint_set[@]}; do
 #        printf "\tLINTING=%s\n" "$lint_file"
@@ -87,14 +88,14 @@ do
 #          exit 2
 #        fi
 #      done
-#      ;;
-#    sh)
+      ;;
+    sh)
 #      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
 #      for lint_file in ${lint_set[@]}; do
 #        printf "\t%s\n" "$lint_file"
 #      done
-#      ;;
-#    yml)
+      ;;
+    yml)
 #      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
 #      for lint_file in ${lint_set[@]}; do
 #        printf "\tLINTING=%s\n" "$lint_file"
@@ -107,7 +108,7 @@ do
 #          exit 2
 #        fi
 #      done
-#      ;;
+      ;;
     yaml)
       lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
       for lint_file in ${lint_set[@]}; do
