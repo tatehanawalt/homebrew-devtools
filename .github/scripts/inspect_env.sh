@@ -26,7 +26,7 @@ prefix="\t"
 in_log=0
 
 # IF RUN BY CI vs Locally
-if [ "$CI" = "yes" ]; then
+if [ "$CI" = "true" ]; then
   prefix=""
 fi
 
@@ -73,7 +73,6 @@ inspect_fields ENV $(printf "%s" "$(env)" | sed 's/=.*//g' | tr '\n' ',')
 
 if [ ! -z "$INSPECT_GROUPS" ]; then
   groups=$(printf "%s" "$INSPECT_GROUPS" | sed '/^$/d' | tr ' ' '\n' | sed 's/[[:space:]]*$//g' | sed 's/^[[:space:]]*//g' )
-
   log INSPECT_GROUPS
   for group in $groups; do
     group=$(printf "%s" "$group" | xargs)
@@ -81,7 +80,6 @@ if [ ! -z "$INSPECT_GROUPS" ]; then
     printf "$prefix%s\n" "$gkey"
   done
   log
-
   for group in $groups; do
     group=$(printf "%s" "$group" | xargs)
     gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
