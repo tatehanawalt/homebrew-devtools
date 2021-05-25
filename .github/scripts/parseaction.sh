@@ -51,6 +51,7 @@ for f_path in $diff_files; do
   fi
 done
 
+printf "\n\nHERE....\n\n"
 
 printf "$lint_files" | while read line || [[ -n $line ]];
 do
