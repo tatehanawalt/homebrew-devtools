@@ -24,26 +24,30 @@ IFS="
 "
 prefix="\t"
 in_log=0
+in_ci=1
 
 # IF RUN BY CI vs Locally
 if [ "$CI" = "true" ]; then
   prefix=""
+  in_ci=0
 fi
 
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 log() {
   if [ $in_log -ne 0 ]; then
-    if [ "$CI" = "true" ]; then
+    if [ $in_ci -eq 0 ]; then
       echo "::endgroup::";
     else
       echo
     fi
     in_log=0
   fi
+
+  # Do we need to start a group?
   if [ ! -z "$1" ]; then
-    if [ "$CI" = "true" ]; then
-      echo "::endgroup::";
+    if [ $in_ci -eq 0 ]; then
+      echo "::group::$1";
     else
       echo "$1:"
     fi
