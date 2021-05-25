@@ -59,16 +59,24 @@ inspect_fields ENV $(printf "%s" "$(env)" | sed 's/=.*//g' | tr '\n' ',')
 
 if [ ! -z "$INSPECT_GROUPS" ]; then
   log inspect_groups
-  groups=$(printf "%s" "$INSPECT_GROUPS" | sed '/^$/d')
+  groups=$(printf "%s" "$INSPECT_GROUPS" | sed '/^$/d' | sed 's/[[:space:]]*$//g')
   echo "inspect_groups:"
   for group in ${groups}; do
-    printf "%s" $group | xargs
-
+    group=$(printf "%s" $group | xargs)
     #tr -d ' '
-    # gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
+    gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
+
+    printf "\tkey:\t%s\n" $gkey
     # [ ! -z "$gkey" ] && inspect_fields $gkey $(printf "%s" "$group" | sed 's/.*=//')
   done
   log
 fi
+
+
+#export INSPECT_GROUPS='
+#  git_env=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
+#  user_env=DIFF_BRANCH,DIFF_FILES,DIFF_DIRS,DIFF_FORMULA,LABELS
+#  '
+
 
 exit 0
