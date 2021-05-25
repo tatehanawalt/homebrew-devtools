@@ -31,14 +31,16 @@ class Demozsh < Formula
   def install
     if build.head?
       cd 'demozsh' do
-        lib.install ['_demozsh', 'demozsh.zsh', 'doc/man/demozsh.1']
+        zsh_completion.install lib / "_demozsh"
+        bin.install 'demozsh.zsh' => 'demozsh'
+        man1.install 'demozsh.1'
       end
-    else
-      lib.install ['_demozsh', 'demozsh.zsh', 'doc/man/demozsh.1']
+      return
     end
-    zsh_completion.install lib / "_demozsh"
-    bin.install lib / 'demozsh.zsh' => 'demozsh'
-    man1.install lib / 'demozsh.1'
+
+    zsh_completion.install "_demozsh"
+    bin.install 'demozsh.zsh' => 'demozsh'
+    man1.install 'demozsh.1'
   end
 
   test do
