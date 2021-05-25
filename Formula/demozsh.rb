@@ -24,7 +24,7 @@ class Demozsh < Formula
 
   bottle :unneeded
 
-  def install
+  install do
     if build.head?
       cd 'demozsh' do
         lib.install ['_demozsh', 'demozsh.zsh', 'doc/man/demozsh.1']
@@ -32,9 +32,9 @@ class Demozsh < Formula
     else
       lib.install ['_demozsh', 'demozsh.zsh', 'doc/man/demozsh.1']
     end
-    zsh_completion.install lib/'_demozsh'
-    bin.install lib/'demozsh.zsh' => 'demozsh'
-    man1.install lib/'demozsh.1'
+    zsh_completion.install lib / '_demozsh'
+    bin.install lib / 'demozsh.zsh' => 'demozsh'
+    man1.install lib / 'demozsh.1'
   end
 
   test do
