@@ -13,7 +13,7 @@ ENV_MAP=$(echo "$ENV_MAP" | sort)
 
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
-function log() {
+log () {
   echo "::endgroup::"
   [ ! -z "$1" ] && echo "::group::$1"
 }
