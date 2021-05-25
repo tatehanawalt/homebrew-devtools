@@ -1,5 +1,13 @@
 #!/bin/sh
 
+bold_div_line="======================================================================================================="
+div_line="-------------------------------------------------------------------------------------------------------"
+item_prefix="- "
+
+printf "%s\n" "$bold_div_line"
+printf "LINTING RESULTS AT THE BOTTOM OF THE LOG\n"
+printf "%s\n" "$bold_div_line"
+
 COMPARE_BRANCH=dev
 if [ -z "$COMPARE_BRANCH" ]; then
   printf "\$COMPARE_BRANCH length is 0..." 1>&2;
@@ -15,6 +23,43 @@ if [ ! -d "$GITHUB_WORKSPACE" ]; then
   printf "\$GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE" 1>&2;
   exit 2
 fi
+
+# Takes the FULL filepath of a file to lint
+lint_fs_file () {
+  ext=$(echo "$1" | sed 's/.*\.//g')
+  lint_results=""
+  lint_exit_code=0
+  case "$ext" in
+    md)
+      lint_exit_code=0
+      ;;
+    rb)
+      lint_results=$(rubocop $1)
+      lint_exit_code=$?
+      ;;
+    sh)
+      lint_exit_code=0
+      ;;
+    yml)
+      lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $1)
+      lint_exit_code=$?
+      [ "$lint_results" = "false" ] && lint_exit_code=2
+      ;;
+    yaml)
+      lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $1)
+      lint_exit_code=$?
+      [ "$lint_results" = "false" ] && lint_exit_code=2
+      ;;
+    *)
+      lint_results=$(printf "UNHANDLED_EXTENSION=%s\n" "$ext")
+      lint_exit_code=2
+      ;;
+  esac
+  if [ ! -z "$lint_results" ]; then
+    printf "$lint_results\n" | sed 's/^/\t/'
+  fi
+  return $lint_exit_code
+}
 
 cd $GITHUB_WORKSPACE
 has_dif_branch=$(git branch --list "$COMPARE_BRANCH")
@@ -51,128 +96,43 @@ for f_path in $diff_files; do
   fi
 done
 
-printf "\n\nHERE....\n\n"
-
 IFS="
 "
-
-lint_files=$(echo "$lint_files")
+# This part just logs the linting set
+lint_files=$(echo "$lint_files" | sort -u )
+printf "FILES:\n"
 for f_path in $lint_files; do
-  printf "fpath: $f_path\n"
+  printf "%s%s\n" "$item_prefix" "$f_path"
 done
-
-lint_extensions=$(echo "$lint_extensions")
+lint_extensions=$(echo "$lint_extensions" | sort -u )
+printf "EXTENSIONS:\n"
 for ext in $lint_extensions; do
-  printf "ext: $ext\n"
+  printf "%s%s\n" "$item_prefix" "$ext"
 done
-
-
-lint_fs_file () {
-
-  printf "\nLINTING FILE: $@\n"
-
-
-}
-
-
-
-
+# Actually lint the files
+lint_failures=""
 for ext in $lint_extensions; do
-  echo "EXTENSION=$ext"
-  case "$ext" in
-    md)
-#      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
-#      for lint_file in ${lint_set[@]}; do
-#        printf "\t%s\n" "$lint_file"
-#      done
-      ;;
-    rb)
-      lint_set=$(echo "$lint_files" | grep "$ext" | sort -u)
-      for lint_file in $lint_set; do
-        lint_fs_file $lint_file
-        continue
-
-        printf "\tLINTING=%s\n" "$lint_file"
-        lint_results=$(rubocop $lint_file)
-        lint_exit_code=$?
-        printf "\tEXIT_CODE=$lint_exit_code\n"
-        printf "$lint_results\n" | sed 's/^/\t/'
-        if [ $lint_exit_code -ne 0 ]; then
-          printf "\n\n"
-          exit 2
-        fi
-      done
-      ;;
-    sh)
-#      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
-#      for lint_file in ${lint_set[@]}; do
-#        printf "\t%s\n" "$lint_file"
-#      done
-      ;;
-    yml)
-      lint_set=$(echo "$lint_files" | grep "$ext" | sort -u)
-      for lint_file in $lint_set; do
-        printf "\tLINTING=%s\n" "$lint_file"
-        lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $lint_file)
-        lint_exit_code=$?
-        printf "\tEXIT_CODE=$lint_exit_code\n"
-        printf "$lint_results\n" | sed 's/^/\t/'
-        if [ $lint_exit_code -ne 0 ]; then
-          printf "\n\n"
-          exit 2
-        fi
-      done
-      ;;
-    yaml)
-      lint_set=$(echo "$lint_files" | grep "$ext" | sort -u)
-      for lint_file in $lint_set; do
-        printf "\tLINT_FILE=%s\n" "$lint_file"
-        lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $lint_file)
-        lint_exit_code=$?
-        printf "\tEXIT_CODE=$lint_exit_code\n"
-        printf "$lint_results\n" | sed 's/^/\t/'
-        if [ $lint_exit_code -ne 0 ]; then
-          printf "\n\n"
-          exit 2
-        fi
-      done
-      ;;
-    *)
-      printf "UNHANDLED_EXTENSION=%s\n" "$ext"  1>&2;
-      exit 2
-      ;;
-  esac
-  printf "\n\n"
+  printf "%s\n" "$div_line"
+  printf "EXT=$ext\n"
+  lint_set=$(echo "$lint_files" | grep "$ext\$" | sort -u)
+  for lint_file in $lint_set; do
+    printf "%sFILE=%s\n" "$item_prefix" "$lint_file"
+    lint_fs_file $lint_file
+    if [ $? -ne 0 ]; then
+      lint_failures="$lint_failures$lint_file\n"
+    fi
+  done
 done
 
+if [ ! -z "$lint_failures" ]; then
+  printf "%s\n" "$bold_div_line"
+  printf "LINTING=failed\n"
+  printf "FILES:\n"
+  lint_failures=$(echo "$lint_failures" | sort -u)
+  for failed_lint in $lint_failures; do
+    printf "%s%s\n" "$item_prefix" "$failed_lint"
+  done
+  printf "%s\n" "$bold_div_line"
+  exit 1
+fi
 exit 0
-
-
-
-# for ext in ${lint_extensions[@]}; do
-
-# printf "SH ONMAIN $0 - ARGS:\n"
-# if [ ${#@} -gt 0 ]; then
-#   printf "\t- %s\n" "$@"
-#   printf "\n"
-# fi
-# printf "\n"
-# printf "ENV:\n"
-# env | sort
-# printf "\n\n"
-# # ENV VARS:
-# # GITHUB_ACTIONS = Always set to true when GitHub Actions is running the workflow. You can use this variable to differentiate when tests are being run locally or by GitHub Actions.
-# printf "%-12s%s\n" action "$GITHUB_ACTION"
-# printf "%-12s%s\n" trigger "$GITHUB_EVENT_NAME"
-# printf "%-12s%s\n" repo "$GITHUB_WORKSPACE"
-# printf "%-12s%s\n" commit "$GITHUB_SHA"
-# if [ ! -z "$GITHUB_HEAD_REF" ] && [ ! -z "$GITHUB_REF" ]; then
-#   printf "\nPR ACTION\n"
-# fi
-# lint_files=$(printf "$lint_files" | sort -u)
-# printf "LINT FILES: %d\n" "${#lint_files[@]}"
-# for lint_file in "${lint_files[@]}"; do
-#   printf "\t$lint_file\n"
-# done
-# GITHUB_WORKSPACE=/usr/local/Homebrew/Library/Taps/tatehanawalt/homebrew-devtools
-# GITHUB_WORKSPACE=/usr/local/Homebrew/Library/Taps/tatehanawalt/homebrew-devtools ./parseaction.sh
