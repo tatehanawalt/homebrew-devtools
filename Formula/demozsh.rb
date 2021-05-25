@@ -12,7 +12,6 @@
 
 # Demozsh Formula
 class Demozsh < Formula
-
   desc 'Brew install demozsh'
   homepage 'https://www.TateHanawalt.com'
   version '0.0.0'
