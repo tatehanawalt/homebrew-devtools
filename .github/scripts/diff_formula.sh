@@ -9,11 +9,18 @@ formulas=""
 for file in $DIFF_FILES; do
   printf "%s%s\n" "- " "$file"
   # Match formula files:
-  if [[ "$file" =~ ^Formula/.*.rb$ ]]; then
-    formula=$(echo "$file" | sed 's/^Formula\///' | sed 's/.rb$//')
-    echo "formula: $formula"
-    formulas="$formulas$formula\n"
+  # if [[ "$file" =~ ^Formula/.*.rb$ ]]; then
+  #   formula=$(echo "$file" | sed 's/^Formula\///' | sed 's/.rb$//')
+  #   echo "formula: $formula"
+  #   formulas="$formulas$formula\n"
+  # fi
+
+  if (echo "$file" | grep -Eq ^Formula/.*.rb$); then
+    echo "matched"
+  else
+    echo "did not match"
   fi
+
 done
 
 formulas=$(echo "$formulas")
