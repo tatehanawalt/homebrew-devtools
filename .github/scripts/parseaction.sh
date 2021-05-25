@@ -61,24 +61,14 @@ for f_path in $lint_files; do
   printf "fpath: $f_path\n"
 done
 
-exit 3
-
-
-
-printf "$lint_files" | while read line || [[ -n $line ]];
-do
-  echo "file: $line"
+lint_extensions=$(echo "$lint_extensions")
+for ext in $lint_extensions; do
+  printf "ext: $ext\n"
 done
 
-printf "$lint_extensions" | sort -u | while read line || [[ -n $line ]];
-do
-  echo "extension: $line"
-done
 
-printf "$lint_extensions" | sort -u | while read ext || [[ -n $line ]];
-do
-  echo "$ext"
-
+for ext in $lint_extensions; do
+  echo "EXTENSION=$ext"
   case "$ext" in
     md)
 #      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
@@ -121,9 +111,9 @@ do
 #      done
       ;;
     yaml)
-      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
+      lint_set=$(echo "$lint_files" | sort -u | grep "$ext")
       for lint_file in ${lint_set[@]}; do
-        printf "\tLINTING=%s\n" "$lint_file"
+        printf "\tLINT_FILE=%s\n" "$lint_file"
         lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $lint_file)
         lint_exit_code=$?
         printf "\tEXIT_CODE=$lint_exit_code\n"
