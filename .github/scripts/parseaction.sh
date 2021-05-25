@@ -29,7 +29,6 @@ if [ -z "$has_dif_branch" ]; then
 fi
 
 diff_files=$(git diff --name-only "$COMPARE_BRANCH")
-
 lint_files=()
 lint_extensions=()
 
@@ -60,32 +59,67 @@ done
 lint_extensions=($(printf "$lint_extensions" | sort -u))
 printf "LINT EXTENSIONS: %d\n" ${#lint_extensions[@]}
 for ext in ${lint_extensions[@]}; do
-  echo "\t$ext"
-
+  echo "$ext"
   case "$ext" in
     md)
+      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
+      for lint_file in ${lint_set[@]}; do
+        printf "\t%s\n" "$lint_file"
+      done
       ;;
     rb)
       lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
-      printf "lint_set: %s\n" "${lint_set[@]}"
-
-
+      for lint_file in ${lint_set[@]}; do
+        printf "\tLINTING=%s\n" "$lint_file"
+        lint_results=$(rubocop $lint_file)
+        lint_exit_code=$?
+        printf "\tEXIT_CODE=$lint_exit_code\n"
+        printf "$lint_results\n" | sed 's/^/\t/'
+        if [ $lint_exit_code -ne 0 ]; then
+          printf "\n\n"
+          exit 2
+        fi
+      done
       ;;
     sh)
+      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
+      for lint_file in ${lint_set[@]}; do
+        printf "\t%s\n" "$lint_file"
+      done
       ;;
     yml)
-      printf "\nyml... rename this!\n"
+      lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
+      for lint_file in ${lint_set[@]}; do
+        printf "\tLINTING=%s\n" "$lint_file"
+        lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $lint_file)
+        lint_exit_code=$?
+        printf "\tEXIT_CODE=$lint_exit_code\n"
+        printf "$lint_results\n" | sed 's/^/\t/'
+        if [ $lint_exit_code -ne 0 ]; then
+          printf "\n\n"
+          exit 2
+        fi
+      done
       ;;
     yaml)
-      printf "\nYAML!\n"
-
       lint_set=$(echo "${lint_files[@]}" | tr ' ' '\n' | grep "$ext")
-      printf "lint_set: %s\n" "$lint_set}"
-
+      for lint_file in ${lint_set[@]}; do
+        printf "\tLINTING=%s\n" "$lint_file"
+        lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $lint_file)
+        lint_exit_code=$?
+        printf "\tEXIT_CODE=$lint_exit_code\n"
+        printf "$lint_results\n" | sed 's/^/\t/'
+        if [ $lint_exit_code -ne 0 ]; then
+          printf "\n\n"
+          exit 2
+        fi
+      done
+      ;;
+    *)
+      printf "UNHANDLED_EXTENSION=%s\n" "$ext"  1>&2;
+      exit 2
       ;;
   esac
-
-
 done
 
 exit 0
