@@ -53,6 +53,17 @@ done
 
 printf "\n\nHERE....\n\n"
 
+IFS="
+"
+
+lint_files=$(echo "$lint_files")
+for f_path in $lint_files; do
+  printf "fpath: $f_path\n"
+done
+
+exit 3
+
+
 
 printf "$lint_files" | while read line || [[ -n $line ]];
 do
