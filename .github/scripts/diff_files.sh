@@ -34,8 +34,9 @@ fi
 DIFF_FILES=$(git diff --name-only "$COMPARE_BRANCH")
 printf "DIFF_FILES:\n"
 printf "\t%s\n" $DIFF_FILES | sort -u
+echo $DIFF_FILES | tr '\n' '\t'
 
-echo "::set-output name=DIFF::$(echo $DIFF_FILES | tr '\n' '\t')"
+echo "::set-output name=DIFF::\"$(echo $DIFF_FILES | tr '\n' '\t')\""
 
 exit 0
 
