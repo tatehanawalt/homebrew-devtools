@@ -51,8 +51,8 @@ DIFF_DIRS=$(echo $DIFF_DIRS | sed 's/^ //g' | \
   sed 's/ /,/g')
 echo "$DIFF_DIRS"
 echo
-echo "::set-output name=DIFF_FILES::$(echo $DIFF_FILES | tr ' ' ',')"
-echo "::set-output name=DIFF_DIRS::$(echo $DIFF_DIRS | tr ' ' ',')"
+echo "::set-output name=DIFF_FILES::$DIFF_FILES"
+echo "::set-output name=DIFF_DIRS::$DIFF_DIRS"
 echo
 exit 0
 
