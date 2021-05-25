@@ -25,6 +25,7 @@ fi
 
 printf "\n\n"
 
+git fetch origin dev
 git branch dev FETCH_HEAD
 git diff --name-only dev
 
