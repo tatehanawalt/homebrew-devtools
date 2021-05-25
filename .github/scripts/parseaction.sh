@@ -34,20 +34,22 @@ lint_fs_file () {
       lint_exit_code=0
       ;;
     rb)
-      ubocop $1 2>&1
-      lint_results=$(rubocop $1 2>&1)
+      lint_results=$(rubocop "$1" 2>&1)
       lint_exit_code=$?
+      if [ $lint_exit_code -ne 0 ]; then
+        printf "\nRUBY FAILURE - try running rubocop with --auto-correct\n"
+      fi
       ;;
     sh)
       lint_exit_code=0
       ;;
     yml)
-      lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $1)
+      lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $1 2>&1)
       lint_exit_code=$?
       [ "$lint_results" = "false" ] && lint_exit_code=2
       ;;
     yaml)
-      lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $1)
+      lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $1 2>&1)
       lint_exit_code=$?
       [ "$lint_results" = "false" ] && lint_exit_code=2
       ;;
