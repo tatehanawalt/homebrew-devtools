@@ -6,11 +6,11 @@ if [ -z "$COMPARE_BRANCH" ]; then
 fi
 # Make sure we are in the github workspace
 if [ -z "$GITHUB_WORKSPACE" ]; then
-  printf "\$GITHUB_WORKSPACE length is 0...\n"
+  printf "GITHUB_WORKSPACE length is 0...\n"
   exit 2
 fi
 if [ ! -d "$GITHUB_WORKSPACE" ]; then
-  printf "\$GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE\n"
+  printf "GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE\n"
   exit 2
 fi
 
@@ -34,9 +34,9 @@ fi
 DIFF_FILES=$(git diff --name-only "$COMPARE_BRANCH")
 printf "DIFF_FILES:\n"
 printf "\t%s\n" $DIFF_FILES | sort -u
-echo $DIFF_FILES | sed 's/\n$//' | tr -s ','
+echo $DIFF_FILES | tr ' ' ','
 
-echo "::set-output name=DIFF::$(echo $DIFF_FILES | echo $DIFF_FILES | sed 's/\n$//' | tr -s ',')"
+echo "::set-output name=DIFF::$(echo $DIFF_FILES | tr ' ' ',')"
 
 exit 0
 
