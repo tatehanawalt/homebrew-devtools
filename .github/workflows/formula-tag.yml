@@ -1,0 +1,25 @@
+name: formula-tag
+
+on: [ pull_request ]
+
+env:
+  COMPARE_BRANCH: main
+
+jobs:
+  lint-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - id: diff
+        name: diff
+        run: ./.github/scripts/diff_files.sh
+        shell: bash
+        env:
+            COMPARE_BRANCH: ${{ env.COMPARE_BRANCH }}
+      - name: 'inspect_env'
+        run: ./.github/scripts/inspect_env.sh
+        shell: bash
+        env:
+          DIFF_BRANCH: "${{ steps.diff.outputs.DIFF_BRANCH }}"
+          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+          DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
