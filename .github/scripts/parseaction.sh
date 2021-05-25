@@ -69,7 +69,7 @@ done
 
 function lint_fs_file {
 
-  printf "\nLINTING FILE: $1"
+  printf "\nLINTING FILE: $@\n"
 
 
 }
