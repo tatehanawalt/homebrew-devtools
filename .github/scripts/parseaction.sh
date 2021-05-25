@@ -46,7 +46,7 @@ for f_path in $diff_files; do
     continue
   fi
   if [ -f "$full_path" ]; then
-    lint_files="${lint_files[@]}$full_path\n"
+    lint_files="$lint_files$full_path\n"
     modified_ext=$(echo "$full_path" | sed 's/.*\.//g')
     if [ ! -z "$modified_ext" ]; then
       lint_extensions="$lint_extensions$modified_ext\n"
@@ -57,7 +57,6 @@ done
 echo "$lint_files"
 
 exit 3
-
 printf "${lint_files[@]}" | while read line || [[ -n $line ]];
 do
     echo "line: $line"
