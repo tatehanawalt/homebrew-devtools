@@ -25,6 +25,7 @@ fi
 
 printf "\n\n"
 
+git branch dev FETCH_HEAD
 git diff --name-only dev
 
 cd $GITHUB_WORKSPACE
