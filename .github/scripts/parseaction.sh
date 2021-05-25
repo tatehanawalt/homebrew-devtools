@@ -25,10 +25,10 @@ fi
 
 printf "\n\n"
 
-
-
 git diff --name-only dev
 
+cd $GITHUB_WORKSPACE
+ls -la
 
 
 
