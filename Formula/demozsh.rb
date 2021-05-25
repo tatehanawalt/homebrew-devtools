@@ -4,10 +4,13 @@
 # desc    :zsh cli built as part of the homebrew demo/dev tools project
 # auth    :Tate Hanawalt(tate@tatehanawalt.com)
 # date    :1621396284
+# ==============================================================================
 # exit    :0=success, 1=input error 2=execution error
 # usage   :See the repo README file for usage
+# ==============================================================================
 # frozen_string_literal: true
 class Demozsh < Formula
+
   desc 'Brew install demozsh'
   homepage 'https://www.TateHanawalt.com'
   version '0.0.0'
