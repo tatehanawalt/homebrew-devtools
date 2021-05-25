@@ -37,7 +37,7 @@ lint_fs_file () {
       lint_results=$(rubocop "$1" 2>&1)
       lint_exit_code=$?
       if [ $lint_exit_code -ne 0 ]; then
-        printf "\nRUBY FAILURE - try running rubocop with --auto-correct\n"
+        printf "\n\tRUBY FAILURE - try running rubocop with --auto-correct\n\n"
       fi
       ;;
     sh)
