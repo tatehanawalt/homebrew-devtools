@@ -11,20 +11,29 @@ IFS="
 
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
-log() { echo "::endgroup::"; [ ! -z "$1" ] && echo "::group::$1"; }
+in_log=0
+log() {
+  if [ $in_log -ne 0 ]; then
+    echo "::endgroup::";
+    in_log=0
+  fi
+  if [ ! -z "$1" ]; then
+    echo "::group::$1";
+    in_log=1
+  fi
+}
 
 # Pass this function the set of comma-separated keys to inspect the environment
 # variable value of each key
 inspect_fields() {
   log $1
-  shift
-  fields=$(printf "%s" "$1" | sed 's/^,//' |sed 's/,$//' |tr ',' '\n' |sort -u )
+  fields=$(printf "%s" "$2" | sed 's/^,//' | sed 's/,$//' | tr ',' '\n' | sort -u )
   max_field_len=0
   for key in ${fields}; do
     [ ${#key} -gt $max_field_len ] && max_field_len=${#key}
     printf "%s=%s\n" $key $(eval "echo \"\$$key\"")
   done
-  log "$1_TABLE"
+  log "${1}_TABLE"
   for key in ${fields}; do
     printf "%-${max_field_len}s - %s\n" $key $(eval "echo \"\$$key\"")
   done
