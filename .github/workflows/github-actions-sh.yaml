@@ -14,8 +14,8 @@ jobs:
         shell: bash
         env:
             COMPARE_BRANCH: ${{ env.COMPARE_BRANCH }}
-        outputs:
-          diff: ${{ steps.diff.outputs.action_fruit }}
+#        outputs:
+#          diff: ${{ steps.diff.outputs.action_fruit }}
       - name: 'inspect_env'
         run: ./.github/scripts/inspect_env.sh
         shell: bash
