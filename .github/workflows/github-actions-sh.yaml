@@ -1,5 +1,5 @@
 name: devtools
-on: [push]
+# on: [push]
 
 env:
   COMPARE_BRANCH: main

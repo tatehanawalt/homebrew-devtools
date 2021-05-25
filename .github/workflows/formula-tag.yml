@@ -1,6 +1,6 @@
 name: formula-tag
 
-on: [ pull_request ]
+on: [pull_request]
 
 env:
   COMPARE_BRANCH: main
@@ -16,7 +16,7 @@ jobs:
         shell: bash
         env:
             COMPARE_BRANCH: ${{ env.COMPARE_BRANCH }}
-      - name: 'inspect_env'
+      - name: inspect_env
         run: ./.github/scripts/inspect_env.sh
         shell: bash
         env:
