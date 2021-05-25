@@ -67,7 +67,7 @@ for ext in $lint_extensions; do
 done
 
 
-function lint_fs_file {
+lint_fs_file () {
 
   printf "\nLINTING FILE: $@\n"
 
