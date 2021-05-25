@@ -28,14 +28,16 @@ fi
 
 printf "\n\n"
 
+cd $GITHUB_WORKSPACE
 git fetch origin dev
 git branch dev FETCH_HEAD
-diff_files=$(git diff --name-only dev))
+diff_files=$(git diff --name-only dev)
 
 printf "\n\nDIFF_FILES:\n"
 printf " - %s\n" $diff_files
 
-cd $GITHUB_WORKSPACE
+
+printf "\n\n"
 ls -la
 
 
