@@ -1,5 +1,6 @@
 #!/bin/sh
 
+COMPARE_BRANCH=dev
 bold_div_line="======================================================================================================="
 div_line="-------------------------------------------------------------------------------------------------------"
 item_prefix="- "
@@ -8,7 +9,6 @@ printf "%s\n" "$bold_div_line"
 printf "LINTING RESULTS AT THE BOTTOM OF THE LOG\n"
 printf "%s\n" "$bold_div_line"
 
-COMPARE_BRANCH=dev
 if [ -z "$COMPARE_BRANCH" ]; then
   printf "\$COMPARE_BRANCH length is 0..." 1>&2;
   exit 2
@@ -64,8 +64,7 @@ lint_fs_file () {
 cd $GITHUB_WORKSPACE
 has_dif_branch=$(git branch --list "$COMPARE_BRANCH")
 if [ -z "$has_dif_branch" ]; then
-  printf "\n\nFETCHING COMPARE BRANCH: $COMPARE_BRANCH\n\n"
-  git fetch origin $COMPARE_BRANCH
+  git fetch origin $COMPARE_BRANCH &>/dev/null
   git branch dev FETCH_HEAD
 fi
 has_dif_branch=$(git branch --list "$COMPARE_BRANCH")
