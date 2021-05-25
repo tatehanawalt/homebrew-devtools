@@ -30,7 +30,11 @@ lint_fs_file () {
   lint_results=""
   lint_exit_code=0
   case "$ext" in
+    # IGNORED SET:
     gitignore);;
+    sh);;
+
+    # Lint Set:
     md)
       lint_exit_code=0
       ;;
@@ -41,7 +45,6 @@ lint_fs_file () {
         printf "\n\tRUBY FAILURE - try running rubocop with --auto-correct\n\n"
       fi
       ;;
-    sh);;
     yml)
       lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $1 2>&1)
       lint_exit_code=$?
