@@ -112,7 +112,7 @@ for ext in $lint_extensions; do
       ;;
     yaml)
       lint_set=$(echo "$lint_files" | sort -u | grep "$ext")
-      for lint_file in ${lint_set[@]}; do
+      for lint_file in $lint_set; do
         printf "\tLINT_FILE=%s\n" "$lint_file"
         lint_results=$(ruby -ryaml -e "p YAML.load(STDIN.read)" < $lint_file)
         lint_exit_code=$?
