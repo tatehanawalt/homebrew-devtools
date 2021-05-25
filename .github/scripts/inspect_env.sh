@@ -44,7 +44,6 @@ log() {
     fi
     in_log=0
   fi
-
   # Do we need to start a group?
   if [ ! -z "$1" ]; then
     if [ $in_ci -eq 0 ]; then
@@ -69,7 +68,7 @@ inspect_fields() {
   done
   log "${1}_TABLE"
   for key in ${fields}; do
-    printf "$prefix%-${max_field_len}s - %s\n" $key $(eval "echo \"\$$key\"")
+    printf "\t%-${max_field_len}s - %s\n" $key $(eval "echo \"\$$key\"")
   done
   log
 }
