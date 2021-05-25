@@ -20,7 +20,8 @@ jobs:
         run: ./.github/scripts/inspect_env.sh
         shell: bash
         env:
-          diff: "${{ steps.diff.outputs.diff }}"
+          DIFF: "${{ steps.diff.outputs.diff }}"
+          DIFF2: "static-diff"
 #      - name: 'action'
 #        run: ./.github/scripts/parseaction.sh
 #        shell: bash
