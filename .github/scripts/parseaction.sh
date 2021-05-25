@@ -35,10 +35,11 @@ diff_files=$(git diff --name-only dev)
 
 printf "\n\nDIFF_FILES:\n"
 printf " - %s\n" $diff_files
-
-
 printf "\n\n"
-ls -la
+for f_path in $diff_files; do
+  printf "\tDIFF PATH: %s\n" $f_path
+
+done
 
 
 
