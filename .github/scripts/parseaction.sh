@@ -113,6 +113,20 @@ printf "EXTENSIONS:\n"
 for ext in $lint_extensions; do
   printf "%s%s\n" "$item_prefix" "$ext"
 done
+
+for ext in $lint_extensions; do
+  case "$ext" in
+
+    rb)
+      printf "Will lint ruby\n"
+      rubocop --version
+      ruby --version
+      ;;
+
+  esac
+done
+
+
 # Actually lint the files
 lint_failures=""
 for ext in $lint_extensions; do
