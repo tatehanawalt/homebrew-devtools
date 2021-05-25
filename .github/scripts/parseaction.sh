@@ -1,6 +1,9 @@
 #!/bin/sh
 printf "\n\n"
 
+COMPARE_BRANCH=${COMPARE_BRANCH:-dev}
+
+
 printf "SH ONMAIN $0 - ARGS:\n"
 if [ ${#@} -gt 0 ]; then
   printf "\t- %s\n" "$@"
@@ -25,9 +28,15 @@ fi
 
 printf "\n\n"
 
+compare_extensions=()
+
 git fetch origin dev
 git branch dev FETCH_HEAD
-git diff --name-only dev
+diff_files=("$(git diff --name-only dev)")
+
+printf "\n\nDIFF_FILES:\n"
+printf " - %s\n" $diff_files
+
 
 cd $GITHUB_WORKSPACE
 ls -la
