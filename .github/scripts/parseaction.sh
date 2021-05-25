@@ -37,7 +37,17 @@ printf "\n\nDIFF_FILES:\n"
 printf " - %s\n" $diff_files
 printf "\n\n"
 for f_path in $diff_files; do
-  printf "\tDIFF PATH: %s\n" $f_path
+  full_path="$GITHUB_WORKSPACE/$f_path"
+
+  printf "\tDIFF PATH: %s\n" $full_path
+
+  if [ -z "$full_path" ]; then
+    printf "full_path length is 0..." 1>&2;
+    return 2
+  fi
+
+  if [ -f "$full_path" ]
+
 
 done
 
