@@ -19,11 +19,11 @@ class Demozsh < Formula
     sha256 "c4d93067c46d0c76a432f7b2d1880310467cc5314bfe694791e845ec2810af4d"
   end
 
-  bottle :unneeded
-
   head do
     url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
   end
+
+  bottle :unneeded
 
   def install
     if build.head?
