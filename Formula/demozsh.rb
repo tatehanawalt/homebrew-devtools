@@ -28,18 +28,20 @@ class Demozsh < Formula
 
   bottle :unneeded
 
+  def install_common
+    zsh_completion.install "_demozsh"
+    bin.install 'demozsh.zsh' => 'demozsh'
+    man1.install 'doc/man/demozsh.1'
+  end
+
   def install
     if build.head?
       cd 'demozsh' do
-        zsh_completion.install lib / "_demozsh"
-        bin.install 'demozsh.zsh' => 'demozsh'
-        man1.install 'demozsh.1'
+        install_common
       end
       return
     end
-    zsh_completion.install "_demozsh"
-    bin.install 'demozsh.zsh' => 'demozsh'
-    man1.install 'demozsh.1'
+    install_common
   end
 
   test do
