@@ -59,7 +59,7 @@ lint_fs_file () {
       ;;
   esac
   if [ ! -z "$lint_results" ]; then
-    printf "$lint_results\n" | sed 's/^/\t/'
+    printf "%s\n" "$lint_results" | sed 's/^/\t/'
   fi
   return $lint_exit_code
 }
