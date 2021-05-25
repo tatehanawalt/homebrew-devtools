@@ -22,6 +22,10 @@ jobs:
         shell: bash
         env:
           DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+      - id: list_labels
+        name: list_labels
+        run: ./.github/scripts/list_labels.sh
+        shell: bash
       - name: inspect_env
         run: ./.github/scripts/inspect_env.sh
         shell: bash
@@ -30,3 +34,12 @@ jobs:
           DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
           DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
           DIFF_FORMULA: "${{ steps.diff_formula.outputs.DIFF_FORMULA }}"
+          LABELS: "${{ steps.list_labels.outputs.RESULT }}"
+#      - name: formula_tag_pr
+#        run: ./.github/scripts/label.sh
+#        shell: bash
+#        env:
+#          DIFF_BRANCH: "${{ steps.diff.outputs.DIFF_BRANCH }}"
+#          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+#          DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
+#          DIFF_FORMULA: "${{ steps.diff_formula.outputs.DIFF_FORMULA }}"

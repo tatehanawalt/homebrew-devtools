@@ -1,4 +1,8 @@
 #!/bin/sh
+
+# Takes a compare branch and outputs the files that have changed between
+# the latest compare branch and the commit that fired the action
+
 if [ -z "$COMPARE_BRANCH" ]; then
   echo "COMPARE_BRANCH length is 0... set COMPARE_BRANCH=<branch_name>"
   exit 2
