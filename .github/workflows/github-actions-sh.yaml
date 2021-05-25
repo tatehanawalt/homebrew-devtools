@@ -8,6 +8,8 @@ jobs:
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: 2.6
+      - name: Install Rubocop gem
+        run: gem install rubocop
       - name: 'action'
         run: ./.github/scripts/parseaction.sh
         shell: bash
