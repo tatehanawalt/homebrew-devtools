@@ -3,7 +3,6 @@ if [ -z "$COMPARE_BRANCH" ]; then
   printf "COMPARE_BRANCH length is 0... set COMPARE_BRANCH=<branch_name>\n"
   exit 2
 fi
-# Make sure we are in the github workspace
 if [ -z "$GITHUB_WORKSPACE" ]; then
   printf "GITHUB_WORKSPACE length is 0...\n"
   exit 2
@@ -12,7 +11,6 @@ if [ ! -d "$GITHUB_WORKSPACE" ]; then
   printf "GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE\n"
   exit 2
 fi
-echo
 echo "COMPARE_BRANCH=$COMPARE_BRANCH\n"
 cd $GITHUB_WORKSPACE
 has_dif_branch=$(git branch --list "$COMPARE_BRANCH")
@@ -35,7 +33,6 @@ for file_path in $DIFF_FILES; do
   dir=$(dirname $file_path)
   DIFF_DIRS="$DIFF_DIRS $dir\n"
 done
-echo
 DIFF_FILES=$(echo $DIFF_FILES | sed 's/^ //g' | \
   sed 's/  $//g' | \
   sort -u | tr '\n' '  ' | \
@@ -50,12 +47,7 @@ DIFF_DIRS=$(echo $DIFF_DIRS | sed 's/^ //g' | \
   sed 's/ $//g' | \
   sed 's/ /,/g')
 echo "$DIFF_DIRS"
-echo
+echo "::set-output name=DIFF_BRANCH::$COMPARE_BRANCH"
 echo "::set-output name=DIFF_FILES::$DIFF_FILES"
 echo "::set-output name=DIFF_DIRS::$DIFF_DIRS"
-echo
 exit 0
-
-# for f_path in $DIFF_FILES; do
-#   printf "\t%s\n" "$f_path"
-# done
