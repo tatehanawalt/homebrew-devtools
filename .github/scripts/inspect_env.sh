@@ -5,9 +5,27 @@
 # Specify INSPECT_ENV_FIELDS=<field>,<field2>... to see a list of specific
 # fields
 
+# Specify a specific set with INSPECT_ENV_FIELDS=<field>,<field2>... to see a list of specific
+#
+# or specify groups of inspect sets with
+# INSPECT_GROUPS='
+#   groupname1=<key1>,<key2...>
+#   groupname2=<key1>,<key2...>
+# '
+# Where groupname is the name of the group
+# for example:
+# INSPECT_GROUPS='
+#   git_env=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE"
+#   user_env=DIFF_BRANCH,DIFF_FILES,DIFF_DIRS,DIFF_FORMULA,LABELS
+# '
+
+
+
 # DO NOT MODIFY IFS!
 IFS="
 "
+
+
 
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
@@ -42,4 +60,14 @@ inspect_fields() {
 
 inspect_fields ENV $(printf "%s" "$(env)" | sed 's/=.*//g' | tr '\n' ',')
 [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS
+
+
+if [ ! -z "$INSPECT_GROUPS" ]; then
+  groups=$(printf "$INSPECT_GROUPS" | tr -d ' ')
+  for group in ${groups}; do
+    gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
+    [ ! -z "$gkey" ] && inspect_fields $gkey $(printf "%s" "$group" | sed 's/.*=//')
+  done
+fi
+
 exit 0
