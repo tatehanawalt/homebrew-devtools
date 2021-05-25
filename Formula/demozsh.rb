@@ -28,7 +28,7 @@ class Demozsh < Formula
 
   bottle :unneeded
 
-  install do
+  def install
     if build.head?
       cd 'demozsh' do
         lib.install ['_demozsh', 'demozsh.zsh', 'doc/man/demozsh.1']
