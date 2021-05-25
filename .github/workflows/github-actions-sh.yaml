@@ -20,6 +20,7 @@ jobs:
         shell: bash
         env:
           DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+          DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
 #      - name: 'action'
 #        run: ./.github/scripts/parseaction.sh
 #        shell: bash
