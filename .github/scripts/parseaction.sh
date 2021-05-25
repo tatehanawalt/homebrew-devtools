@@ -54,7 +54,9 @@ for f_path in $diff_files; do
   fi
 done
 
+echo "$lint_files"
 
+exit 3
 
 printf "${lint_files[@]}" | while read line || [[ -n $line ]];
 do
