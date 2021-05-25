@@ -45,4 +45,22 @@ RESULT=$(echo $output | jq --arg field_name $search_field -r 'map(.[$field_name]
 echo "RESULT:"
 echo "$RESULT"
 
-echo "::set-output name=RESULT::$RESULT"
+echo "::set-output name=RESULT::${RESULT}"
+
+
+
+
+# core.addPath	Accessible using environment file GITHUB_PATH
+# core.debug	debug
+# core.error	error
+# core.endGroup	endgroup
+# core.exportVariable	Accessible using environment file GITHUB_ENV
+# core.getInput	Accessible using environment variable INPUT_{NAME}
+# core.getState	Accessible using environment variable STATE_{NAME}
+# core.isDebug	Accessible using environment variable RUNNER_DEBUG
+# core.saveState	save-state
+# core.setFailed	Used as a shortcut for ::error and exit 1
+# core.setOutput	set-output
+# core.setSecret	add-mask
+# core.startGroup	group
+# core.warning	warning file
