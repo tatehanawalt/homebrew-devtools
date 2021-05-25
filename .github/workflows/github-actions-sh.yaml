@@ -10,6 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: diff
+        name: diff
         run: ./.github/scripts/diff_files.sh
         shell: bash
         env:
