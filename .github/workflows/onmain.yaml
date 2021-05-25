@@ -15,8 +15,8 @@ jobs:
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: 2.6
-      - name: 'parseaction'
-        run: ./.github/scripts/parseaction.sh
+      - name: parseaction
+        run: .github/scripts/parseaction.sh
         shell: bash
 
 
