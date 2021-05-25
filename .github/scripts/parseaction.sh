@@ -37,7 +37,7 @@ printf "\n\nDIFF_FILES:\n"
 printf " - %s\n" $diff_files
 printf "\n\n"
 
-lint_files=()
+declare a lint_files
 
 for f_path in $diff_files; do
   full_path="$GITHUB_WORKSPACE/$f_path"
