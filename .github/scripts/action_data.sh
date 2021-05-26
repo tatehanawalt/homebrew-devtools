@@ -69,8 +69,10 @@ case $GITHUB_EVENT_NAME in
     write_result_set "$ID" "ID"
     OWNER=$(printf "%s" "$GITHUB_REPOSITORY" | sed 's/\/.*//')
     write_result_set "$OWNER" "OWNER"
-    LABELS=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name) | join(",")')
-    write_result_set "$LABELS" "LABELS"
+
+    LABELS=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name)')
+    write_result_set $(join_by , ${LABELS[@]}) "LABELS"
+
     ;;
   *)
     printf "\n\nUNHANDLED GITHUB_EVENT_NAME GITHUB_EVENT_NAME\n"
