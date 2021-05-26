@@ -103,16 +103,13 @@ formula_urls() {
 
 
 write_result_set() {
-
   result="$1"
   result=$(echo -e "$result" | sed 's/"//g')
   result="${result//'%'/'%25'}"
   result="${result//$'\n'/'%0A'}"
   result="${result//$'\r'/'%0D'}"
-
   printf "\nwrite_result_set: $1\n"
   printf "\nwrite_result_set: ${#@}\n"
-
   echo
   echo $result
   echo
@@ -122,79 +119,25 @@ write_result_set() {
 case $template in
   formula_names)
     write_result_set $(join_by , $(formula_names))
-    # echo "::set-output name=RESULT::$(join_by , $(formula_names))"
     ;;
   formula_paths)
     write_result_set $(join_by , $(formula_paths))
-
-    # result=$(join_by , $(formula_paths))
-    # echo "::set-output name=RESULT::$(join_by , $(formula_paths))"
     ;;
   formula_shas)
     write_result_set $(join_by , $(formula_shas))
-
-    # "$(formula_shas)"
-    # result=$(join_by , $(formula_shas))
-    # # result="$(join_by , $(formula_urls stable))"
-    # result=$(echo -e "$result" | sed 's/"//g')
-    # result="${result//'%'/'%25'}"
-    # result="${result//$'\n'/'%0A'}"
-    # result="${result//$'\r'/'%0D'}"
-    # echo
-    # echo $result
-    # echo
-    # echo "::set-output name=RESULT::$(echo -e $result)"
-    # echo "::set-output name=RESULT::$(join_by , $(formula_shas))"
     ;;
   formula_stable_urls)
     write_result_set $(join_by , $(formula_urls stable))
-
-    # result="$(join_by , $(formula_urls stable))"
-    # result=$(echo -e "$result" | sed 's/"//g')
-    # result="${result//'%'/'%25'}"
-    # result="${result//$'\n'/'%0A'}"
-    # result="${result//$'\r'/'%0D'}"
-    # echo
-    # echo $result
-    # echo
-    # echo "::set-output name=RESULT::$(echo -e $result)"
     ;;
   formula_head_urls)
     write_result_set $(join_by , $(formula_urls head))
-
-    # result="$(join_by , $(formula_urls head))"
-    # result=$(echo -e "$result" | sed 's/"//g')
-    # result="${result//'%'/'%25'}"
-    # result="${result//$'\n'/'%0A'}"
-    # result="${result//$'\r'/'%0D'}"
-    # echo
-    # echo $result
-    # echo
-    # echo "::set-output name=RESULT::$(echo $result)"
     ;;
 esac
-
-echo
 exit 0
 
 
 
-# result=($(printf "%s\n" $(formula_urls)))
-# result=$(echo "${result[@]}" | tr '\n' '\t')
-#  echo -e "formula_urls=$result\n"
-# echo "::set-output name=RESULT::$result"
 
-# result=$(formula_paths | sed 's/ /,/g')
-# echo -e "formula_paths=$result\n"
-# echo "::set-output name=RESULT::$result"
-
-# result=$(formula_names | tr '\n' ' ' | sed 's/ /,/g')
-# result=($(formula_names))
-# printf "%s" $(join_by , "${result[@]}")
-# printf "%s" $(join_by , $(formula_names))
-# echo "${result[@]}" | sed 's/\n/,/g'
-# echo $result | sed 's/ /,/g'
-# echo -e "formula_names=$result\n"
 
 
 
@@ -211,6 +154,7 @@ exit 0
 #  done
 #  printf "\n\n\n"
 #done
+
 #dev_parse_formula() {
 #  formula_file=$(cat $GITHUB_WORKSPACE/Formula/demozsh.rb)
 #  class_name=$(echo "$formula_file" | \
