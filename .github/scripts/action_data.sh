@@ -59,16 +59,16 @@ log
 case $GITHUB_EVENT_NAME in
   pull_request)
     log PULL_REQUEST
+
+    # AFTER -> NEW COMMIT
+    # BEFORE -> OLD COMMIT
+
     printf "GITHUB_REF=%s\n" "$GITHUB_REF"
-
     PULL_REQUEST_JSON=$(cat $GITHUB_EVENT_PATH | jq '.pull_request')
-
     ID=$(cat $GITHUB_EVENT_PATH | jq '.number')
     write_result_set "$ID" "ID"
-
     OWNER=$(printf "%s" "$GITHUB_REPOSITORY" | sed 's/\/.*//')
     write_result_set "$OWNER" "OWNER"
-
     LABELS=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name) | join(",")')
     write_result_set "$LABELS" "LABELS"
     ;;

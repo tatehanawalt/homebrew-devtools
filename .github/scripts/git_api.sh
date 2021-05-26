@@ -36,7 +36,25 @@ log() {
   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
   in_log=1
 }
-
+join_by () {
+  local d=${1-} f=${2-};
+  if shift 2; then
+    printf %s "$f" "${@/#/$d}";
+  fi;
+}
+write_result_set() {
+  result="$1"
+  result=$(echo -e "$result" | sed 's/"//g')
+  result="${result//'%'/'%25'}"
+  result="${result//$'\n'/'%0A'}"
+  result="${result//$'\r'/'%0D'}"
+  KEY="RESULT"
+  [ ! -z "$2" ] && KEY="$2"
+  echo "$KEY:"
+  echo $result
+  echo
+  echo "::set-output name=$KEY::$(echo -e $result)"
+}
 
 log "FIELDS"
 echo "CI=$in_ci"
@@ -108,7 +126,6 @@ run_input() {
     pull_requests)
       QUERY_BASE=pulls
       ;;
-
 
     release)
       QUERY_BASE=releases/$ID
