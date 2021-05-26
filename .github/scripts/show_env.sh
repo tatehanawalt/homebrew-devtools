@@ -71,7 +71,6 @@ log VERSIONS
 inspect_fields() {
   log $1
   fields=($(printf "%s" "$2" | sed 's/^,//' | sed 's/,$//' | tr ',' '\n' | sort -u | sed '/^$/d'))
-
   max_field_len=0
   for key in ${fields[@]}; do
     key_len=${#key}
@@ -92,28 +91,6 @@ inspect_fields() {
     for entry in ${keyval[@]}; do printf "\t     - %s\n" $entry; done
     printf "\n"
   done
-
-
-
-  return 1
-
-
-  for key in ${fields}; do
-    [ ${#key} -gt $max_field_len ] && max_field_len=${#key}
-    keyval=$(eval "echo \"\$$key\"")
-    printf "$prefix%s=%s\n" $key "$keyval"
-  done
-  log "${1}_TABLE"
-  for key in ${fields}; do
-    keyval=$(eval "echo \"\$$key\"")
-    lines=$(echo "$keyval" | tr ',' '\n' | wc -l)
-    [ $lines -lt 2 ] && printf "\t%-${max_field_len}s - %s\n" $key $keyval && continue
-    # We found a csv set entry... print it in the necessary format
-    entries=$(echo "$keyval" | tr ',' '\n' | tr '\t' '\n')
-    printf "\t%-${max_field_len}s\n" "$key:"
-    for entry in ${entries}; do printf "\t     - %s\n" $entry; done
-  done
-  log
 }
 
 inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
@@ -144,3 +121,19 @@ exit 0
 # printf "\n\n"
 # echo "$keyval" | tr ',' '\n'
 # lines=$(echo "$keyval" | tr ',' '\n' | wc -l)
+# for key in ${fields}; do
+#   [ ${#key} -gt $max_field_len ] && max_field_len=${#key}
+#   keyval=$(eval "echo \"\$$key\"")
+#   printf "$prefix%s=%s\n" $key "$keyval"
+# done
+# log "${1}_TABLE"
+# for key in ${fields}; do
+#   keyval=$(eval "echo \"\$$key\"")
+#   lines=$(echo "$keyval" | tr ',' '\n' | wc -l)
+#   [ $lines -lt 2 ] && printf "\t%-${max_field_len}s - %s\n" $key $keyval && continue
+#   # We found a csv set entry... print it in the necessary format
+#   entries=$(echo "$keyval" | tr ',' '\n' | tr '\t' '\n')
+#   printf "\t%-${max_field_len}s\n" "$key:"
+#   for entry in ${entries}; do printf "\t     - %s\n" $entry; done
+# done
+# log
