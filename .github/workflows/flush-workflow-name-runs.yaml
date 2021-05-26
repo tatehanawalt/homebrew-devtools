@@ -10,6 +10,7 @@ jobs:
   inspect-env:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: repo_workflow_id
         id: repo_workflow_id
         run: ./.github/scripts/git_api.sh

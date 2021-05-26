@@ -63,6 +63,8 @@ run_input() {
     artifacts)
       QUERY_BASE=actions/artifacts
       ;;
+
+
     collaborators)
       QUERY_BASE=collaborators
       WITH_AUTH=0
@@ -77,6 +79,8 @@ run_input() {
       WITH_AUTH=0
       # /repos/{owner}/{repo}/collaborators/{username}
       ;;
+
+
     labels)
       QUERY_BASE=labels
       ;;
@@ -100,6 +104,8 @@ run_input() {
     pull_request_merged)
       QUERY_BASE=pulls/ID/merge
       ;;
+
+
     release)
       QUERY_BASE=releases/$ID
       ;;
@@ -122,9 +128,13 @@ run_input() {
       SEARCH_FIELD=tag_name
       SEARCH_STRING='.[$field_name]'
       ;;
+
+
     tagged)
       QUERY_BASE=releases/tags/$TAG
       ;;
+
+
     repo_branches)
       QUERY_BASE=branches
       ;;
@@ -132,10 +142,13 @@ run_input() {
       QUERY_BASE=branches
       SEARCH_FIELD=name
       ;;
+
     repo_user_permissions)
       QUERY_BASE=collaborators/$USER/permission
       WITH_AUTH=0
       ;;
+
+
     repo_contributors)
       QUERY_BASE=contributors
       # WITH_AUTH=0
@@ -144,6 +157,8 @@ run_input() {
       QUERY_BASE=contributors
       SEARCH_FIELD=login
       ;;
+
+
     repo_languages)
       QUERY_BASE=languages
       ;;
@@ -151,25 +166,31 @@ run_input() {
       QUERY_BASE=languages
       SEARCH_STRING='keys | join(",")'
       ;;
+
+
     repo_tags)
       QUERY_BASE=tags
       WITH_AUTH=0
       ;;
+
+
     repo_teams)
       QUERY_BASE=teams
       WITH_AUTH=0
       ;;
+
+
     repo_topics)
       QUERY_BASE=topics
       WITH_AUTH=0
       ;;
 
 
-    repo_workflows)
-      QUERY_BASE=actions/workflows
-      ;;
     repo_workflow)
       QUERY_BASE=actions/workflows/$ID
+      ;;
+    repo_workflows)
+      QUERY_BASE=actions/workflows
       ;;
     repo_workflow_id)
       QUERY_BASE=actions/workflows
@@ -188,13 +209,13 @@ run_input() {
     repo_workflow_runs)
       QUERY_BASE=actions/runs
       ;;
-    repo_workflow_run_ids)
-      QUERY_BASE=actions/runs
-      SEARCH_STRING='.workflow_runs | map(.id) | join(",")'
-      ;;
     repo_workflow_completed_runs)
       QUERY_BASE=actions/runs
       SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")]'
+      ;;
+    repo_workflow_run_ids)
+      QUERY_BASE=actions/runs
+      SEARCH_STRING='.workflow_runs | map(.id) | join(",")'
       ;;
     repo_workflow_completed_run_ids)
       QUERY_BASE=actions/runs
@@ -249,6 +270,7 @@ run_input() {
       QUERY_URL="$GITHUB_API_URL/$TOPIC/$USER/$QUERY_BASE"
       SEARCH_FIELD=name
       ;;
+
     *)
       printf "UNHANDLED TARGET: $1"
       return 1
