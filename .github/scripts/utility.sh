@@ -57,7 +57,7 @@ case $template in
   keys_not_in_set)
 
     # TESTING:
-    # export target=keys_not_in_set
+    # export template=keys_not_in_set
     # export SET='brew,bug,democ,democpp,demogolang,demonodejs,demopython,demozsh,devenv,documentation,duplicate,enhancement,formula,good first issue,help wanted,invalid,ops,question,wontfix'
     # export KEYS='demozsh,devenv,donotfindmeinset,ialso do not exist'
 
