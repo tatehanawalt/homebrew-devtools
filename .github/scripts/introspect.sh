@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Introspection generates / parses data related to the contents of the
+# specific repository by parsing the local filesystem resources
+#
+#
+# IF any results require curl or any other network requests they should not
+# be part of this file
+
+
 # Returns values about a repo specific to our repo implementation
 # TEST VALUES:
 [ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)

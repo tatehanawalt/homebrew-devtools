@@ -17,6 +17,12 @@ jobs:
         env:
           template: label_names
 
+      # List of labels for this repository
+      - name: action_data
+        id: action_data
+        run: ./.github/scripts/action_data.sh
+        shell: bash
+
       # Lists the files, directories
       - id: diff
         name: diff
