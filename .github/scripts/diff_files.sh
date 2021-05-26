@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 in_log=0
 in_ci=1
@@ -56,16 +56,16 @@ fi
 cd $GITHUB_WORKSPACE
 
 
-has_dif_branch=$(git branch --list "$GITHUB_BASE_REF")
-if [ -z "$has_dif_branch" ]; then
+export has_diff_branch=$(git branch --list "$GITHUB_BASE_REF")
+if [ -z "$has_diff_branch" ]; then
   git fetch origin "$GITHUB_BASE_REF"
   git branch "$GITHUB_BASE_REF" FETCH_HEAD
   fetch_exit_code=$?
   echo "FETCH_EXIT_CODE=$fetch_exit_code"
 fi
 
-has_dif_branch=$(git branch --list "$GITHUB_BASE_REF")
-if [ -z "$has_dif_branch" ]; then
+has_diff_branch=$(git branch --list "$GITHUB_BASE_REF")
+if [ -z "$has_diff_branch" ]; then
   echo "FETCH_HEAD for branch $GITHUB_BASE_REF"
   exit 2
 fi
@@ -73,7 +73,7 @@ fi
 
 
 DIFF_FILES=$(git diff --name-only "$GITHUB_BASE_REF")
-printf "DIFF_FILES:\n"
+printf "\nDIFF_FILES:\n"
 printf "\t%s\n" $DIFF_FILES | sort -u
 
 
@@ -90,6 +90,7 @@ DIFF_FILES=$(echo $DIFF_FILES | sed 's/^ //g' | \
   sed 's/ $//g' | \
   sed 's/ /,/g')
 
+printf "\nDIFF_DIRS:\n"
 echo "$DIFF_FILES"
 
 DIFF_DIRS=$(echo $DIFF_DIRS | sed 's/^ //g' | \
