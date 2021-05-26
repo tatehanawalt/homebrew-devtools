@@ -64,15 +64,11 @@ inspect_fields() {
   for key in ${fields}; do
     keyval=$(eval "echo \"\$$key\"")
     lines=$(echo "$keyval" | tr ',' '\n' | wc -l)
-    if [ $lines -gt 1 ]; then
-      entries=$(echo "$keyval" | tr ',' '\n' | tr '\t' '\n')
-      printf "\t%-${max_field_len}s\n" "$key:"
-      for entry in ${entries}; do
-        printf "\t     - %s\n" $entry
-      done
-    else
-      printf "\t%-${max_field_len}s - %s\n" $key $keyval
-    fi
+    [ $lines -lt 2 ] && printf "\t%-${max_field_len}s - %s\n" $key $keyval && continue
+    # We found a csv set entry... print it in the necessary format
+    entries=$(echo "$keyval" | tr ',' '\n' | tr '\t' '\n')
+    printf "\t%-${max_field_len}s\n" "$key:"
+    for entry in ${entries}; do printf "\t     - %s\n" $entry; done
   done
   log
 }
