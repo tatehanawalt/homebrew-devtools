@@ -110,18 +110,25 @@ case $template in
     echo "::set-output name=RESULT::$(join_by , $(formula_paths))"
     ;;
   formula_shas)
-    echo "::set-output name=RESULT::$(join_by , $(formula_shas))"
-    ;;
-  formula_stable_urls)
-    result="$(join_by , $(formula_urls stable))"
-
+    result=$(join_by , $(formula_shas))
+    # result="$(join_by , $(formula_urls stable))"
     result=$(echo -e "$result" | sed 's/"//g')
     result="${result//'%'/'%25'}"
     result="${result//$'\n'/'%0A'}"
     result="${result//$'\r'/'%0D'}"
-
     echo
-    # echo -e $result
+    echo $result
+    echo
+    echo "::set-output name=RESULT::$(echo -e $result)"
+    # echo "::set-output name=RESULT::$(join_by , $(formula_shas))"
+    ;;
+  formula_stable_urls)
+    result="$(join_by , $(formula_urls stable))"
+    result=$(echo -e "$result" | sed 's/"//g')
+    result="${result//'%'/'%25'}"
+    result="${result//$'\n'/'%0A'}"
+    result="${result//$'\r'/'%0D'}"
+    echo
     echo $result
     echo
     echo "::set-output name=RESULT::$(echo -e $result)"
@@ -133,13 +140,10 @@ case $template in
     result="${result//'%'/'%25'}"
     result="${result//$'\n'/'%0A'}"
     result="${result//$'\r'/'%0D'}"
-
     echo
-    # echo -e $result
     echo $result
     echo
     echo "::set-output name=RESULT::$(echo $result)"
-    # echo "::set-output name=RESULT::$(echo -e $result)"
     ;;
 esac
 
