@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       workflowName:
-        description: 'Name of workflow to flush'
+        description: 'Workflow Name'
         required: true
         default: 'na'
 jobs:

@@ -1,0 +1,24 @@
+name: check-repo-labels
+on: [workflow_dispatch]
+jobs:
+  inspect-env:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the repo
+      - uses: actions/checkout@v2
+
+      # Get the workflow id from the workflow name=$NAME
+      - name: label_names
+        id: label_names
+        run: ./.github/scripts/git_api.sh
+        shell: bash
+        env:
+          template: label_names
+
+      # For debugging and troubleshooting - introspective environment audit
+      - name: inspect_env
+        run: ./.github/scripts/inspect_env.sh
+        shell: bash
+        env:
+          INSPECT_GROUPS: 'reference=LABEL_NAMES'
+          LABEL_NAMES: "${{ steps.label_names.outputs.RESULT }}"

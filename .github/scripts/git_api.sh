@@ -1,6 +1,5 @@
 #!/bin/sh
-
-
+# Setup the default parameters
 WITH_AUTH=1
 WITH_SEARCH=1
 WITH_DELETE=1
@@ -8,44 +7,29 @@ TOPIC=repos
 in_log=0
 in_ci=1
 request_status=0
-
 [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
-
-# This function starts a git actions log group. Call with 0 args to end a log
-# group without starting a new one
-log() {
-  if [ $in_log -ne 0 ]; then
-    if [ $in_ci -eq 0 ]; then
-      echo "::endgroup::";
-    fi
-    in_log=0
-  fi
-  # Do we need to start a group?
-  if [ ! -z "$1" ]; then
-    if [ $in_ci -eq 0 ]; then
-      echo "::group::$1";
-    else
-      echo "$1:"
-    fi
-    in_log=1
-  fi
-}
-
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
+  if [ -z "$template" ]; then
+    echo "NO TEMPLATE SPECIFIED"
+    exit 1
+  fi
 fi
-
-if [ -z "$template" ]; then
-  echo "NO TEMPLATE SPECIFIED"
-  exit 1
-fi
-
 [ -z "$GITHUB_API_URL" ] && GITHUB_API_URL="https://api.github.com"
 [ ! -z "$GITHUB_REPOSITORY_OWNER" ] && OWNER=$GITHUB_REPOSITORY_OWNER
 [ ! -z "$GITHUB_REPOSITORY" ] && REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
 [ ! -z "$GITHUB_HEAD_REF" ] && HEAD=$GITHUB_HEAD_REF
 [ ! -z "$GITHUB_BASE_REF" ] && BASE=$GITHUB_BASE_REF
 
+# This function starts a git actions log group. Call with 0 args to end a log
+# group without starting a new one
+log() {
+  [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
+  in_log=0
+  [ -z "$1" ] && return # Input specified we do not need to start a new log group
+  [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
+  in_log=1
+}
 log "FIELDS"
 echo "CI=$in_ci"
 echo "OWNER=$OWNER"
@@ -59,6 +43,8 @@ echo "ID=$ID"
 echo "template=$template"
 
 run_input() {
+
+
   case $1 in
     artifacts)
       QUERY_BASE=actions/artifacts
@@ -88,6 +74,11 @@ run_input() {
       SEARCH_FIELD=name
       QUERY_BASE=labels
       ;;
+    label_ids)
+      SEARCH_FIELD=id
+      QUERY_BASE=labels
+      ;;
+
 
     pull_request)
       QUERY_BASE=pulls/ID
@@ -142,7 +133,6 @@ run_input() {
       QUERY_BASE=branches
       SEARCH_FIELD=name
       ;;
-
     repo_user_permissions)
       QUERY_BASE=collaborators/$USER/permission
       WITH_AUTH=0
@@ -221,7 +211,7 @@ run_input() {
       QUERY_BASE=actions/runs
       SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
       ;;
-    repo_workflow_usage) # Specify an $ID to get billing of this repos workflow
+    repo_workflow_usage)
       QUERY_BASE=actions/workflows/$ID/timing
       ;;
 
@@ -241,6 +231,7 @@ run_input() {
       QUERY_BASE=actions/workflows/$ID/runs
       SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
       ;;
+
 
     delete_workflow_run)
       WITH_DELETE=0
@@ -276,21 +267,9 @@ run_input() {
       return 1
       ;;
   esac
-
-  # Aggregate values
-  if [ -z "$QUERY_URL" ]; then
-    QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
-  fi
-
-  if [ ! -z "$SEARCH_FIELD" ]; then
-    WITH_SEARCH=0
-  fi
-  if [ $WITH_SEARCH -eq 0 ]; then
-    if [ -z "$SEARCH_STRING" ]; then
-      SEARCH_STRING='map(.[$field_name]) | join(",")'
-    fi
-  fi
-
+  [ -z "$QUERY_URL" ] && QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
+  [ ! -z "$SEARCH_FIELD" ] && WITH_SEARCH=0
+  [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ] && SEARCH_STRING='map(.[$field_name]) | join(",")'
   echo "QUERY_BASE=$QUERY_BASE"
   echo "TOPIC=$TOPIC"
   echo "WITH_SEARCH=$WITH_SEARCH"
@@ -300,7 +279,6 @@ run_input() {
   echo "SEARCH_FIELD=$SEARCH_FIELD"
   echo "SEARCH_STRING=$SEARCH_STRING"
   echo "ID=$ID"
-
   response=""
   if [ $WITH_DELETE -eq 0 ]; then
     response=$(curl \
@@ -326,45 +304,35 @@ run_input() {
         $QUERY_URL)
     fi
   fi
-
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   request_status=$((${request_status} + 0))
   [ $request_status -eq 200 ] && request_status=0
   [ $request_status -eq 204 ] && request_status=0
-
   log RESPONSE
   echo $output | jq
   if [ ! -z "$SEARCH_STRING" ]; then
     log SEARCH
-    result=$(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING" )
-    jq_exit_code=$?
+    result=$(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING")
     echo "$result\n"
   fi
   log
   echo "::set-output name=RESULT::${result}"
 }
 
-if [ ! -z "$ID" ]; then
-  IDS=$(printf "%s" $ID | tr ',' '\n')
-  lines=$(echo "$IDS" | wc -l)
-  if [ $lines -gt 1 ]; then
-    for entry in $IDS; do
-      ID=$entry
-      request_status=0
-      run_input $template
-      [ $request_status -ne 0 ] && break
-    done
-  else
-    run_input $template
-  fi
-else
+IDS=$(printf "%s" $ID | tr ',' '\n')
+lines=$(echo "$IDS" | wc -l)
+if [ $lines -le 1 ]; then
   run_input $template
+  exit $request_status
 fi
-
+for entry in $IDS; do
+  ID=$entry
+  request_status=0
+  run_input $template
+  [ $request_status -ne 0 ] && break
+done
 exit $request_status
-
-
 
 # ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
 # ESCAPED="${ESCAPED//'%'/'%25'}"
