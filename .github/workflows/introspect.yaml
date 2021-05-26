@@ -15,8 +15,6 @@ jobs:
         env:
           template: label_names
 
-
-
       # Get the set of formula paths
       - name: formula_paths
         id: formula_paths
@@ -24,8 +22,6 @@ jobs:
         shell: bash
         env:
           template: formula_paths
-
-
 
       # For debugging and troubleshooting - introspective environment audit
       - name: show_env
