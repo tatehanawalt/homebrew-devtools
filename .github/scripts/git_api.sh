@@ -269,9 +269,7 @@ run_input() {
   echo "SEARCH_FIELD=$SEARCH_FIELD"
   echo "SEARCH_STRING=$SEARCH_STRING"
 
-  status=1
   response=""
-
   if [ $WITH_DELETE -eq 0 ]; then
     response=$(curl \
       -X DELETE \
@@ -297,7 +295,13 @@ run_input() {
     fi
   fi
 
+  log INITIAL_RESPONSE
+
+  echo "$response"
+
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
+
+  echo $output
 
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   request_status=$((${request_status} + 0))
