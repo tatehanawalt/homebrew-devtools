@@ -30,6 +30,7 @@ printf "\nREQUEST_URL=%s\n" "$REQUEST_URL"
 curl \
   -X POST \
   -d '["devenv"]' \
+  -H "Authorization: token $GITHUB_AUTH_TOKEN" \
   -H "Accept: application/vnd.github.v3+json" \
   "$REQUEST_URL"
 

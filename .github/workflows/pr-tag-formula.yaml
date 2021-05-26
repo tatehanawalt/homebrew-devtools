@@ -68,6 +68,7 @@ jobs:
         env:
           LABELS: "${{ steps.keys_not_in_set.outputs.RESULT }}"
           ID: ${{ steps.action_data.outputs.ID }}
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Print the values from introspection
       - name: show_env
