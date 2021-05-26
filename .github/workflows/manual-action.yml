@@ -45,7 +45,9 @@ jobs:
         id: delete_workflow_run
         run: ./.github/scripts/git_api.sh
         shell: bash
+        with:
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         env:
           template: delete_workflow_run
           ID: "${{ steps.workflow_run_ids.outputs.RESULT }}"
-          GITHUB_AUTH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          # GITHUB_AUTH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
