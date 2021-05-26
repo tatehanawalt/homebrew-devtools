@@ -7,6 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: user_repos
+        run: ./.github/scripts/git_api.sh
+        shell: bash
+        env:
+          template: user_repos
+          USER: tatehanawalt
       - name: inspect_env
         run: ./.github/scripts/inspect_env.sh
         shell: bash
