@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 WITH_AUTH=1
 WITH_SEARCH=1
 WITH_DELETE=1
@@ -322,7 +323,7 @@ run_input() {
 
 if [ ! -z "$ID" ]; then
   IDS=$(printf "%s" $ID | tr ',' '\n')
-  lines=$(printf "$IDS" | wc -l)
+  lines=$(echo "$IDS" | wc -l)
   if [ $lines -gt 1 ]; then
     for entry in $IDS; do
       ID=$entry
