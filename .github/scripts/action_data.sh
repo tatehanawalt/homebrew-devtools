@@ -67,10 +67,14 @@ case $GITHUB_EVENT_NAME in
     PULL_REQUEST_JSON=$(cat $GITHUB_EVENT_PATH | jq '.pull_request')
     ID=$(cat $GITHUB_EVENT_PATH | jq '.number')
     write_result_set "$ID" "ID"
-    OWNER=$(printf "%s" "$GITHUB_REPOSITORY" | sed 's/\/.*//')
-    write_result_set "$OWNER" "OWNER"
 
-    LABELS=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name)')
+    OWNER=$(printf "%s" "$GITHUB_REPOSITORY" | sed 's/\/.*//')
+    write_result_set $(join_by , $OWNER) "OWNER"
+
+
+    printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name)'
+
+    LABELS=($(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name)'))
     write_result_set $(join_by , ${LABELS[@]}) "LABELS"
 
     ;;
