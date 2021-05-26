@@ -3,18 +3,25 @@
 # Takes a compare branch and outputs the files that have changed between
 # the latest compare branch and the commit that fired the action
 
+if [ -z "$COMPARE_BRANCH" ] && [ ! -z "$GITHUB_BASE_REF" ]; then
+  COMPARE_BRANCH=$GITHUB_BASE_REF
+fi
+
 if [ -z "$COMPARE_BRANCH" ]; then
   echo "COMPARE_BRANCH length is 0... set COMPARE_BRANCH=<branch_name>"
   exit 2
 fi
+
 if [ -z "$GITHUB_WORKSPACE" ]; then
   echo "GITHUB_WORKSPACE length is 0"
   exit 2
 fi
+
 if [ ! -d "$GITHUB_WORKSPACE" ]; then
   echo "GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
   exit 2
 fi
+
 echo "COMPARE_BRANCH=$COMPARE_BRANCH"
 cd $GITHUB_WORKSPACE
 has_dif_branch=$(git branch --list "$COMPARE_BRANCH")

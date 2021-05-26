@@ -153,9 +153,17 @@ case $template in
     QUERY_BASE=contributors
     # WITH_AUTH=0
     ;;
+  repo_contributor_names)
+    QUERY_BASE=contributors
+    SEARCH_FIELD=login
+    ;;
+
   repo_languages)
     QUERY_BASE=languages
-    WITH_AUTH=0
+    ;;
+  repo_language_names)
+    QUERY_BASE=languages
+    SEARCH_STRING='keys | join(",")'
     ;;
   repo_tags)
     QUERY_BASE=tags
@@ -270,6 +278,7 @@ if [ ! -z "$SEARCH_STRING" ]; then
   jq_exit_code=$?
   echo "SEARCHED:"
   echo "$ESCAPED"
+  ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
   # ESCAPED="${ESCAPED//'%'/'%25'}"
   # ESCAPED="${ESCAPED//$'\n'/'%0A'}"
   # ESCAPED="${ESCAPED//$'\r'/'%0D'}"
