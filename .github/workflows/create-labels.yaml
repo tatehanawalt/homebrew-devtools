@@ -38,7 +38,7 @@ jobs:
 
       # For debugging and troubleshooting - introspective environment audit
       - name: create_label
-        run: ./.github/scripts/create_label.sh
+        run: ./.github/scripts/create_labels.sh
         shell: bash
         env:
           CHECK_CREATE_LABELS: "${{ steps.formula_names.outputs.RESULT }}"
