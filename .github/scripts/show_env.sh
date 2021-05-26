@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Used as a debugging script to see what an environment looks like
 #
@@ -48,15 +48,19 @@ log() {
 log VERSIONS
   echo "BASH:"
   printf "\t%s\n" $(bash --version)
+  printf "\t- %s\n" $(which bash)
   echo
   echo "BREW:"
   printf "\t%s\n" $(brew --version)
+  printf "\t- %s\n" $(which brew)
   echo
   echo "GIT:"
   printf "\t%s\n" $(git --version)
+  printf "\t- %s\n" $(which git)
   echo
   echo "JQ:"
   printf "\t%s\n" $(jq --version)
+  printf "\t- %s\n" $(which jq)
   echo
 
 # Normalize input inspect_groups
