@@ -9,7 +9,7 @@
 # exit    :0=success, 1=input error 2=execution error
 #==============================================================================
 class Democ < Formula
-  depends_on "llvm" => :install            # dependencies
+  depends_on "llvm" => :install           # dependencies
   desc "Brew install democ"               # formula description
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes

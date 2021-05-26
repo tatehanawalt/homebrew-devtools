@@ -70,8 +70,48 @@ log VERSIONS
 # variable value of each key
 inspect_fields() {
   log $1
-  fields=$(printf "%s" "$2" | sed 's/^,//' | sed 's/,$//' | tr ',' '\n' | sort -u )
+  fields=($(printf "%s" "$2" | sed 's/^,//' | sed 's/,$//' | tr ',' '\n' | sort -u | sed '/^$/d'))
+
   max_field_len=0
+  for key in ${fields[@]}; do
+
+    key_len=${#key}
+
+    [ $key_len -gt $max_field_len ] && max_field_len=$(($key_len + 1))
+
+    printf "key: %s\n" $key
+    printf "\tkeylen: %d\n" $key_len
+    echo "$key" | wc -m
+    keyval=$(eval "echo \"\$$key\"")
+    printf "$prefix%s=%s\n" $key "$keyval"
+  done
+
+
+
+  printf "\n\n"
+
+  printf "max_field_len: %d\n" $max_field_len
+
+  printf "\n\n"
+
+  log "${1}_TABLE"
+  for key in ${fields[@]}; do
+    keyval=($(eval "echo -e \"\$$key\"" | tr ',' '\n'))
+    printf "%-${max_field_len}s" "$key:"
+    if [ ${#keyval[@]} -lt 2 ]; then
+      printf " %s\n" "$keyval"
+      continue
+    fi
+    printf "\n"
+    for entry in ${keyval[@]}; do printf "\t     - %s\n" $entry; done
+    printf "\n"
+  done
+
+
+
+  return 1
+
+
   for key in ${fields}; do
     [ ${#key} -gt $max_field_len ] && max_field_len=${#key}
     keyval=$(eval "echo \"\$$key\"")
@@ -110,3 +150,11 @@ fi
 log
 
 exit 0
+
+
+# printf "\t%s\n" ${keyval[@]}
+# printf "\t%d\n" ${#keyval[@]}
+# echo "$keyval"
+# printf "\n\n"
+# echo "$keyval" | tr ',' '\n'
+# lines=$(echo "$keyval" | tr ',' '\n' | wc -l)

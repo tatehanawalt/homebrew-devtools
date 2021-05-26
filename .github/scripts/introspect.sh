@@ -115,9 +115,31 @@ case $template in
   formula_stable_urls)
     result="$(join_by , $(formula_urls stable))"
 
-    echo -e $result
+    result=$(echo -e "$result" | sed 's/"//g')
+    result="${result//'%'/'%25'}"
+    result="${result//$'\n'/'%0A'}"
+    result="${result//$'\r'/'%0D'}"
 
+    echo
+    # echo -e $result
+    echo $result
+    echo
     echo "::set-output name=RESULT::$(echo -e $result)"
+    ;;
+  formula_head_urls)
+    result="$(join_by , $(formula_urls head))"
+
+    result=$(echo -e "$result" | sed 's/"//g')
+    result="${result//'%'/'%25'}"
+    result="${result//$'\n'/'%0A'}"
+    result="${result//$'\r'/'%0D'}"
+
+    echo
+    # echo -e $result
+    echo $result
+    echo
+    echo "::set-output name=RESULT::$(echo $result)"
+    # echo "::set-output name=RESULT::$(echo -e $result)"
     ;;
 esac
 
@@ -193,8 +215,6 @@ exit 0
 #  #  echo "${return_set[@]}"
 #}
 #exit 0
-
-
 
 # echo "$(formula_paths)"
 # echo "$(formula_names)"
