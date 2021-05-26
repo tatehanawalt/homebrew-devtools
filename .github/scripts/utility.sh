@@ -52,7 +52,7 @@ contains() {
   [[ $@ =~ (^|[[:space:]])$check($|[[:space:]]) ]] && return 0 || return 1
 }
 
-case $target in
+case $template in
   # Check which of the $KEYS (csv) are not in the $SET (csv)
   keys_not_in_set)
 
