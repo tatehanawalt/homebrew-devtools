@@ -1,4 +1,4 @@
-name: check-repo-labels
+name: introspect
 on: [workflow_dispatch]
 jobs:
   inspect-env:
@@ -15,10 +15,23 @@ jobs:
         env:
           template: label_names
 
+
+
+      # Get the set of formula paths
+      - name: formula_paths
+        id: formula_paths
+        run: ./.github/scripts/introspect.sh
+        shell: bash
+        env:
+          template: formula_paths
+
+
+
       # For debugging and troubleshooting - introspective environment audit
       - name: show_env
         run: ./.github/scripts/show_env.sh
         shell: bash
         env:
-          INSPECT_GROUPS: 'reference=LABEL_NAMES'
+          INSPECT_GROUPS: 'reference=LABEL_NAMES,FORMULA_PATHS'
           LABEL_NAMES: "${{ steps.label_names.outputs.RESULT }}"
+          FORMULA_PATHS: "${{ steps.formula_paths.outputs.RESULT }}"

@@ -25,11 +25,18 @@ log() {
   in_log=1
 }
 
+log PARAMS
 echo "template=$template"
 echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+log
 
+case $template in
+  formula_paths)
+    file_paths=$(ls $GITHUB_WORKSPACE/Formula/*.rb)
+    formula_paths=()
+    for f_path in $file_paths; do formula_paths+=(${f_path#$GITHUB_WORKSPACE/}); done
+    echo "${formula_paths[@]}" | sed 's/ /,/g'
+    echo "::set-output name=RESULT::$(echo "${formula_paths[@]}" | sed 's/ /,/g')"
 
-# case $template in
-#   formula)
-#     ;;
-# esac
+    ;;
+esac
