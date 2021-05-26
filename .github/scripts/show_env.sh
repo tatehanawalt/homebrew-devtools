@@ -21,7 +21,7 @@ log() {
 
   # Do we need to start a group?
   if [ ! -z "$1" ]; then
-    [ $in_ci -eq 0 ] && echo "::group::$1"; || echo "$1:"
+    [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1:"
     in_log=1
   fi
 }
@@ -89,29 +89,3 @@ fi
 log
 
 exit 0
-
-# keyval=$(eval "echo \"\$$key\"")
-# gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
-# gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
-# printf "\t%s\n" ${keyval[@]}
-# printf "\t%d\n" ${#keyval[@]}
-# echo "$keyval"
-# printf "\n\n"
-# echo "$keyval" | tr ',' '\n'
-# lines=$(echo "$keyval" | tr ',' '\n' | wc -l)
-# for key in ${fields}; do
-#   [ ${#key} -gt $max_field_len ] && max_field_len=${#key}
-#   keyval=$(eval "echo \"\$$key\"")
-#   printf "$prefix%s=%s\n" $key "$keyval"
-# done
-# log "${1}_TABLE"
-# for key in ${fields}; do
-#   keyval=$(eval "echo \"\$$key\"")
-#   lines=$(echo "$keyval" | tr ',' '\n' | wc -l)
-#   [ $lines -lt 2 ] && printf "\t%-${max_field_len}s - %s\n" $key $keyval && continue
-#   # We found a csv set entry... print it in the necessary format
-#   entries=$(echo "$keyval" | tr ',' '\n' | tr '\t' '\n')
-#   printf "\t%-${max_field_len}s\n" "$key:"
-#   for entry in ${entries}; do printf "\t     - %s\n" $entry; done
-# done
-# log
