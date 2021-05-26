@@ -13,6 +13,11 @@ for label in ${labels[@]}; do
 done
 printf "\n"
 
+post_body=$(printf "\"%s\"," "${labels[@]}" | sed 's/,$//')
+printf "post_body: %s\n" "$post_body"
+
+post_body=$(printf "[%s]" "$post_body")
+printf "post_body: %s\n" "$post_body"
 
 [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
 [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
@@ -29,10 +34,9 @@ printf "\nREQUEST_URL=%s\n" "$REQUEST_URL"
 
 curl \
   -X POST \
-  -d '["devenv"]' \
+  -d $post_body \
   -H "Authorization: token $GITHUB_AUTH_TOKEN" \
   -H "Accept: application/vnd.github.v3+json" \
   "$REQUEST_URL"
-
 
 printf "\n"
