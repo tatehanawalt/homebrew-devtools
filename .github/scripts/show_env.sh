@@ -74,25 +74,11 @@ inspect_fields() {
 
   max_field_len=0
   for key in ${fields[@]}; do
-
     key_len=${#key}
-
     [ $key_len -gt $max_field_len ] && max_field_len=$(($key_len + 1))
-
-    printf "key: %s\n" $key
-    printf "\tkeylen: %d\n" $key_len
-    echo "$key" | wc -m
     keyval=$(eval "echo \"\$$key\"")
     printf "$prefix%s=%s\n" $key "$keyval"
   done
-
-
-
-  printf "\n\n"
-
-  printf "max_field_len: %d\n" $max_field_len
-
-  printf "\n\n"
 
   log "${1}_TABLE"
   for key in ${fields[@]}; do
