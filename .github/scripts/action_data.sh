@@ -50,33 +50,24 @@ log
 log PRE_EVENT
 printf "GITHUB_EVENT_NAME=%s\n" "$GITHUB_EVENT_NAME"
 REPOSITORY_JSON=$(cat $GITHUB_EVENT_PATH | jq '.repository')
-
 REPOSITORY_ID=$(echo "$REPOSITORY_JSON" | jq -r '.id')
 write_result_set "$REPOSITORY_ID" "REPOSITORY_ID"
-
 REPO=$(echo "$REPOSITORY_JSON" | jq -r '.name')
 write_result_set "$REPO" "REPO"
-
 log
 case $GITHUB_EVENT_NAME in
   pull_request)
     log PULL_REQUEST
-
     # AFTER -> NEW COMMIT
     # BEFORE -> OLD COMMIT
-
     printf "GITHUB_REF=%s\n" "$GITHUB_REF"
     PULL_REQUEST_JSON=$(cat $GITHUB_EVENT_PATH | jq '.pull_request')
     ID=$(cat $GITHUB_EVENT_PATH | jq '.number')
-    write_result_set "$ID" "ID"
-
+    write_result_set "$ID" ID
     OWNER=$(printf "%s" "$GITHUB_REPOSITORY" | sed 's/\/.*//')
-    write_result_set $(join_by , $OWNER) "OWNER"
-
-
+    write_result_set $(join_by , $OWNER) OWNER
     labels_str=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name) | join(",")')
-    write_result_set "${labels_str[@]}" "LABELS"
-
+    write_result_set "${labels_str[@]}" LABELS
     ;;
   *)
     printf "\n\nUNHANDLED GITHUB_EVENT_NAME GITHUB_EVENT_NAME\n"
