@@ -25,6 +25,8 @@ h1 {
 }
       </style>
       <h1>Hello, world</h1>
+
+      <button>This is a button</button>
     </div>
   </foreignObject>
 </svg>
