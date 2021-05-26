@@ -1,11 +1,5 @@
 name: flush-all-completed-workflow-runs
-on:
-  workflow_dispatch:
-    inputs:
-      workflowName:
-        description: 'Name of workflow to flush'
-        required: true
-        default: 'na'
+on: [workflow_dispatch]
 jobs:
   inspect-env:
     runs-on: ubuntu-latest
