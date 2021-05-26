@@ -26,6 +26,7 @@ jobs:
 
       # For debugging and troubleshooting - introspective environment audit
       - name: show_env
+        id: show_env
         run: ./.github/scripts/show_env.sh
         shell: bash
         env:
