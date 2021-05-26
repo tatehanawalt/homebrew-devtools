@@ -270,10 +270,9 @@ if [ ! -z "$SEARCH_STRING" ]; then
   jq_exit_code=$?
   echo "SEARCHED:"
   echo "$ESCAPED"
-  ESCAPED="${ESCAPED//'%'/'%25'}"
-  ESCAPED="${ESCAPED//$'\n'/'%0A'}"
-  ESCAPED="${ESCAPED//$'\r'/'%0D'}"
-  echo "ESCAPED:"
+  # ESCAPED="${ESCAPED//'%'/'%25'}"
+  # ESCAPED="${ESCAPED//$'\n'/'%0A'}"
+  # ESCAPED="${ESCAPED//$'\r'/'%0D'}"
   echo "EXIT_CODE=$jq_exit_code"
   printf "%s" "$ESCAPED"
   echo
