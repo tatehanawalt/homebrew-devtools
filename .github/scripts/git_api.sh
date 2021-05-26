@@ -51,6 +51,7 @@ echo "ID=$ID"
 echo "template=$template"
 
 run_input() {
+
   case $1 in
     artifacts)
       QUERY_BASE=actions/artifacts
@@ -84,10 +85,15 @@ run_input() {
       ;;
 
     pull_request)
-      QUERY_BASE=pulls/ID
+      QUERY_BASE=pulls/$ID
       ;;
-    pull_requests)
-      QUERY_BASE=pulls
+    pull_request_labels)
+      QUERY_BASE=pulls/$ID
+      SEARCH_STRING='.labels'
+      ;;
+    pull_request_label_names)
+      QUERY_BASE=pulls/$ID
+      SEARCH_STRING='[.labels[]] | map(.name) | join(",")'
       ;;
     pull_request_commits)
       QUERY_BASE=pulls/ID/commits
@@ -98,6 +104,11 @@ run_input() {
     pull_request_merged)
       QUERY_BASE=pulls/ID/merge
       ;;
+
+    pull_requests)
+      QUERY_BASE=pulls
+      ;;
+
 
     release)
       QUERY_BASE=releases/$ID
@@ -159,12 +170,10 @@ run_input() {
       QUERY_BASE=tags
       WITH_AUTH=0
       ;;
-
     repo_teams)
       QUERY_BASE=teams
       WITH_AUTH=0
       ;;
-
     repo_topics)
       QUERY_BASE=topics
       WITH_AUTH=0
@@ -258,6 +267,7 @@ run_input() {
       return 1
       ;;
   esac
+
   [ -z "$QUERY_URL" ] && QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
   [ ! -z "$SEARCH_FIELD" ] && WITH_SEARCH=0
   [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ] && SEARCH_STRING='map(.[$field_name]) | join(",")'
@@ -297,11 +307,13 @@ run_input() {
         $QUERY_URL)
     fi
   fi
+
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   request_status=$((${request_status} + 0))
   [ $request_status -eq 200 ] && request_status=0
   [ $request_status -eq 204 ] && request_status=0
+
   log RESPONSE
   echo $output | jq
   if [ ! -z "$SEARCH_STRING" ]; then

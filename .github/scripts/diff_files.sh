@@ -3,40 +3,38 @@
 # Takes a compare branch and outputs the files that have changed between
 # the latest compare branch and the commit that fired the action
 
-if [ -z "$COMPARE_BRANCH" ] && [ ! -z "$GITHUB_BASE_REF" ]; then
-  COMPARE_BRANCH=$GITHUB_BASE_REF
-fi
+#  Compare against the main branch
+[ -z "$GITHUB_BASE_REF" ] && GITHUB_BASE_REF=main
 
-if [ -z "$COMPARE_BRANCH" ]; then
-  echo "COMPARE_BRANCH length is 0... set COMPARE_BRANCH=<branch_name>"
+# Using the HEAD branch
+[ -z "$GITHUB_HEAD_REF" ] && GITHUB_HEAD_REF=main
+if [ -z "$GITHUB_HEAD_REF" ]; then
+  echo "GITHUB_HEAD_REF length is 0... set GITHUB_HEAD_REF=<branch_name>"
   exit 2
 fi
-
 if [ -z "$GITHUB_WORKSPACE" ]; then
   echo "GITHUB_WORKSPACE length is 0"
   exit 2
 fi
-
 if [ ! -d "$GITHUB_WORKSPACE" ]; then
   echo "GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
   exit 2
 fi
-
-echo "COMPARE_BRANCH=$COMPARE_BRANCH"
+echo "GITHUB_HEAD_REF=$GITHUB_HEAD_REF"
 cd $GITHUB_WORKSPACE
-has_dif_branch=$(git branch --list "$COMPARE_BRANCH")
+has_dif_branch=$(git branch --list "$GITHUB_HEAD_REF")
 if [ -z "$has_dif_branch" ]; then
-  git fetch origin "$COMPARE_BRANCH"
-  git branch "$COMPARE_BRANCH" FETCH_HEAD
+  git fetch origin "$GITHUB_HEAD_REF"
+  git branch "$GITHUB_HEAD_REF" FETCH_HEAD
   fetch_exit_code=$?
   echo "FETCH_EXIT_CODE=$fetch_exit_code"
 fi
-has_dif_branch=$(git branch --list "$COMPARE_BRANCH")
+has_dif_branch=$(git branch --list "$GITHUB_HEAD_REF")
 if [ -z "$has_dif_branch" ]; then
-  echo "FETCH_HEAD for branch $COMPARE_BRANCH"
+  echo "FETCH_HEAD for branch $GITHUB_HEAD_REF"
   exit 2
 fi
-DIFF_FILES=$(git diff --name-only "$COMPARE_BRANCH")
+DIFF_FILES=$(git diff --name-only "$GITHUB_HEAD_REF")
 printf "DIFF_FILES:\n"
 printf "\t%s\n" $DIFF_FILES | sort -u
 DIFF_DIRS=""
@@ -58,7 +56,7 @@ DIFF_DIRS=$(echo $DIFF_DIRS | sed 's/^ //g' | \
   sed 's/ $//g' | \
   sed 's/ /,/g')
 echo "$DIFF_DIRS"
-echo "::set-output name=DIFF_BRANCH::$COMPARE_BRANCH"
+echo "::set-output name=DIFF_BRANCH::$GITHUB_HEAD_REF"
 echo "::set-output name=DIFF_FILES::$DIFF_FILES"
 echo "::set-output name=DIFF_DIRS::$DIFF_DIRS"
 exit 0
