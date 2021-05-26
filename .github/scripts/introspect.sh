@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Returns values about a repo specific to our repo implementation
 
