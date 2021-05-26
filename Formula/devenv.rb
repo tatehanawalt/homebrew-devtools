@@ -9,12 +9,12 @@
 #===============================================================================
 class Devenv < Formula
   bottle :unneeded                        # formula that can be installed without compilation
-  desc "Brew install demozsh"             # formula description
-  homepage "https://www.TateHanawalt.com" # my website
+  desc 'Brew install demozsh'             # formula description
+  homepage 'https://www.TateHanawalt.com' # my website
   revision 0                              # force compile with no version changes
-  version "0.0.0"                         # Formulae version
+  version '0.0.0'                         # Formulae version
   head do
-    url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
+    url 'https://github.com/tatehanawalt/.th_sys.git', branch: 'main'
   end
   def install
     puts "install DEVENV brew formula install:\n"

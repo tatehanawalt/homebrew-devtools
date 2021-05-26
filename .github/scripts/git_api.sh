@@ -36,9 +36,26 @@ log() {
   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
   in_log=1
 }
+join_by () {
+  local d=${1-} f=${2-};
+  if shift 2; then
+    printf %s "$f" "${@/#/$d}";
+  fi;
+}
+write_result_set() {
+  result="$1"
+  result=$(echo -e "$result" | sed 's/"//g')
+  result="${result//'%'/'%25'}"
+  result="${result//$'\n'/'%0A'}"
+  result="${result//$'\r'/'%0D'}"
+  KEY="RESULT"
+  [ ! -z "$2" ] && KEY="$2"
+  echo "$KEY:"
+  echo $result
+  echo "::set-output name=$KEY::$(echo -e $result)"
+}
 
-
-log "FIELDS"
+log FIELDS
 echo "CI=$in_ci"
 echo "OWNER=$OWNER"
 echo "NAME=$NAME"
@@ -51,6 +68,7 @@ echo "ID=$ID"
 echo "template=$template"
 
 run_input() {
+
   case $1 in
     artifacts)
       QUERY_BASE=actions/artifacts
@@ -84,10 +102,15 @@ run_input() {
       ;;
 
     pull_request)
-      QUERY_BASE=pulls/ID
+      QUERY_BASE=pulls/$ID
       ;;
-    pull_requests)
-      QUERY_BASE=pulls
+    pull_request_labels)
+      QUERY_BASE=pulls/$ID
+      SEARCH_STRING='.labels'
+      ;;
+    pull_request_label_names)
+      QUERY_BASE=pulls/$ID
+      SEARCH_STRING='[.labels[]] | map(.name) | join(",")'
       ;;
     pull_request_commits)
       QUERY_BASE=pulls/ID/commits
@@ -97,6 +120,10 @@ run_input() {
       ;;
     pull_request_merged)
       QUERY_BASE=pulls/ID/merge
+      ;;
+
+    pull_requests)
+      QUERY_BASE=pulls
       ;;
 
     release)
@@ -159,12 +186,10 @@ run_input() {
       QUERY_BASE=tags
       WITH_AUTH=0
       ;;
-
     repo_teams)
       QUERY_BASE=teams
       WITH_AUTH=0
       ;;
-
     repo_topics)
       QUERY_BASE=topics
       WITH_AUTH=0
@@ -258,6 +283,7 @@ run_input() {
       return 1
       ;;
   esac
+
   [ -z "$QUERY_URL" ] && QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
   [ ! -z "$SEARCH_FIELD" ] && WITH_SEARCH=0
   [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ] && SEARCH_STRING='map(.[$field_name]) | join(",")'
@@ -297,11 +323,13 @@ run_input() {
         $QUERY_URL)
     fi
   fi
+
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   request_status=$((${request_status} + 0))
   [ $request_status -eq 200 ] && request_status=0
   [ $request_status -eq 204 ] && request_status=0
+
   log RESPONSE
   echo $output | jq
   if [ ! -z "$SEARCH_STRING" ]; then

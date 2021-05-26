@@ -10,6 +10,7 @@ IFS="
 TOPIC=repos
 [ -z "$OWNER" ] && OWNER="$GITHUB_REPOSITORY_OWNER"
 [ -z "$REPO" ] && REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
+
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 in_log=0
