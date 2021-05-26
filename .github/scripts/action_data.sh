@@ -21,6 +21,7 @@ join_by () {
     printf %s "$f" "${@/#/$d}";
   fi;
 }
+
 write_result_set() {
   result="$1"
   result=$(echo -e "$result" | sed 's/"//g')
@@ -31,6 +32,7 @@ write_result_set() {
   [ ! -z "$2" ] && KEY="$2"
   echo "$KEY:"
   echo $result
+  # echo "::set-output name=$KEY::$(echo -e $result)"
   echo "::set-output name=$KEY::$(echo -e $result)"
   echo
 }
@@ -85,5 +87,3 @@ esac
 
 log
 exit 0
-
-    # LABELS=($(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name) | join("\n")'))
