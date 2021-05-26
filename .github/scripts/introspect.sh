@@ -60,7 +60,7 @@ formula_shas() {
   formula_shas=()
   formulas=($(formula_names))
   for item in "${formulas[@]}"; do
-    formula_shas+=("$item=$(formula_sha $item)")
+    formula_shas+=($(formula_sha $item))
   done
   echo "${formula_shas[@]}"
 }

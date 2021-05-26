@@ -39,7 +39,6 @@ jobs:
         env:
           template: formula_shas
 
-
       # For debugging and troubleshooting - introspective environment audit
       - name: show_env
         run: ./.github/scripts/show_env.sh
