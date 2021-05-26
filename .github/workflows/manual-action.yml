@@ -39,6 +39,7 @@ jobs:
           WORKFLOW_NAME: "${{ github.event.inputs.workflowName }}"
           WORKFLOW_ID: "${{ steps.repo_workflow_id.outputs.RESULT }}"
           WORKFLOW_RUN_IDS: "${{ steps.workflow_run_ids.outputs.RESULT }}"
+          INSPECT_GROUPS: 'reference=WORKFLOW_NAME,WORKFLOW_ID,WORKFLOW_RUN_IDS'
 
       # Delete workflow run for each id in output of workflow_run_ids
       - name: delete_workflow_run
