@@ -34,5 +34,3 @@ class Democpp < Formula
       man1.install "doc/man/democpp.1"
   end
 end
-
-__END__

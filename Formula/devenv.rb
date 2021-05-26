@@ -54,5 +54,3 @@ class Devenv < Formula
     # system "zsh", "--login", "-i", "-c", "${#name} help"
   end
 end
-
-__END__

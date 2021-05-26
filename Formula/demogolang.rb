@@ -35,5 +35,3 @@ class Demogolang < Formula
     man1.install lib/"demogolang.1"
   end
 end
-
-__END__

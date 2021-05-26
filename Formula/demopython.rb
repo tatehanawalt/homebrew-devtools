@@ -36,5 +36,3 @@ class Demopython < Formula
     man1.install lib/"demopython.1"
   end
 end
-
-__END__

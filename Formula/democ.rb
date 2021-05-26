@@ -34,5 +34,3 @@ class Democ < Formula
     man1.install "doc/man/democ.1"
   end
 end
-
-__END__

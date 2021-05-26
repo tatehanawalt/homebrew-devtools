@@ -33,5 +33,3 @@ class Demonodejs < Formula
     man1.install lib/"demonodejs.1"
   end
 end
-
-__END__
