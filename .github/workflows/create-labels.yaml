@@ -49,10 +49,10 @@ jobs:
             '
 
       # For debugging and troubleshooting - introspective environment audit
-      - name: create_label
-        run: ./.github/scripts/create_labels.sh
-        shell: bash
-        env:
-          CHECK_CREATE_LABELS: "${{ steps.formula_names.outputs.RESULT }}"
-          EXISTING_LABELS: "${{ steps.label_names.outputs.RESULT }}"
-          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: create_label
+      #   run: ./.github/scripts/create_labels.sh
+      #   shell: bash
+      #   env:
+      #     CHECK_CREATE_LABELS: "${{ steps.formula_names.outputs.RESULT }}"
+      #     EXISTING_LABELS: "${{ steps.label_names.outputs.RESULT }}"
+      #     GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
