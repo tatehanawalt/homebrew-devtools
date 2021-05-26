@@ -10,41 +10,33 @@ jobs:
   inspect-env:
     runs-on: ubuntu-latest
     steps:
-      # Get the repository workflow id for the passed NAME
       - name: repo_workflow_id
         id: repo_workflow_id
         run: ./.github/scripts/git_api.sh
         shell: bash
         env:
-          template: repo_workflow_id
           NAME: "${{ github.event.inputs.workflowName }}"
-
-      # Get the repo_completed_workfow_run_ids
+          template: repo_workflow_id
       - name: workflow_completed_run_ids
         id: workflow_completed_run_ids
         run: ./.github/scripts/git_api.sh
         shell: bash
         env:
-          template: workflow_completed_run_ids
           ID: "${{ steps.repo_workflow_id.outputs.RESULT }}"
-
-      # Inspect the parameters and environment before deleting each workflow run
-      # THIS IS NOT MANDATORY - this step could be omitted entirely
+          template: workflow_completed_run_ids
       - name: inspect_env
         run: ./.github/scripts/inspect_env.sh
         shell: bash
         env:
-          WORKFLOW_NAME: "${{ github.event.inputs.workflowName }}"
-          WORKFLOW_ID: "${{ steps.repo_workflow_id.outputs.RESULT }}"
-          WORKFLOW_COMPLETED_RUN_IDS: "${{ steps.workflow_completed_run_ids.outputs.RESULT }}"
           INSPECT_GROUPS: 'reference=WORKFLOW_NAME,WORKFLOW_ID,WORKFLOW_COMPLETED_RUN_IDS'
-
-      # Delete workflow run for each id in output of workflow_run_ids
+          WORKFLOW_COMPLETED_RUN_IDS: "${{ steps.workflow_completed_run_ids.outputs.RESULT }}"
+          WORKFLOW_ID: "${{ steps.repo_workflow_id.outputs.RESULT }}"
+          WORKFLOW_NAME: "${{ github.event.inputs.workflowName }}"
       - name: delete_workflow_run
         id: delete_workflow_run
         run: ./.github/scripts/git_api.sh
         shell: bash
         env:
-          template: delete_workflow_run
-          ID: "${{ steps.workflow_completed_run_ids.outputs.RESULT }}"
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ID: "${{ steps.workflow_completed_run_ids.outputs.RESULT }}"
+          template: delete_workflow_run
