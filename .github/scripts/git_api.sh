@@ -1,13 +1,21 @@
 #!/bin/sh
 # Setup the default parameters
+
 WITH_AUTH=1
 WITH_SEARCH=1
 WITH_DELETE=1
 TOPIC=repos
-in_log=0
-in_ci=1
 request_status=0
-[ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
+
+[ -z "$GITHUB_API_URL" ] && GITHUB_API_URL="https://api.github.com"
+[ ! -z "$GITHUB_REPOSITORY_OWNER" ] && OWNER=$GITHUB_REPOSITORY_OWNER
+[ ! -z "$GITHUB_REPOSITORY" ] && REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
+[ ! -z "$GITHUB_HEAD_REF" ] && HEAD=$GITHUB_HEAD_REF
+[ ! -z "$GITHUB_BASE_REF" ] && BASE=$GITHUB_BASE_REF
+[ ! -z "$GITHUB_WORKSPACE" ] && REPO=$GITHUB_WORKSPACE
+[ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
+
+
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
   if [ -z "$template" ]; then
@@ -15,14 +23,12 @@ if [ -z "$template" ]; then
     exit 1
   fi
 fi
-[ -z "$GITHUB_API_URL" ] && GITHUB_API_URL="https://api.github.com"
-[ ! -z "$GITHUB_REPOSITORY_OWNER" ] && OWNER=$GITHUB_REPOSITORY_OWNER
-[ ! -z "$GITHUB_REPOSITORY" ] && REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
-[ ! -z "$GITHUB_HEAD_REF" ] && HEAD=$GITHUB_HEAD_REF
-[ ! -z "$GITHUB_BASE_REF" ] && BASE=$GITHUB_BASE_REF
 
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
+in_log=0
+in_ci=1
+[ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
 log() {
   [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
   in_log=0
@@ -30,6 +36,8 @@ log() {
   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
   in_log=1
 }
+
+
 log "FIELDS"
 echo "CI=$in_ci"
 echo "OWNER=$OWNER"
@@ -43,13 +51,10 @@ echo "ID=$ID"
 echo "template=$template"
 
 run_input() {
-
-
   case $1 in
     artifacts)
       QUERY_BASE=actions/artifacts
       ;;
-
 
     collaborators)
       QUERY_BASE=collaborators
@@ -66,7 +71,6 @@ run_input() {
       # /repos/{owner}/{repo}/collaborators/{username}
       ;;
 
-
     labels)
       QUERY_BASE=labels
       ;;
@@ -78,7 +82,6 @@ run_input() {
       SEARCH_FIELD=id
       QUERY_BASE=labels
       ;;
-
 
     pull_request)
       QUERY_BASE=pulls/ID
@@ -95,7 +98,6 @@ run_input() {
     pull_request_merged)
       QUERY_BASE=pulls/ID/merge
       ;;
-
 
     release)
       QUERY_BASE=releases/$ID
@@ -120,11 +122,9 @@ run_input() {
       SEARCH_STRING='.[$field_name]'
       ;;
 
-
     tagged)
       QUERY_BASE=releases/tags/$TAG
       ;;
-
 
     repo_branches)
       QUERY_BASE=branches
@@ -138,7 +138,6 @@ run_input() {
       WITH_AUTH=0
       ;;
 
-
     repo_contributors)
       QUERY_BASE=contributors
       # WITH_AUTH=0
@@ -148,7 +147,6 @@ run_input() {
       SEARCH_FIELD=login
       ;;
 
-
     repo_languages)
       QUERY_BASE=languages
       ;;
@@ -157,24 +155,20 @@ run_input() {
       SEARCH_STRING='keys | join(",")'
       ;;
 
-
     repo_tags)
       QUERY_BASE=tags
       WITH_AUTH=0
       ;;
-
 
     repo_teams)
       QUERY_BASE=teams
       WITH_AUTH=0
       ;;
 
-
     repo_topics)
       QUERY_BASE=topics
       WITH_AUTH=0
       ;;
-
 
     repo_workflow)
       QUERY_BASE=actions/workflows/$ID
@@ -215,7 +209,6 @@ run_input() {
       QUERY_BASE=actions/workflows/$ID/timing
       ;;
 
-
     workflow_runs)
       QUERY_BASE=actions/workflows/$ID/runs
       ;;
@@ -231,7 +224,6 @@ run_input() {
       QUERY_BASE=actions/workflows/$ID/runs
       SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
       ;;
-
 
     delete_workflow_run)
       WITH_DELETE=0
@@ -338,3 +330,18 @@ exit $request_status
 # ESCAPED="${ESCAPED//'%'/'%25'}"
 # ESCAPED="${ESCAPED//$'\n'/'%0A'}"
 # ESCAPED="${ESCAPED//$'\r'/'%0D'}"
+
+# core.addPath	Accessible using environment file GITHUB_PATH
+# core.debug	debug
+# core.error	error
+# core.endGroup	endgroup
+# core.exportVariable	Accessible using environment file GITHUB_ENV
+# core.getInput	Accessible using environment variable INPUT_{NAME}
+# core.getState	Accessible using environment variable STATE_{NAME}
+# core.isDebug	Accessible using environment variable RUNNER_DEBUG
+# core.saveState	save-state
+# core.setFailed	Used as a shortcut for ::error and exit 1
+# core.setOutput	set-output
+# core.setSecret	add-mask
+# core.startGroup	group
+# core.warning	warning file

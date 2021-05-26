@@ -16,8 +16,8 @@ jobs:
           template: label_names
 
       # For debugging and troubleshooting - introspective environment audit
-      - name: inspect_env
-        run: ./.github/scripts/inspect_env.sh
+      - name: show_env
+        run: ./.github/scripts/show_env.sh
         shell: bash
         env:
           INSPECT_GROUPS: 'reference=LABEL_NAMES'

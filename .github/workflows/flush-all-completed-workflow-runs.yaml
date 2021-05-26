@@ -17,8 +17,8 @@ jobs:
 
       # Inspect the parameters and environment before deleting each workflow run
       # THIS IS NOT MANDATORY - this step could be omitted entirely
-      - name: inspect_env
-        run: ./.github/scripts/inspect_env.sh
+      - name: show_env
+        run: ./.github/scripts/show_env.sh
         shell: bash
         env:
           COMPLETED_WORKFLOW_RUN_IDS: "${{ steps.repo_workflow_completed_run_ids.outputs.RESULT }}"

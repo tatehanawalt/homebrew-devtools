@@ -32,8 +32,8 @@ jobs:
           template: workflow_completed_run_ids
 
       # For debugging and troubleshooting - introspective environment audit
-      - name: inspect_env
-        run: ./.github/scripts/inspect_env.sh
+      - name: show_env
+        run: ./.github/scripts/show_env.sh
         shell: bash
         env:
           INSPECT_GROUPS: 'reference=WORKFLOW_NAME,WORKFLOW_ID,WORKFLOW_COMPLETED_RUN_IDS'

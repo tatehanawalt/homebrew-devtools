@@ -1,19 +1,15 @@
 #!/bin/sh
-
 COMPARE_BRANCH=dev
 bold_div_line="======================================================================================================="
 div_line="-------------------------------------------------------------------------------------------------------"
 item_prefix="- "
-
 printf "%s\n" "$bold_div_line"
 printf "LINTING RESULTS AT THE BOTTOM OF THE LOG\n"
 printf "%s\n" "$bold_div_line"
-
 if [ -z "$COMPARE_BRANCH" ]; then
   printf "\$COMPARE_BRANCH length is 0..." 1>&2;
   exit 2
 fi
-
 # Make sure we are in the github workspace
 if [ -z "$GITHUB_WORKSPACE" ]; then
   printf "\$GITHUB_WORKSPACE length is 0..." 1>&2;
@@ -23,7 +19,6 @@ if [ ! -d "$GITHUB_WORKSPACE" ]; then
   printf "\$GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE" 1>&2;
   exit 2
 fi
-
 # Takes the FULL filepath of a file to lint
 lint_fs_file () {
   ext=$(echo "$1" | sed 's/.*\.//g')
@@ -33,7 +28,6 @@ lint_fs_file () {
     # IGNORED SET:
     gitignore);;
     sh);;
-
     # Lint Set:
     md)
       lint_exit_code=0
@@ -79,11 +73,9 @@ if [ -z "$has_dif_branch" ]; then
   printf "\n\nFETCH_HEAD for branch $COMPARE_BRANCH\n" 1>&2;
   exit 2
 fi
-
 diff_files=$(git diff --name-only "$COMPARE_BRANCH")
 lint_files=""
 lint_extensions=""
-
 for f_path in $diff_files; do
   full_path="$GITHUB_WORKSPACE/$f_path"
   if [ -z "$full_path" ]; then
@@ -101,7 +93,6 @@ for f_path in $diff_files; do
     fi
   fi
 done
-
 IFS="
 "
 # This part just logs the linting set
@@ -115,7 +106,6 @@ printf "EXTENSIONS:\n"
 for ext in $lint_extensions; do
   printf "%s%s\n" "$item_prefix" "$ext"
 done
-
 for ext in $lint_extensions; do
   case "$ext" in
     rb)
@@ -125,8 +115,6 @@ for ext in $lint_extensions; do
       ;;
   esac
 done
-
-
 # Actually lint the files
 lint_failures=""
 for ext in $lint_extensions; do
@@ -141,7 +129,6 @@ for ext in $lint_extensions; do
     fi
   done
 done
-
 if [ ! -z "$lint_failures" ]; then
   printf "%s\n" "$bold_div_line"
   printf "LINTING=failed\n"
