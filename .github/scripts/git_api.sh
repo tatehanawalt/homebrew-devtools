@@ -1,24 +1,6 @@
 #!/bin/sh
 # Setup the default parameters
 
-WITH_AUTH=1
-WITH_SEARCH=1
-WITH_DELETE=1
-TOPIC=repos
-request_status=0
-
-[ -z "$GITHUB_API_URL" ] && GITHUB_API_URL="https://api.github.com"
-[ ! -z "$GITHUB_REPOSITORY_OWNER" ] && OWNER=$GITHUB_REPOSITORY_OWNER
-[ ! -z "$GITHUB_REPOSITORY" ] && REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
-[ ! -z "$GITHUB_HEAD_REF" ] && HEAD=$GITHUB_HEAD_REF
-[ ! -z "$GITHUB_BASE_REF" ] && BASE=$GITHUB_BASE_REF
-[ ! -z "$GITHUB_WORKSPACE" ] && REPO=$GITHUB_WORKSPACE
-
-
-# DEFAULTS
-[ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
-[ -z "$REPO" ]
-
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
   if [ -z "$template" ]; then
@@ -26,6 +8,22 @@ if [ -z "$template" ]; then
     exit 1
   fi
 fi
+
+WITH_AUTH=1
+WITH_SEARCH=1
+WITH_DELETE=1
+TOPIC=repos
+request_status=0
+
+[ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
+[ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
+[ -z "$GITHUB_HEAD_REF" ]         && GITHUB_HEAD_REF="main"
+[ -z "$GITHUB_REPOSITORY" ]       && GITHUB_REPOSITORY="tatehanawalt/homebrew-devtools"
+[ -z "$GITHUB_REPOSITORY_OWNER" ] && GITHUB_REPOSITORY_OWNER="tatehanawalt"
+[ -z "$GITHUB_WORKSPACE" ]        && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
+
+OWNER="$GITHUB_REPOSITORY_OWNER"
+REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
 
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
@@ -265,6 +263,7 @@ run_input() {
   [ -z "$QUERY_URL" ] && QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
   [ ! -z "$SEARCH_FIELD" ] && WITH_SEARCH=0
   [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ] && SEARCH_STRING='map(.[$field_name]) | join(",")'
+
   echo "QUERY_BASE=$QUERY_BASE"
   echo "TOPIC=$TOPIC"
   echo "WITH_SEARCH=$WITH_SEARCH"
@@ -274,6 +273,7 @@ run_input() {
   echo "SEARCH_FIELD=$SEARCH_FIELD"
   echo "SEARCH_STRING=$SEARCH_STRING"
   echo "ID=$ID"
+
   response=""
   if [ $WITH_DELETE -eq 0 ]; then
     response=$(curl \
@@ -349,27 +349,14 @@ exit $request_status
 # core.startGroup	group
 # core.warning	warning file
 
-GITHUB_ACTION=run2
-GITHUB_ACTIONS=true
-GITHUB_ACTION_REF=
-GITHUB_ACTION_REPOSITORY=
-GITHUB_ACTOR=tatehanawalt
-GITHUB_API_URL=https://api.github.com
-GITHUB_BASE_REF=
-GITHUB_ENV=/home/runner/work/_temp/_runner_file_commands/set_env_9753dc4e-2868-4a31-86b1-cb38d43f91e0
-GITHUB_EVENT_NAME=workflow_dispatch
-GITHUB_EVENT_PATH=/home/runner/work/_temp/_github_workflow/event.json
-GITHUB_GRAPHQL_URL=https://api.github.com/graphql
-GITHUB_HEAD_REF=
-GITHUB_JOB=inspect-env
-GITHUB_PATH=/home/runner/work/_temp/_runner_file_commands/add_path_9753dc4e-2868-4a31-86b1-cb38d43f91e0
-GITHUB_REF=refs/heads/main
-GITHUB_REPOSITORY=tatehanawalt/homebrew-devtools
-GITHUB_REPOSITORY_OWNER=tatehanawalt
-GITHUB_RETENTION_DAYS=3
-GITHUB_RUN_ID=877788549
-GITHUB_RUN_NUMBER=6
-GITHUB_SERVER_URL=https://github.com
-GITHUB_SHA=ac04d8bf63f96e861a154a2581bfaa0e81959393
-GITHUB_WORKFLOW=flush-all-completed-workflow-runs
-GITHUB_WORKSPACE=/home/runner/work/homebrew-devtools/homebrew-devtools
+# [ ! -z "$GITHUB_HEAD_REF" ] && HEAD=$GITHUB_HEAD_REF
+# [ ! -z "$GITHUB_BASE_REF" ] && BASE=$GITHUB_BASE_REF
+# [ ! -z "$GITHUB_REPOSITORY_OWNER" ] && OWNER=$GITHUB_REPOSITORY_OWNER
+# [ ! -z "$GITHUB_WORKSPACE" ] && REPO=$GITHUB_WORKSPACE
+# GITHUB_API_URL          - https://api.github.com
+# GITHUB_AUTH_TOKEN       -
+# GITHUB_BASE_REF         - main
+# GITHUB_HEAD_REF         - diff_files_Action
+# GITHUB_REPOSITORY       - tatehanawalt/homebrew-devtools
+# GITHUB_REPOSITORY_OWNER - tatehanawalt
+# DEFAULTS
