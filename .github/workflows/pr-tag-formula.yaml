@@ -56,8 +56,6 @@ jobs:
         env:
           template: label_names
 
-
-
       # For debugging and troubleshooting - introspective environment audit
       # - name: create_label
       #   run: ./.github/scripts/create_labels.sh
