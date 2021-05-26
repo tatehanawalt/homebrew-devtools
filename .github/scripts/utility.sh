@@ -63,7 +63,12 @@ case $template in
 
     set_fields=($(echo -e "${SET[@]}" | tr ',' '\n'))
     key_fields=($(echo -e "${KEYS[@]}" | tr ',' '\n'))
+
+    printf "set_fields:\n"
     printf "\t%s\n" ${set_fields[@]} | sort -u
+    printf "key_fields:\n"
+    printf "\t%s\n" ${key_fields[@]} | sort -u
+
     result_keys=()
     for key in ${key_fields[@]}; do
       printf "\t%s\n" "$key"
