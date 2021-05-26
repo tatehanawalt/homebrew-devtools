@@ -7,18 +7,6 @@ jobs:
       # Check out the repo
       - uses: actions/checkout@v2
 
-      # Inspect the parameters and environment before deleting each workflow run
-      # THIS IS NOT MANDATORY - this step could be omitted entirely
-      - name: show_env
-        run: ./.github/scripts/show_env.sh
-        shell: bash
-        env:
-          COMPLETED_WORKFLOW_RUN_IDS: "${{ steps.repo_workflow_completed_run_ids.outputs.RESULT }}"
-          INSPECT_GROUPS: '
-              git=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
-              reference=repo_workflow_completed_run_ids
-            '
-
       # Get the repository workflow id for the passed NAME
       - name: repo_workflow_completed_run_ids
         id: repo_workflow_completed_run_ids
@@ -33,10 +21,10 @@ jobs:
         run: ./.github/scripts/show_env.sh
         shell: bash
         env:
-          COMPLETED_WORKFLOW_RUN_IDS: "${{ steps.repo_workflow_completed_run_ids.outputs.RESULT }}"
+          RUN_IDS: "${{ steps.repo_workflow_completed_run_ids.outputs.RESULT }}"
           INSPECT_GROUPS: '
               git=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
-              reference=repo_workflow_completed_run_ids
+              reference=RUN_IDS
             '
       # Delete workflow run for each id in output of workflow_run_ids
       - name: delete_workflow_run
