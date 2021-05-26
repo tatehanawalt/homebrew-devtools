@@ -2,9 +2,6 @@
 
 # Returns values about a repo specific to our repo implementation
 # TEST VALUES:
-
-FORMULA=demogolang
-
 [ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
@@ -27,9 +24,10 @@ log() {
   in_log=1
 }
 
-# log PARAMS
+log PARAMS
 echo "template=$template"
 echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+log
 
 function join_by { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
 
