@@ -4,7 +4,6 @@ jobs:
   inspect-env:
     runs-on: ubuntu-latest
     steps:
-
       # Check out the repo
       - uses: actions/checkout@v2
 
