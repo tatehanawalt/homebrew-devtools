@@ -32,7 +32,6 @@ if [ "$CI" = "true" ]; then
 fi
 [ ! -z "$INSPECT_GROUPS" ] && INSPECT_GROUPS=$(printf "%s" "$INSPECT_GROUPS" | sed "s/  */\n/g" | sed '/^$/d' | sed 's/^[^[:space:]]/\t&/')
 
-
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 log() {
