@@ -45,6 +45,20 @@ log() {
   fi
 }
 
+log VERSIONS
+  echo "BASH:"
+  printf "\t%s\n" $(bash --version)
+  echo
+  echo "BREW:"
+  printf "\t%s\n" $(brew --version)
+  echo
+  echo "GIT:"
+  printf "\t%s\n" $(git --version)
+  echo
+  echo "JQ:"
+  printf "\t%s\n" $(jq --version)
+  echo
+
 # Normalize input inspect_groups
 [ ! -z "$INSPECT_GROUPS" ] && INSPECT_GROUPS=$(printf "%s" "$INSPECT_GROUPS" | sed "s/  */\n/g" | sed '/^$/d' | sed 's/^[^[:space:]]/\t&/')
 
@@ -71,6 +85,7 @@ inspect_fields() {
   done
   log
 }
+
 inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
 [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS
 if [ ! -z "$INSPECT_GROUPS" ]; then
