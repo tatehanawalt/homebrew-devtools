@@ -277,9 +277,10 @@ run_input() {
       -X DELETE \
       -s \
       -w "HTTPSTATUS:%{http_code}" \
-      -H "Authorization: token $GITHUB_AUTH_TOKEN" \
       -H "Accept: application/vnd.github.v3+json" \
       $QUERY_URL)
+
+      # -H "Authorization: token $GITHUB_AUTH_TOKEN" \
   else
     if [ $WITH_AUTH -eq 0 ]; then
       response=$(curl \
@@ -314,14 +315,6 @@ run_input() {
   echo "::set-output name=RESULT::${result}"
 }
 
-#   ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
-#   # ESCAPED="${ESCAPED//'%'/'%25'}"
-#   # ESCAPED="${ESCAPED//$'\n'/'%0A'}"
-#   # ESCAPED="${ESCAPED//$'\r'/'%0D'}"
-#   echo "EXIT_CODE=$jq_exit_code"
-#   printf "%s" "$ESCAPED"
-#   echo
-
 if [ ! -z "$ID" ]; then
   IDS=$(printf "%s" $ID | tr ',' '\n')
   lines=$(printf "$IDS" | wc -l)
@@ -346,7 +339,17 @@ fi
 
 exit $request_status
 
-#exit 0
+
+
+#   ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
+#   # ESCAPED="${ESCAPED//'%'/'%25'}"
+#   # ESCAPED="${ESCAPED//$'\n'/'%0A'}"
+#   # ESCAPED="${ESCAPED//$'\r'/'%0D'}"
+#   echo "EXIT_CODE=$jq_exit_code"
+#   printf "%s" "$ESCAPED"
+#   echo
+
+# exit 0
 # ID=870212720,870210320,870174988,870154963,870147712,870145568,870139109,870137494,870132974,870125352,870116776,870113884,870097591,870090034,869929300,869800565,869750414,869746094,869740494,869738864,869730655,869707000,869705237,869695785,869686073,869485000
 # log RESPONSE
 # echo $output | jq
