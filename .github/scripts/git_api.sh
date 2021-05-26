@@ -57,6 +57,7 @@ fi
 log "FIELDS"
 echo "CI=$in_ci"
 echo "OWNER=$OWNER"
+echo "NAME=$NAME"
 echo "REPO=$REPO"
 echo "HEAD=$HEAD"
 echo "BASE=$BASE"
@@ -88,7 +89,6 @@ case $template in
     WITH_AUTH=0
     # /repos/{owner}/{repo}/collaborators/{username}
     ;;
-
   labels)
     QUERY_BASE=labels
     ;;
@@ -182,6 +182,12 @@ case $template in
     ;;
   repo_workflow)
     QUERY_BASE=actions/workflows/$ID
+    ;;
+  repo_workflow_id)
+    # Get the id of a workflow from the specified input name
+    QUERY_BASE=actions/workflows
+    SEARCH_FIELD=$NAME
+    SEARCH_STRING='.workflows | .[] | select(.name == $field_name) | .id'
     ;;
   repo_workflow_ids)
     QUERY_BASE=actions/workflows
@@ -277,7 +283,7 @@ echo "$output" | jq
 log SEARCH
 if [ ! -z "$SEARCH_STRING" ]; then
   # Search the response json
-  ESCAPED=$(echo $output | jq --arg field_name $SEARCH_FIELD -r "$SEARCH_STRING" )
+  ESCAPED=$(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING" )
   jq_exit_code=$?
   echo "SEARCHED:"
   echo "$ESCAPED"

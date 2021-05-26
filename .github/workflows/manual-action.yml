@@ -1,22 +1,29 @@
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'Log level'
+      workflowName:
+        description: 'Name of workflow to flush'
         required: true
-        default: 'warning'
-      tags:
-        description: 'Test scenario tags'
+        default: 'na'
 jobs:
   inspect-env:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       # Print the values from introspection
+
+      # List of labels for this repository
+      - name: repo_workflow_id
+        id: repo_workflow_id
+        run: ./.github/scripts/git_api.sh
+        shell: bash
+        env:
+          template: repo_workflow_id
+          NAME: "${{ github.event.inputs.workflowName }}"
+
       - name: inspect_env
         run: ./.github/scripts/inspect_env.sh
         shell: bash
         env:
-          LOG_LEVEL: "${{ github.event.inputs.logLevel }}"
-          TAGS: "${{ github.event.inputs.tags }}"
-# workflow_dispatch
+          WORKFLOW_ID: "${{ steps.repo_workflow_id.outputs.RESULT }}"
+          WORKFLOW_NAME: "${{ github.event.inputs.workflowName }}"
