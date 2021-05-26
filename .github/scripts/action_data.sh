@@ -9,7 +9,7 @@ in_log=0
 in_ci=1
 [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
 log() {
-  [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
+  [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::" || echo -e "\n"
   in_log=0
   [ -z "$1" ] && return # Input specified we do not need to start a new log group
   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
@@ -31,13 +31,12 @@ write_result_set() {
   KEY="RESULT"
   [ ! -z "$2" ] && KEY="$2"
   echo "$KEY:"
-  echo $result
-  # echo "::set-output name=$KEY::$(echo -e $result)"
+  echo "$result"
   echo "::set-output name=$KEY::$(echo -e $result)"
-  echo
 }
 
 log EVENT_FILE
+
 if [ -f "$GITHUB_EVENT_PATH" ]; then
   cat $GITHUB_EVENT_PATH | jq
 else
@@ -45,22 +44,21 @@ else
   printf "GITHUB_EVENT_PATH=%s\n" "$GITHUB_EVENT_PATH"
   exit 1
 fi
-log
 
-log PRE_EVENT
-printf "GITHUB_EVENT_NAME=%s\n" "$GITHUB_EVENT_NAME"
+log EVENT_$(echo $GITHUB_EVENT_NAME | tr [:lower:] [:upper:])
+
 REPOSITORY_JSON=$(cat $GITHUB_EVENT_PATH | jq '.repository')
 REPOSITORY_ID=$(echo "$REPOSITORY_JSON" | jq -r '.id')
 write_result_set "$REPOSITORY_ID" "REPOSITORY_ID"
 REPO=$(echo "$REPOSITORY_JSON" | jq -r '.name')
 write_result_set "$REPO" "REPO"
-log
+
 case $GITHUB_EVENT_NAME in
   pull_request)
-    log PULL_REQUEST
+    # log PULL_REQUEST
     # AFTER -> NEW COMMIT
     # BEFORE -> OLD COMMIT
-    printf "GITHUB_REF=%s\n" "$GITHUB_REF"
+    # printf "GITHUB_REF=%s\n" "$GITHUB_REF"
     PULL_REQUEST_JSON=$(cat $GITHUB_EVENT_PATH | jq '.pull_request')
     ID=$(cat $GITHUB_EVENT_PATH | jq '.number')
     write_result_set "$ID" ID
