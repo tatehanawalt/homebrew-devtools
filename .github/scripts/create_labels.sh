@@ -59,9 +59,9 @@ create_label() {
   request_status=$((${request_status} + 0))
   [ $request_status -eq 200 ] && request_status=0
   echo $output | jq --arg response_code "$request_status" '. += {"response_code":$response_code}'
-  [ $request_status -eq 200 ] && exit 0
-  [ $request_status -eq 201 ] && exit 0
-  exit 1
+  [ $request_status -eq 200 ] && return 0
+  [ $request_status -eq 201 ] && return 0
+  return 1
 }
 
 printf "OWNER: %s\n" "$OWNER"
