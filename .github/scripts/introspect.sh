@@ -101,50 +101,76 @@ formula_urls() {
   printf "%s\n" ${return_set[@]}
 }
 
+
+write_result_set() {
+
+  result="$1"
+  result=$(echo -e "$result" | sed 's/"//g')
+  result="${result//'%'/'%25'}"
+  result="${result//$'\n'/'%0A'}"
+  result="${result//$'\r'/'%0D'}"
+
+  printf "\nwrite_result_set: $1\n"
+  printf "\nwrite_result_set: ${#@}\n"
+
+  echo
+  echo $result
+  echo
+  echo "::set-output name=RESULT::$(echo -e $result)"
+}
+
 case $template in
   formula_names)
-    echo "::set-output name=RESULT::$(join_by , $(formula_names))"
+    write_result_set $(join_by , $(formula_names))
+    # echo "::set-output name=RESULT::$(join_by , $(formula_names))"
     ;;
   formula_paths)
-    result=$(join_by , $(formula_paths))
+    write_result_set $(join_by , $(formula_paths))
 
-    echo "::set-output name=RESULT::$(join_by , $(formula_paths))"
+    # result=$(join_by , $(formula_paths))
+    # echo "::set-output name=RESULT::$(join_by , $(formula_paths))"
     ;;
   formula_shas)
-    result=$(join_by , $(formula_shas))
-    # result="$(join_by , $(formula_urls stable))"
-    result=$(echo -e "$result" | sed 's/"//g')
-    result="${result//'%'/'%25'}"
-    result="${result//$'\n'/'%0A'}"
-    result="${result//$'\r'/'%0D'}"
-    echo
-    echo $result
-    echo
-    echo "::set-output name=RESULT::$(echo -e $result)"
+    write_result_set $(join_by , $(formula_shas))
+
+    # "$(formula_shas)"
+    # result=$(join_by , $(formula_shas))
+    # # result="$(join_by , $(formula_urls stable))"
+    # result=$(echo -e "$result" | sed 's/"//g')
+    # result="${result//'%'/'%25'}"
+    # result="${result//$'\n'/'%0A'}"
+    # result="${result//$'\r'/'%0D'}"
+    # echo
+    # echo $result
+    # echo
+    # echo "::set-output name=RESULT::$(echo -e $result)"
     # echo "::set-output name=RESULT::$(join_by , $(formula_shas))"
     ;;
   formula_stable_urls)
-    result="$(join_by , $(formula_urls stable))"
-    result=$(echo -e "$result" | sed 's/"//g')
-    result="${result//'%'/'%25'}"
-    result="${result//$'\n'/'%0A'}"
-    result="${result//$'\r'/'%0D'}"
-    echo
-    echo $result
-    echo
-    echo "::set-output name=RESULT::$(echo -e $result)"
+    write_result_set $(join_by , $(formula_urls stable))
+
+    # result="$(join_by , $(formula_urls stable))"
+    # result=$(echo -e "$result" | sed 's/"//g')
+    # result="${result//'%'/'%25'}"
+    # result="${result//$'\n'/'%0A'}"
+    # result="${result//$'\r'/'%0D'}"
+    # echo
+    # echo $result
+    # echo
+    # echo "::set-output name=RESULT::$(echo -e $result)"
     ;;
   formula_head_urls)
-    result="$(join_by , $(formula_urls head))"
+    write_result_set $(join_by , $(formula_urls head))
 
-    result=$(echo -e "$result" | sed 's/"//g')
-    result="${result//'%'/'%25'}"
-    result="${result//$'\n'/'%0A'}"
-    result="${result//$'\r'/'%0D'}"
-    echo
-    echo $result
-    echo
-    echo "::set-output name=RESULT::$(echo $result)"
+    # result="$(join_by , $(formula_urls head))"
+    # result=$(echo -e "$result" | sed 's/"//g')
+    # result="${result//'%'/'%25'}"
+    # result="${result//$'\n'/'%0A'}"
+    # result="${result//$'\r'/'%0D'}"
+    # echo
+    # echo $result
+    # echo
+    # echo "::set-output name=RESULT::$(echo $result)"
     ;;
 esac
 
