@@ -31,8 +31,8 @@ write_result_set() {
   [ ! -z "$2" ] && KEY="$2"
   echo "$KEY:"
   echo $result
-  echo
   echo "::set-output name=$KEY::$(echo -e $result)"
+  echo
 }
 
 log EVENT_FILE
@@ -72,10 +72,8 @@ case $GITHUB_EVENT_NAME in
     write_result_set $(join_by , $OWNER) "OWNER"
 
 
-    printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name)'
-
-    LABELS=($(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name)'))
-    write_result_set $(join_by , ${LABELS[@]}) "LABELS"
+    labels_str=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name) | join(",")')
+    write_result_set "${labels_str[@]}" "LABELS"
 
     ;;
   *)
@@ -87,3 +85,5 @@ esac
 
 log
 exit 0
+
+    # LABELS=($(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name) | join("\n")'))
