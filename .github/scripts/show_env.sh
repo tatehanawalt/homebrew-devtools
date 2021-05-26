@@ -75,46 +75,43 @@ inspect_fields() {
   for key in ${fields[@]}; do
     key_len=${#key}
     [ $key_len -gt $max_field_len ] && max_field_len=$(($key_len + 1))
-    keyval=$(eval "echo \"\$$key\"")
-    printf "$prefix%s=%s\n" $key "$keyval"
+    printf "$prefix%s=%s\n" $key "$(eval "echo \"\$$key\"")"
   done
-
   log "${1}_TABLE"
   for key in ${fields[@]}; do
     keyval=($(eval "echo -e \"\$$key\"" | tr ',' '\n'))
-    printf "%-${max_field_len}s" "$key:"
     if [ ${#keyval[@]} -lt 2 ]; then
-      printf " %s\n" "$keyval"
+      printf "%-${max_field_len}s %s\n" "$key:" "$keyval"
       continue
     fi
-    printf "\n"
+    printf "%-${max_field_len}s\n" "$key:"
     for entry in ${keyval[@]}; do printf "\t     - %s\n" $entry; done
-    printf "\n"
   done
 }
+
+printf "%-${max_field_len}s" "$key:"
 
 inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
 [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS
 if [ ! -z "$INSPECT_GROUPS" ]; then
-  groups=$(printf "%s" "$INSPECT_GROUPS" | sed 's/^[[:space:]]*//g' | sed '/^$/d' )
   log INSPECT_GROUPS
+  groups=$(printf "%s" "$INSPECT_GROUPS" | sed 's/^[[:space:]]*//g' | sed '/^$/d' )
   for group in $groups; do
     group=$(printf "%s" "$group" | xargs)
-    gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
-    printf "\t%s\n" "$gkey"
+    printf "\t%s\n" "$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')"
   done
-  log
   for group in $groups; do
     group=$(printf "%s" "$group" | xargs)
-    gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
-    inspect_fields $gkey $(printf "%s" "$group" | sed 's/.*=//')
+    inspect_fields $(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]') $(printf "%s" "$group" | sed 's/.*=//')
   done
 fi
 log
 
 exit 0
 
-
+# keyval=$(eval "echo \"\$$key\"")
+# gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
+# gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
 # printf "\t%s\n" ${keyval[@]}
 # printf "\t%d\n" ${#keyval[@]}
 # echo "$keyval"
