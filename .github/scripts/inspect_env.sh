@@ -4,7 +4,6 @@
 #
 # Specify INSPECT_ENV_FIELDS=<field>,<field2>... to see a list of specific
 # fields
-
 # Specify a specific set with INSPECT_ENV_FIELDS=<field>,<field2>... to see a list of specific
 #
 # or specify groups of inspect sets with
@@ -26,12 +25,7 @@ prefix="\t"
 in_log=0
 in_ci=1
 # IF RUN BY CI vs Locally
-if [ "$CI" = "true" ]; then
-  prefix=""
-  in_ci=0
-fi
-[ ! -z "$INSPECT_GROUPS" ] && INSPECT_GROUPS=$(printf "%s" "$INSPECT_GROUPS" | sed "s/  */\n/g" | sed '/^$/d' | sed 's/^[^[:space:]]/\t&/')
-
+[ "$CI" = "true" ] && prefix="" && in_ci=0
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 log() {
@@ -51,6 +45,9 @@ log() {
     in_log=1
   fi
 }
+
+# Normalize input inspect_groups
+[ ! -z "$INSPECT_GROUPS" ] && INSPECT_GROUPS=$(printf "%s" "$INSPECT_GROUPS" | sed "s/  */\n/g" | sed '/^$/d' | sed 's/^[^[:space:]]/\t&/')
 
 # Pass this function the set of comma-separated keys to inspect the environment
 # variable value of each key

@@ -1,11 +1,74 @@
 #!/bin/sh
 
+# TESTING:
+# export GITHUB_API_URL=https://api.github.com
+# export GITHUB_REPOSITORY="tatehanawalt/homebrew-devtools"
+# export GITHUB_REPOSITORY_OWNER=tatehanawalt
+# export GITHUB_HEAD_REF=diff_files_Action
+# export GITHUB_BASE_REF=main
+# export GITHUB_API_URL=https://api.github.com && export GITHUB_REPO=tatehanawalt/homebrew-devtools && export GITHUB_REPOSITORY_OWNER=tatehanawalt && export GITHUB_HEAD_REF=diff_files_Action && export GITHUB_BASE_REF=main
+# BASE - base branch
+# HEAD - head branch
+# REPO - repository
+# OWNER - repo owner
+
 WITH_AUTH=1
 WITH_SEARCH=1
-[ ! -z "$1" ] && template="$1"
 TOPIC=repos
 
+in_log=0
+in_ci=1
+[ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
+
+# This function starts a git actions log group. Call with 0 args to end a log
+# group without starting a new one
+log() {
+  if [ $in_log -ne 0 ]; then
+    if [ $in_ci -eq 0 ]; then
+      echo "::endgroup::";
+    fi
+    in_log=0
+  fi
+  # Do we need to start a group?
+  if [ ! -z "$1" ]; then
+    if [ $in_ci -eq 0 ]; then
+      echo "::group::$1";
+    else
+      echo "$1:"
+    fi
+    in_log=1
+  fi
+}
+
+
+
+[ ! -z "$1" ] && template="$1"
+if [ -z "$template" ]; then
+  echo "NO TEMPLATE SPECIFIED"
+  exit 1
+fi
+
+[ -z "$GITHUB_API_URL" ] && GITHUB_API_URL="https://api.github.com"
+[ ! -z "$GITHUB_REPOSITORY_OWNER" ] && OWNER=$GITHUB_REPOSITORY_OWNER
+[ ! -z "$GITHUB_REPOSITORY" ] && REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
+[ ! -z "$GITHUB_HEAD_REF" ] && HEAD=$GITHUB_HEAD_REF
+[ ! -z "$GITHUB_BASE_REF" ] && BASE=$GITHUB_BASE_REF
+
+log "FIELDS"
+echo "CI=$in_ci"
+echo "OWNER=$OWNER"
+echo "REPO=$REPO"
+echo "HEAD=$HEAD"
+echo "BASE=$BASE"
+echo "USER=$USER"
+echo "TAG=$TAG"
 echo "template=$template"
+
+
+
+
+
+
 
 case $template in
   artifacts)
@@ -30,6 +93,7 @@ case $template in
     QUERY_BASE=labels
     WITH_SEARCH=0
     ;;
+
   pull_request)
     QUERY_BASE=pulls/ID
     ;;
@@ -45,11 +109,12 @@ case $template in
   pull_request_merged)
     QUERY_BASE=pulls/ID/merge
     ;;
-  releases)
-    QUERY_BASE=releases
-    ;;
+
   release)
     QUERY_BASE=releases/$ID
+    ;;
+  releases)
+    QUERY_BASE=releases
     ;;
   release_assets)
     QUERY_BASE=releases/$ID/assets
@@ -67,13 +132,19 @@ case $template in
     SEARCH_FIELD=tag_name
     SEARCH_STRING='.[$field_name]'
     ;;
+
   tagged)
     QUERY_BASE=releases/tags/$TAG
     ;;
+
   repo_branches)
     QUERY_BASE=branches
-    # WITH_AUTH=0
     ;;
+  repo_branche_names)
+    QUERY_BASE=branches
+    SEARCH_FIELD=name
+    ;;
+
   repo_user_permissions)
     QUERY_BASE=collaborators/$USER/permission
     WITH_AUTH=0
@@ -100,7 +171,6 @@ case $template in
     ;;
   repo_workflow)
     QUERY_BASE=actions/workflows/$ID
-    # GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}
     ;;
   repo_workflow_ids)
     QUERY_BASE=actions/workflows
@@ -117,7 +187,6 @@ case $template in
     ;;
   repo_workflow_run)
     QUERY_BASE=actions/runs/$ID
-    # /repos/{owner}/{repo}/actions/runs/{run_id}
     ;;
   repo_workflow_runs)
     QUERY_BASE=actions/runs
@@ -129,42 +198,53 @@ case $template in
     ;;
   repo_workflow_usage)
     QUERY_BASE=actions/workflows/$ID/timing
-    # GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/timing
     ;;
+
   workflow_runs)
     QUERY_BASE=actions/workflows/$ID/runs
-    # /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs
     ;;
   workflow_run_job)
     QUERY_BASE=actions/jobs/$ID
-    # /repos/{owner}/{repo}/actions/jobs/{job_id}
     ;;
   workflow_run_jobs)
     QUERY_BASE=actions/runs/$ID/jobs
     # repos/tatehanawalt/homebrew-devtools/actions/runs/874204741/jobs
     ;;
+
   user_repos)
     TOPIC=users
     QUERY_BASE=repos
-    QUERY_URL="https://api.github.com/$TOPIC/$USER/$QUERY_BASE"
-    WITH_AUTH=0
+    QUERY_URL="$GITHUB_API_URL/$TOPIC/$USER/$QUERY_BASE"
+    ;;
+  user_repo_names)
+    TOPIC=users
+    QUERY_BASE=repos
+    QUERY_URL="$GITHUB_API_URL/$TOPIC/$USER/$QUERY_BASE"
+    SEARCH_FIELD=name
+    ;;
 esac
 
 # Aggregate values
 if [ -z "$QUERY_URL" ]; then
-  QUERY_URL="https://api.github.com/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
+  QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
 fi
-echo "QUERY_URL=$QUERY_URL"
 if [ ! -z "$SEARCH_FIELD" ]; then
-  echo "ENABLED_SEARCH_FROM_FIELD=$SEARCH_FIELD"
   WITH_SEARCH=0
 fi
 if [ $WITH_SEARCH -eq 0 ]; then
   if [ -z "$SEARCH_STRING" ]; then
     SEARCH_STRING='map(.[$field_name]) | join(",")'
   fi
-  echo "SEARCH_STRING=$SEARCH_STRING"
 fi
+
+echo "QUERY_BASE=$QUERY_BASE"
+echo "TOPIC=$TOPIC"
+echo "WITH_SEARCH=$WITH_SEARCH"
+echo "WITH_AUTH=$WITH_AUTH"
+echo "QUERY_URL=$QUERY_URL"
+echo "SEARCH_FIELD=$SEARCH_FIELD"
+echo "SEARCH_STRING=$SEARCH_STRING"
+
 if [ -z "$output" ]; then
   if [ $WITH_AUTH -eq 0 ]; then
     output=$(curl \
@@ -178,15 +258,17 @@ if [ -z "$output" ]; then
   echo "OUTPUT:"
   echo "EXIT_CODE=$output_exit_code"
 fi
+
+log RESPONSE
 echo "$output" | jq
+
+log SEARCH
 if [ ! -z "$SEARCH_STRING" ]; then
   # Search the response json
   ESCAPED=$(echo $output | jq --arg field_name $SEARCH_FIELD -r "$SEARCH_STRING" )
   jq_exit_code=$?
   echo "SEARCHED:"
   echo "$ESCAPED"
-
-
   ESCAPED="${ESCAPED//'%'/'%25'}"
   ESCAPED="${ESCAPED//$'\n'/'%0A'}"
   ESCAPED="${ESCAPED//$'\r'/'%0D'}"
@@ -195,29 +277,13 @@ if [ ! -z "$SEARCH_STRING" ]; then
   printf "%s" "$ESCAPED"
   echo
 fi
+
+log
+
 echo "::set-output name=RESULT::${ESCAPED}"
 
 
 
-# OWNER=tatehanawalt
 # USER=tatehanawalt
 # TAG=0.0.0
 # GITHUB_AUTH_TOKEN=API_AUTH_TOKEN
-# REPOS:
-# REPO=homebrew-devtools
-# REPO=th_sys
-# OWNER != USER... OWNER can be the organization
-# Workflow Run Ids:
-# WORKFLOW_RUN_IDS=876490197,876480259,876269471,876267905,876265708,876261276,876256013,876253650,876230652,876226875,876225737,876222043,876217806,876214470,876201357,876181959,876169169,876131344,876128796,876124463,876109125,876056503,876056294,876049383,876048116,876043023,876033915,876030290,875949473,875942274
-# ID=876490197
-# DELETE /repos/{owner}/{repo}/actions/runs/{run_id}
-# WORKFLOW_RUN_IDS=$(echo "$WORKFLOW_RUN_IDS" | sed 's/,/\n/g')
-# for id in $WORKFLOW_RUN_IDS; do
-#   printf "id: %s\n"  $id
-#   curl \
-#     -X DELETE \
-#     -H "Authorization: token $GITHUB_AUTH_TOKEN" \
-#     -H "Accept: application/vnd.github.v3+json" \
-#     https://api.github.com/repos/octocat/hello-world/actions/runs/$id
-#   break
-# done
