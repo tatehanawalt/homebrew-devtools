@@ -49,13 +49,15 @@ write_result_set() {
 contains() {
   check=$1
   shift
+  printf "\t%s\n" "$check"
   [[ $@ =~ (^|[[:space:]])$check($|[[:space:]]) ]] && return 0 || return 1
 }
+
+printf "\n"
 
 case $template in
   # Check which of the $KEYS (csv) are not in the $SET (csv)
   keys_not_in_set)
-
     # TESTING:
     # export template=keys_not_in_set
     # export SET='brew,bug,democ,democpp,demogolang,demonodejs,demopython,demozsh,devenv,documentation,duplicate,enhancement,formula,good first issue,help wanted,invalid,ops,question,wontfix'
@@ -66,20 +68,25 @@ case $template in
 
     printf "set_fields:\n"
     printf "\t%s\n" ${set_fields[@]} | sort -u
+    printf "\n"
     printf "key_fields:\n"
     printf "\t%s\n" ${key_fields[@]} | sort -u
+    printf "\n"
 
+    printf "checking keys:\n"
     result_keys=()
     for key in ${key_fields[@]}; do
-      printf "\t%s\n" "$key"
       contains "$key" "${set_fields[@]}"
       [ $? -ne 0 ] && result_keys+=($key)
     done
+    printf "\n"
     write_result_set $(join_by , "${result_keys[@]}")
-    exit 0
     ;;
   *)
       printf "UNHANDLED TARGET: $1"
       exit 1
     ;;
 esac
+
+printf "\n"
+exit 0
