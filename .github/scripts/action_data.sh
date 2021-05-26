@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# HEAD is the branch
+# BASE is the main
+
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 in_log=0
@@ -13,14 +16,7 @@ log() {
   in_log=1
 }
 
-
-# TESTING:
-# export GITHUB_EVENT_NAME=pull_request && export GITHUB_REF=refs/pull/14/merge
-# export GITHUB_EVENT_NAME=pull_request && export GITHUB_REPOSITORY=tatehanawalt/homebrew-devtools && export GITHUB_REF=refs/pull/14/merge
-
 printf "\n\nGITHUB_EVENT_NAME=%s\n\n" "$GITHUB_EVENT_NAME"
-
-
 
 log EVENT_FILE
 if [ -f "$GITHUB_EVENT_PATH" ]; then
@@ -31,30 +27,34 @@ else
   printf "GITHUB_EVENT_PATH=%s\n" "$GITHUB_EVENT_PATH"
 fi
 
+REPOSITORY_JSON=$(cat $GITHUB_EVENT_PATH | jq '.repository')
 
-log
+REPOSITORY_ID=$(echo "$REPOSITORY_JSON" | jq -r '.id')
+printf "REPOSITORY_ID=%s\n" "$REPOSITORY_ID"
+
+REPO=$(echo "$REPOSITORY_JSON" | jq -r '.name')
+printf "REPO=%s\n" "$REPO"
+
 
 case $GITHUB_EVENT_NAME in
   pull_request)
-    printf "PULL REQUEST:\n"
+    log PULL_REQUEST
     printf "GITHUB_REF=%s\n" "$GITHUB_REF"
 
-    ID=$(printf "%s" "$GITHUB_REF" | sed 's/[^[:digit:]]//g')
+    PULL_REQUEST_JSON=$(cat $GITHUB_EVENT_PATH | jq '.pull_request')
+
+    ID=$(cat $GITHUB_EVENT_PATH | jq '.number')
     printf "ID=%s\n" "$ID"
+    echo "::set-output name=ID::$ID"
 
     OWNER=$(printf "%s" "$GITHUB_REPOSITORY" | sed 's/\/.*//')
     printf "OWNER=%s\n" "$OWNER"
+    echo "::set-output name=OWNER::$OWNER"
 
-    REPO=$(printf "%s" "$GITHUB_REPOSITORY" | sed 's/.*\///')
-    printf "REPO=%s\n" "$REPO"
+    LABELS=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels[]? | [.name] | join(",")')
+    printf "LABELS=%s\n" "$LABELS"
+    echo "::set-output name=LABELS::$LABELS"
 
-    printf "\n"
-
-    # curl \
-    #   -H "Accept: application/vnd.github.v3+json" \
-    #   https://api.github.com/repos/octocat/hello-world/pulls/42
-
-    echo "::set-output name=ID::$ID"
     ;;
   *)
     printf "\n\nUNHANDLED GITHUB_EVENT_NAME GITHUB_EVENT_NAME\n"
@@ -63,6 +63,10 @@ case $GITHUB_EVENT_NAME in
     ;;
 esac
 
+
+
+log
+exit 0
 
 # GIT_ENV
 # GITHUB_ACTION=run4
@@ -90,3 +94,37 @@ esac
 # GITHUB_SHA=2401fb2b0bd1b7dfcf2457619433993f8cc31023
 # GITHUB_WORKFLOW=pr-formula-tag
 # GITHUB_WORKSPACE=/home/runner/work/homebrew-devtools/homebrew-devtools
+
+# SENDER_JSON=$(cat $GITHUB_EVENT_PATH | jq '.sender')
+# "action",
+# "after",
+# "before",
+# "number",
+# "pull_request",
+# "repository",
+# "sender"
+
+# TESTING:
+# export GITHUB_EVENT_NAME=pull_request
+# export GITHUB_REPOSITORY=tatehanawalt/homebrew-devtools
+# export GITHUB_REF=refs/pull/14/merge
+# export GITHUB_EVENT_PATH=/Users/tatehanawalt/Documents/dev/dev_doc/event.json
+
+# cat $GITHUB_EVENT_PATH | jq 'keys'
+# cat $GITHUB_EVENT_PATH | jq '.action'
+# cat $GITHUB_EVENT_PATH | jq '.before'
+# cat $GITHUB_EVENT_PATH | jq '.after'
+# cat $GITHUB_EVENT_PATH | jq '.sender'
+
+# LABELS=$(echo "$PULL_REQUEST_JSON" | jq '.labels')
+# REPO=$(printf "%s" "$GITHUB_REPOSITORY" | sed 's/.*\///')
+# printf "REPO=%s\n" "$REPO"
+# printf "\n"
+
+# echo "$PULL_REQUEST_JSON" | jq
+# curl \
+#   -H "Accept: application/vnd.github.v3+json" \
+#   https://api.github.com/repos/octocat/hello-world/pulls/42
+
+#LABELS=$(printf "%s" $PULL_REQUEST_JSON | jq '.labels[]? | [.name] | join(",")')
+# printf "%s" "$PULL_REQUEST_JSON" | jq '.labels[]? | .name'
