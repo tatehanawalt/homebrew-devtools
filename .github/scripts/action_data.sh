@@ -31,6 +31,7 @@ write_result_set() {
   [ ! -z "$2" ] && KEY="$2"
   echo "$KEY:"
   echo $result
+  echo
   echo "::set-output name=$KEY::$(echo -e $result)"
 }
 
@@ -47,9 +48,6 @@ log
 log PRE_EVENT
 printf "GITHUB_EVENT_NAME=%s\n" "$GITHUB_EVENT_NAME"
 REPOSITORY_JSON=$(cat $GITHUB_EVENT_PATH | jq '.repository')
-
-
-
 
 REPOSITORY_ID=$(echo "$REPOSITORY_JSON" | jq -r '.id')
 write_result_set "$REPOSITORY_ID" "REPOSITORY_ID"
