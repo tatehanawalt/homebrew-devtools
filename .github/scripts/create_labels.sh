@@ -1,5 +1,4 @@
 #!/bin/bash
-
 IFS="
 "
 [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
@@ -8,11 +7,9 @@ IFS="
 [ -z "$GITHUB_REPOSITORY" ]       && GITHUB_REPOSITORY="tatehanawalt/homebrew-devtools"
 [ -z "$GITHUB_REPOSITORY_OWNER" ] && GITHUB_REPOSITORY_OWNER="tatehanawalt"
 [ -z "$GITHUB_WORKSPACE" ]        && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
-
 TOPIC=repos
 [ -z "$OWNER" ] && OWNER="$GITHUB_REPOSITORY_OWNER"
 [ -z "$REPO" ] && REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
-
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 in_log=0
@@ -30,39 +27,23 @@ contains() {
   shift
   [[ $@ =~ (^|[[:space:]])$check($|[[:space:]]) ]] && return 0 || return 1
 }
-
 existing_labels=($(echo -e "${EXISTING_LABELS[@]}" | tr ',' '\n'))
 check_create_labels=($(echo -e "${CHECK_CREATE_LABELS[@]}" | tr ',' '\n'))
-
 log EXISTING_LABELS
 printf "\t%s\n" ${existing_labels[@]} | sort -u
-
 log CHECK_LABELS
-
 create_labels=()
 for label in ${check_create_labels[@]}; do
   printf "\t%s\n" "$label"
   contains "$label" "${existing_labels[@]}"
   [ $? -ne 0 ] && create_labels+=("$label")
 done
-
-
 log CREATE_LABELS
 printf "\t%s\n" ${create_labels[@]} | sort -u
-
-
 create_label() {
   REQUEST_URL="https://api.github.com/repos/$OWNER/$REPO/labels"
   printf "REQUEST_URL: %s\n"  "$REQUEST_URL"
   data="{\"name\":\"$1\"}"
-
-  # response=$(curl \
-  #   -X POST \
-  #   -s \
-  #   -w "HTTPSTATUS:%{http_code}" \
-  #   -H "Accept: application/vnd.github.v3+json" \
-  #   $REQUEST_URL \
-  #   -d ${data})
 
   response=$(curl \
     -X POST \
@@ -88,7 +69,6 @@ printf "REPO: %s\n"  "$REPO"
 
 log CREATE_LABELS
 echo
-
 for label in ${create_labels[@]}; do
   printf "+ $label\n"
   create_label "$label"
@@ -97,24 +77,5 @@ for label in ${create_labels[@]}; do
     log
   fi
 done
-
 echo
 log
-
-
-
-
-# export EXISTING_LABELS='brew,bug,documentation,duplicate,enhancement,formula,good first issue,help wanted,invalid,ops,question,wontfix'
-# export CHECK_CREATE_LABELS=democ,democpp,demogolang,demonodejs,demopython,demozsh,devenv
-# create_label "democpp"
-#  POST /repos/{owner}/{repo}/labels
-# printf "NEW_TAGS:\n"
-# for tag in ${new_tags[@]}; do
-#   contains $tag "${existing_tags[@]}"
-#   printf "\t%d\n" $?
-# done
-# curl \
-#   -X POST \
-#   -H "Accept: application/vnd.github.v3+json" \
-#   https://api.github.com/repos/octocat/hello-world/labels \
-#   -d '{"name":"name"}
