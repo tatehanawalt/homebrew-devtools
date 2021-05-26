@@ -42,5 +42,5 @@ jobs:
         shell: bash
         env:
           CHECK_CREATE_LABELS: "${{ steps.formula_names.outputs.RESULT }}"
-          EXISTING_LABELS: "${{ steps.formula_shas.outputs.RESULT }}"
+          EXISTING_LABELS: "${{ steps.label_names.outputs.RESULT }}"
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
