@@ -16,25 +16,23 @@ log() {
   in_log=1
 }
 
-printf "\n\nGITHUB_EVENT_NAME=%s\n\n" "$GITHUB_EVENT_NAME"
-
 log EVENT_FILE
 if [ -f "$GITHUB_EVENT_PATH" ]; then
-  cat $GITHUB_EVENT_PATH
   cat $GITHUB_EVENT_PATH | jq
 else
   printf "GITHUB_EVENT_PATH FILE NOT FOUND\n"
   printf "GITHUB_EVENT_PATH=%s\n" "$GITHUB_EVENT_PATH"
+  exit 1
 fi
+log
 
+
+printf "GITHUB_EVENT_NAME=%s\n" "$GITHUB_EVENT_NAME"
 REPOSITORY_JSON=$(cat $GITHUB_EVENT_PATH | jq '.repository')
-
 REPOSITORY_ID=$(echo "$REPOSITORY_JSON" | jq -r '.id')
 printf "REPOSITORY_ID=%s\n" "$REPOSITORY_ID"
-
 REPO=$(echo "$REPOSITORY_JSON" | jq -r '.name')
 printf "REPO=%s\n" "$REPO"
-
 
 case $GITHUB_EVENT_NAME in
   pull_request)
@@ -51,9 +49,14 @@ case $GITHUB_EVENT_NAME in
     printf "OWNER=%s\n" "$OWNER"
     echo "::set-output name=OWNER::$OWNER"
 
-    LABELS=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels[]? | [.name] | join(",")')
-    printf "LABELS=%s\n" "$LABELS"
-    echo "::set-output name=LABELS::$LABELS"
+    # LABELS=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels[]? | [].name | join(",")')
+    # printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels[]? | [].name | join(",")'
+    printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels'
+
+    #printf "LABELS=%s\n" "${LABELS[@]}"
+
+
+    # echo "::set-output name=LABELS::$LABELS"
 
     ;;
   *)
