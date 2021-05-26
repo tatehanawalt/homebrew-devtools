@@ -10,8 +10,6 @@ jobs:
   inspect-env:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
       # Get the repository workflow id for the passed NAME
       - name: repo_workflow_id
         id: repo_workflow_id
@@ -21,21 +19,13 @@ jobs:
           template: repo_workflow_id
           NAME: "${{ github.event.inputs.workflowName }}"
 
-      # List the workflow run ids for the workflow id output by repo_workflow_id
-      - name: workflow_run_ids
-        id: workflow_run_ids
+      # Get the repo_completed_workfow_run_ids
+      - name: workflow_completed_run_ids
+        id: workflow_completed_run_ids
         run: ./.github/scripts/git_api.sh
         shell: bash
         env:
-          template: workflow_run_ids
-          ID: "${{ steps.repo_workflow_id.outputs.RESULT }}"
-
-      - name: repo_completed_workflow_run_ids
-        id: repo_completed_workflow_run_ids
-        run: ./.github/scripts/git_api.sh
-        shell: bash
-        env:
-          template: repo_completed_workflow_run_ids
+          template: workflow_completed_run_ids
           ID: "${{ steps.repo_workflow_id.outputs.RESULT }}"
 
       # Inspect the parameters and environment before deleting each workflow run
@@ -46,9 +36,8 @@ jobs:
         env:
           WORKFLOW_NAME: "${{ github.event.inputs.workflowName }}"
           WORKFLOW_ID: "${{ steps.repo_workflow_id.outputs.RESULT }}"
-          WORKFLOW_RUN_IDS: "${{ steps.workflow_run_ids.outputs.RESULT }}"
-          COMPLETED_WORKFLOW_RUN_IDS: "${{ steps.repo_completed_workflow_run_ids.outputs.RESULT }}"
-          INSPECT_GROUPS: 'reference=WORKFLOW_NAME,WORKFLOW_ID,WORKFLOW_RUN_IDS'
+          WORKFLOW_COMPLETED_RUN_IDS: "${{ steps.workflow_completed_run_ids.outputs.RESULT }}"
+          INSPECT_GROUPS: 'reference=WORKFLOW_NAME,WORKFLOW_ID,WORKFLOW_COMPLETED_RUN_IDS'
 
       # Delete workflow run for each id in output of workflow_run_ids
       - name: delete_workflow_run
@@ -57,5 +46,5 @@ jobs:
         shell: bash
         env:
           template: delete_workflow_run
-          ID: "${{ steps.repo_completed_workflow_run_ids.outputs.RESULT }}"
+          ID: "${{ steps.workflow_completed_run_ids.outputs.RESULT }}"
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

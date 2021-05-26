@@ -168,7 +168,6 @@ run_input() {
     repo_workflows) # Get the Repo Workflow
       QUERY_BASE=actions/workflows
       ;;
-
     repo_workflow) # Get a workflow by id=$ID
       QUERY_BASE=actions/workflows/$ID
       ;;
@@ -178,21 +177,6 @@ run_input() {
       SEARCH_FIELD=$NAME
       SEARCH_STRING='.workflows | .[] | select(.name == $field_name) | .id'
       ;;
-
-    repo_workflow_run_ids) # Get the full set of workflow runs by workflow id=$ID
-      QUERY_BASE=actions/runs
-      SEARCH_FIELD=id
-      SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
-      ;;
-
-    repo_completed_workflow_run_ids) # Get the full set of workflow runs by workflow id=$ID
-      QUERY_BASE=actions/runs
-      SEARCH_FIELD=id
-      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.[$field_name]) | join(",")'
-      # SEARCH_STRING='.workflow_runs | .[] | select(.status == "completed")'
-      #SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
-      ;;
-
     repo_workflow_ids)   # Get the workflows of this repo
       QUERY_BASE=actions/workflows
       SEARCH_FIELD=id
@@ -206,20 +190,42 @@ run_input() {
     repo_workflow_runs)  # Get the runs of workflows in this repo
       QUERY_BASE=actions/runs
       ;;
+    repo_workflow_run_ids)  # Get the runs of workflows in this repo
+      QUERY_BASE=actions/runs
+      SEARCH_FIELD=id
+      SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
+      ;;
+    repo_workflow_completed_runs) # Get the completed runs of workflows in this repo
+      QUERY_BASE=actions/runs
+      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")]'
+      ;;
+    repo_workflow_completed_run_ids) # Get the completed run ids of workflows in this repo
+      QUERY_BASE=actions/runs
+      SEARCH_FIELD=id
+      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.[$field_name]) | join(",")'
+      ;;
     repo_workflow_usage) # Specify an $ID to get billing of this repos workflow
       QUERY_BASE=actions/workflows/$ID/timing
       ;;
 
-    # repo_workflow_runs)
-    #   QUERY_BASE=actions/runs
-    #   ;;
+
     workflow_runs)
       QUERY_BASE=actions/workflows/$ID/runs
+      ;;
+    workflow_completed_runs)
+      QUERY_BASE=actions/workflows/$ID/runs
+      SEARCH_FIELD=id
+      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")]'
       ;;
     workflow_run_ids)
       QUERY_BASE=actions/workflows/$ID/runs
       SEARCH_FIELD=id
       SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
+      ;;
+    workflow_completed_run_ids)
+      QUERY_BASE=actions/workflows/$ID/runs
+      SEARCH_FIELD=id
+      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.[$field_name]) | join(",")'
       ;;
 
     delete_workflow_run)
@@ -379,3 +385,11 @@ exit $request_status
 #   echo
 # fi
 # log
+
+#    repo_workflow_completed_run_ids) # Get the full set of workflow runs by workflow id=$ID
+#      QUERY_BASE=actions/runs
+#      SEARCH_FIELD=id
+#      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.[$field_name]) | join(",")'
+#      # SEARCH_STRING='.workflow_runs | .[] | select(.status == "completed")'
+#      #SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
+#      ;;

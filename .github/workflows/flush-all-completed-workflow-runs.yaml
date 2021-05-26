@@ -1,0 +1,39 @@
+name: flush-all-completed-workflow-runs
+on:
+  workflow_dispatch:
+    inputs:
+      workflowName:
+        description: 'Name of workflow to flush'
+        required: true
+        default: 'na'
+jobs:
+  inspect-env:
+    runs-on: ubuntu-latest
+    steps:
+
+      # Get the repository workflow id for the passed NAME
+      - name: repo_workflow_completed_run_ids
+        id: repo_workflow_completed_run_ids
+        run: ./.github/scripts/git_api.sh
+        shell: bash
+        env:
+          template: repo_workflow_completed_run_ids
+
+      # Inspect the parameters and environment before deleting each workflow run
+      # THIS IS NOT MANDATORY - this step could be omitted entirely
+      - name: inspect_env
+        run: ./.github/scripts/inspect_env.sh
+        shell: bash
+        env:
+          COMPLETED_WORKFLOW_RUN_IDS: "${{ steps.repo_workflow_completed_run_ids.outputs.RESULT }}"
+          INSPECT_GROUPS: 'reference=repo_workflow_completed_run_ids'
+
+      # Delete workflow run for each id in output of workflow_run_ids
+      - name: delete_workflow_run
+        id: delete_workflow_run
+        run: ./.github/scripts/git_api.sh
+        shell: bash
+        env:
+          template: delete_workflow_run
+          ID: "${{ steps.repo_workflow_completed_run_ids.outputs.RESULT }}"
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
