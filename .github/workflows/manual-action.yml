@@ -48,3 +48,4 @@ jobs:
         env:
           template: delete_workflow_run
           ID: "${{ steps.workflow_run_ids.outputs.RESULT }}"
+          GITHUB_AUTH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

@@ -277,10 +277,9 @@ run_input() {
       -X DELETE \
       -s \
       -w "HTTPSTATUS:%{http_code}" \
+      -H "Authorization: token $GITHUB_AUTH_TOKEN" \
       -H "Accept: application/vnd.github.v3+json" \
       $QUERY_URL)
-
-      # -H "Authorization: token $GITHUB_AUTH_TOKEN" \
   else
     if [ $WITH_AUTH -eq 0 ]; then
       response=$(curl \
