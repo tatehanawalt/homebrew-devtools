@@ -248,11 +248,12 @@ echo "SEARCH_STRING=$SEARCH_STRING"
 if [ -z "$output" ]; then
   if [ $WITH_AUTH -eq 0 ]; then
     output=$(curl \
+      -s \
       -H "Authorization: token $GITHUB_AUTH_TOKEN" \
       -H "Accept: application/vnd.github.v3+json" \
       $QUERY_URL)
   else
-    output=$(curl -H "Accept: application/vnd.github.v3+json" $QUERY_URL)
+    output=$(curl -s -H "Accept: application/vnd.github.v3+json" $QUERY_URL)
   fi
   output_exit_code=$?
   echo "OUTPUT:"
