@@ -6,13 +6,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # List of labels for this repository
+      # Get id of this pr
       - name: action_data
         id: action_data
         run: ./.github/scripts/action_data.sh
         shell: bash
 
-      # Set of pr label names
+      # Get the labels attached to this pr
       - id: pull_request_label_names
         name: pull_request_label_names
         run: ./.github/scripts/git_api.sh
@@ -27,7 +27,7 @@ jobs:
         run: ./.github/scripts/diff_files.sh
         shell: bash
 
-      # Set of formula names modified in HEAD vs BASE
+      # Get the names of formulae modified in this pr
       - id: diff_formula
         name: diff_formula
         run: ./.github/scripts/diff_formula.sh
@@ -35,10 +35,7 @@ jobs:
         env:
           DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
 
-
-
-
-      # Set of formula labels not attached to the pr
+      # Set of formulae names which are not existing lables attached to this pr
       - name: keys_not_in_set
         id: keys_not_in_set
         run: ./.github/scripts/utility.sh
@@ -48,7 +45,7 @@ jobs:
           SET: ${{ steps.pull_request_label_names.outputs.RESULT }}
           KEYS: ${{ steps.diff_formula.outputs.DIFF_FORMULA }}
 
-      #  List of labels for this repo
+      #  Set of all label names
       - name: label_names
         id: label_names
         run: ./.github/scripts/git_api.sh
@@ -56,14 +53,21 @@ jobs:
         env:
           template: label_names
 
-      # For debugging and troubleshooting - introspective environment audit
-      # - name: create_label
-      #   run: ./.github/scripts/create_labels.sh
-      #   shell: bash
-      #   env:
-      #     CHECK_CREATE_LABELS: "${{ steps.diff_formula.outputs.DIFF_FORMULA }}"
-      #     EXISTING_LABELS: "${{ steps.label_names.outputs.RESULT }}"
-      #     GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Create any labels that don't exist already
+      - name: create_label
+        run: ./.github/scripts/create_labels.sh
+        shell: bash
+        env:
+          CHECK_CREATE_LABELS: "${{ steps.keys_not_in_set.outputs.RESULT }}"
+          EXISTING_LABELS: "${{ steps.label_names.outputs.RESULT }}"
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: label_pr
+        run: ./.github/scripts/label_pr.sh
+        shell: bash
+        env:
+          LABELS: "${{ steps.keys_not_in_set.outputs.RESULT }}"
+          ID: ${{ steps.action_data.outputs.ID }}
 
       # Print the values from introspection
       - name: show_env
