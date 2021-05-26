@@ -13,8 +13,11 @@ request_status=0
 [ ! -z "$GITHUB_HEAD_REF" ] && HEAD=$GITHUB_HEAD_REF
 [ ! -z "$GITHUB_BASE_REF" ] && BASE=$GITHUB_BASE_REF
 [ ! -z "$GITHUB_WORKSPACE" ] && REPO=$GITHUB_WORKSPACE
-[ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
 
+
+# DEFAULTS
+[ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
+[ -z "$REPO" ]
 
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
@@ -345,3 +348,28 @@ exit $request_status
 # core.setSecret	add-mask
 # core.startGroup	group
 # core.warning	warning file
+
+GITHUB_ACTION=run2
+GITHUB_ACTIONS=true
+GITHUB_ACTION_REF=
+GITHUB_ACTION_REPOSITORY=
+GITHUB_ACTOR=tatehanawalt
+GITHUB_API_URL=https://api.github.com
+GITHUB_BASE_REF=
+GITHUB_ENV=/home/runner/work/_temp/_runner_file_commands/set_env_9753dc4e-2868-4a31-86b1-cb38d43f91e0
+GITHUB_EVENT_NAME=workflow_dispatch
+GITHUB_EVENT_PATH=/home/runner/work/_temp/_github_workflow/event.json
+GITHUB_GRAPHQL_URL=https://api.github.com/graphql
+GITHUB_HEAD_REF=
+GITHUB_JOB=inspect-env
+GITHUB_PATH=/home/runner/work/_temp/_runner_file_commands/add_path_9753dc4e-2868-4a31-86b1-cb38d43f91e0
+GITHUB_REF=refs/heads/main
+GITHUB_REPOSITORY=tatehanawalt/homebrew-devtools
+GITHUB_REPOSITORY_OWNER=tatehanawalt
+GITHUB_RETENTION_DAYS=3
+GITHUB_RUN_ID=877788549
+GITHUB_RUN_NUMBER=6
+GITHUB_SERVER_URL=https://github.com
+GITHUB_SHA=ac04d8bf63f96e861a154a2581bfaa0e81959393
+GITHUB_WORKFLOW=flush-all-completed-workflow-runs
+GITHUB_WORKSPACE=/home/runner/work/homebrew-devtools/homebrew-devtools
