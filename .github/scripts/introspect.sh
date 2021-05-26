@@ -86,8 +86,8 @@ formula_shas() {
   printf "%s\n" ${return_set[@]}
 }
 
-formula_head_url() {
-  formula_method_body $1 stable | \
+formula_url() {
+  formula_method_body $1 $2 | \
     grep 'url.*' | \
     sed "s/\'/\"/g" | \
     cut -d '"' -f 2
@@ -96,7 +96,7 @@ formula_urls() {
   return_set=()
   formulas=($(formula_names))
   for item in ${formulas[@]}; do
-    return_set+=("$item\t$(formula_head_url $item)")
+    return_set+=("$item\t$(formula_url $item $1)")
   done
   printf "%s\n" ${return_set[@]}
 }
@@ -111,8 +111,8 @@ case $template in
   formula_shas)
     echo "::set-output name=RESULT::$(join_by , $(formula_shas))"
     ;;
-  formula_urls)
-    echo "::set-output name=RESULT::$(join_by , $(formula_urls))"
+  formula_stable_urls)
+    echo "::set-output name=RESULT::$(join_by , $(formula_urls stable))"
     ;;
 esac
 
