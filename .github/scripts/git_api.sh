@@ -165,44 +165,40 @@ run_input() {
       ;;
 
 
-    repo_workflows) # Get the Repo Workflow
+    repo_workflows)
       QUERY_BASE=actions/workflows
       ;;
-    repo_workflow) # Get a workflow by id=$ID
+    repo_workflow)
       QUERY_BASE=actions/workflows/$ID
       ;;
-    repo_workflow_id) # Get workflow id for workflow name=$NAME
-      # Get the id of a workflow from the specified input name
+    repo_workflow_id)
       QUERY_BASE=actions/workflows
       SEARCH_FIELD=$NAME
       SEARCH_STRING='.workflows | .[] | select(.name == $field_name) | .id'
       ;;
-    repo_workflow_ids)   # Get the workflows of this repo
+    repo_workflow_ids)
       QUERY_BASE=actions/workflows
-      SEARCH_FIELD=id
-      SEARCH_STRING='.workflows | map(.[$field_name]) | join(",")'
+      SEARCH_STRING='.workflows | map(.id) | join(",")'
       ;;
-    repo_workflow_names) # Get the names of repos of this workflow
+    repo_workflow_names)
       QUERY_BASE=actions/workflows
       SEARCH_FIELD=name
       SEARCH_STRING='.workflows | map(.[$field_name]) | join(",")'
       ;;
-    repo_workflow_runs)  # Get the runs of workflows in this repo
+    repo_workflow_runs)
       QUERY_BASE=actions/runs
       ;;
-    repo_workflow_run_ids)  # Get the runs of workflows in this repo
+    repo_workflow_run_ids)
       QUERY_BASE=actions/runs
-      SEARCH_FIELD=id
-      SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
+      SEARCH_STRING='.workflow_runs | map(.id) | join(",")'
       ;;
-    repo_workflow_completed_runs) # Get the completed runs of workflows in this repo
+    repo_workflow_completed_runs)
       QUERY_BASE=actions/runs
       SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")]'
       ;;
-    repo_workflow_completed_run_ids) # Get the completed run ids of workflows in this repo
+    repo_workflow_completed_run_ids)
       QUERY_BASE=actions/runs
-      SEARCH_FIELD=id
-      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.[$field_name]) | join(",")'
+      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
       ;;
     repo_workflow_usage) # Specify an $ID to get billing of this repos workflow
       QUERY_BASE=actions/workflows/$ID/timing
@@ -214,18 +210,15 @@ run_input() {
       ;;
     workflow_completed_runs)
       QUERY_BASE=actions/workflows/$ID/runs
-      SEARCH_FIELD=id
       SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")]'
       ;;
     workflow_run_ids)
       QUERY_BASE=actions/workflows/$ID/runs
-      SEARCH_FIELD=id
-      SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
+      SEARCH_STRING='.workflow_runs | map(.id) | join(",")'
       ;;
     workflow_completed_run_ids)
       QUERY_BASE=actions/workflows/$ID/runs
-      SEARCH_FIELD=id
-      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.[$field_name]) | join(",")'
+      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
       ;;
 
     delete_workflow_run)
@@ -312,25 +305,19 @@ run_input() {
     fi
   fi
 
-  log INITIAL_RESPONSE
-
-  echo "$response"
-
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
-
-  echo $output
-
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   request_status=$((${request_status} + 0))
   [ $request_status -eq 200 ] && request_status=0
   [ $request_status -eq 204 ] && request_status=0
+
   log RESPONSE
   echo $output | jq
   if [ ! -z "$SEARCH_STRING" ]; then
     log SEARCH
     result=$(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING" )
     jq_exit_code=$?
-    echo "result:\n$result"
+    echo "$result\n"
   fi
   log
   echo "::set-output name=RESULT::${result}"
@@ -357,39 +344,7 @@ exit $request_status
 
 
 
-#   ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
-#   # ESCAPED="${ESCAPED//'%'/'%25'}"
-#   # ESCAPED="${ESCAPED//$'\n'/'%0A'}"
-#   # ESCAPED="${ESCAPED//$'\r'/'%0D'}"
-#   echo "EXIT_CODE=$jq_exit_code"
-#   printf "%s" "$ESCAPED"
-#   echo
-# .github/workflows/github-actions-demo.yml
-# exit 0
-# ID=870212720,870210320,870174988,870154963,870147712,870145568,870139109,870137494,870132974,870125352,870116776,870113884,870097591,870090034,869929300,869800565,869750414,869746094,869740494,869738864,869730655,869707000,869705237,869695785,869686073,869485000
-# log RESPONSE
-# echo $output | jq
-# echo "EXIT_CODE=$output_exit_code"
-# log SEARCH
-# if [ ! -z "$SEARCH_STRING" ]; then
-#   # Search the response json
-#   ESCAPED=$(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING" )
-#   jq_exit_code=$?
-#   echo "SEARCHED:"
-#   ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
-#   # ESCAPED="${ESCAPED//'%'/'%25'}"
-#   # ESCAPED="${ESCAPED//$'\n'/'%0A'}"
-#   # ESCAPED="${ESCAPED//$'\r'/'%0D'}"
-#   echo "EXIT_CODE=$jq_exit_code"
-#   printf "%s" "$ESCAPED"
-#   echo
-# fi
-# log
-
-#    repo_workflow_completed_run_ids) # Get the full set of workflow runs by workflow id=$ID
-#      QUERY_BASE=actions/runs
-#      SEARCH_FIELD=id
-#      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.[$field_name]) | join(",")'
-#      # SEARCH_STRING='.workflow_runs | .[] | select(.status == "completed")'
-#      #SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
-#      ;;
+# ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
+# ESCAPED="${ESCAPED//'%'/'%25'}"
+# ESCAPED="${ESCAPED//$'\n'/'%0A'}"
+# ESCAPED="${ESCAPED//$'\r'/'%0D'}"
