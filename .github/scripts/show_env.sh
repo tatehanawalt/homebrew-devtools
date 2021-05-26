@@ -9,7 +9,8 @@ in_log=0
 in_ci=1
 
 # IF RUN BY CI vs Locally
-[ "$CI" = "true" ] && prefix="" && in_ci=0
+[ "$CI" = "true" ] && in_ci=0
+[ $in_ci -eq 0 ] && prefix=""
 
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
