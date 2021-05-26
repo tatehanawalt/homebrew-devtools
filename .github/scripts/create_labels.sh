@@ -83,7 +83,6 @@ create_label() {
   exit 1
 }
 
-printf "lbl1: %s\n" ${create_labels[0]}
 printf "OWNER: %s\n" "$OWNER"
 printf "REPO: %s\n"  "$REPO"
 
