@@ -96,9 +96,10 @@ formula_urls() {
   return_set=()
   formulas=($(formula_names))
   for item in ${formulas[@]}; do
-    return_set+=("$item\t$(formula_url $item $1)")
+    url="$(formula_url $item $1)"
+    return_set+=("$item\t${url}")
   done
-  printf "%s\n" ${return_set[@]}
+  printf "%s\n" "${return_set[@]}"
 }
 
 case $template in
@@ -112,7 +113,11 @@ case $template in
     echo "::set-output name=RESULT::$(join_by , $(formula_shas))"
     ;;
   formula_stable_urls)
-    echo "::set-output name=RESULT::$(join_by , $(formula_urls stable))"
+    result="$(join_by , $(formula_urls stable))"
+
+    echo -e $result
+
+    echo "::set-output name=RESULT::$(echo -e $result)"
     ;;
 esac
 
