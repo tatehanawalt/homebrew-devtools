@@ -55,8 +55,7 @@ echo "TAG=$TAG"
 echo "ID=$ID"
 echo "template=$template"
 
-
-function run_input() {
+run_input() {
   case $1 in
     artifacts)
       QUERY_BASE=actions/artifacts
