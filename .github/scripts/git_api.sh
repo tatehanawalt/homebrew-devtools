@@ -52,11 +52,10 @@ write_result_set() {
   [ ! -z "$2" ] && KEY="$2"
   echo "$KEY:"
   echo $result
-  echo
   echo "::set-output name=$KEY::$(echo -e $result)"
 }
 
-log "FIELDS"
+log FIELDS
 echo "CI=$in_ci"
 echo "OWNER=$OWNER"
 echo "NAME=$NAME"
