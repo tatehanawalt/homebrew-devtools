@@ -169,19 +169,28 @@ run_input() {
       QUERY_BASE=actions/workflows
       ;;
 
-    repo_workflow) # Specify $ID to get a repo workflow
+    repo_workflow) # Get a workflow by id=$ID
       QUERY_BASE=actions/workflows/$ID
       ;;
-    repo_workflow_id) # specify $NAME to get the workflow id
+    repo_workflow_id) # Get workflow id for workflow name=$NAME
       # Get the id of a workflow from the specified input name
       QUERY_BASE=actions/workflows
       SEARCH_FIELD=$NAME
       SEARCH_STRING='.workflows | .[] | select(.name == $field_name) | .id'
       ;;
-    repo_workflow_run_ids)
+
+    repo_workflow_run_ids) # Get the full set of workflow runs by workflow id=$ID
       QUERY_BASE=actions/runs
       SEARCH_FIELD=id
       SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
+      ;;
+
+    repo_completed_workflow_run_ids) # Get the full set of workflow runs by workflow id=$ID
+      QUERY_BASE=actions/runs
+      SEARCH_FIELD=id
+      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.[$field_name]) | join(",")'
+      # SEARCH_STRING='.workflow_runs | .[] | select(.status == "completed")'
+      #SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
       ;;
 
     repo_workflow_ids)   # Get the workflows of this repo

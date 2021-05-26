@@ -30,6 +30,14 @@ jobs:
           template: workflow_run_ids
           ID: "${{ steps.repo_workflow_id.outputs.RESULT }}"
 
+      - name: repo_completed_workflow_run_ids
+        id: repo_completed_workflow_run_ids
+        run: ./.github/scripts/git_api.sh
+        shell: bash
+        env:
+          template: repo_completed_workflow_run_ids
+          ID: "${{ steps.repo_workflow_id.outputs.RESULT }}"
+
       # Inspect the parameters and environment before deleting each workflow run
       # THIS IS NOT MANDATORY - this step could be omitted entirely
       - name: inspect_env
@@ -39,6 +47,7 @@ jobs:
           WORKFLOW_NAME: "${{ github.event.inputs.workflowName }}"
           WORKFLOW_ID: "${{ steps.repo_workflow_id.outputs.RESULT }}"
           WORKFLOW_RUN_IDS: "${{ steps.workflow_run_ids.outputs.RESULT }}"
+          COMPLETED_WORKFLOW_RUN_IDS: "${{ steps.repo_completed_workflow_run_ids.outputs.RESULT }}"
           INSPECT_GROUPS: 'reference=WORKFLOW_NAME,WORKFLOW_ID,WORKFLOW_RUN_IDS'
 
       # Delete workflow run for each id in output of workflow_run_ids
@@ -48,5 +57,5 @@ jobs:
         shell: bash
         env:
           template: delete_workflow_run
-          ID: "${{ steps.workflow_run_ids.outputs.RESULT }}"
+          ID: "${{ steps.repo_completed_workflow_run_ids.outputs.RESULT }}"
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
