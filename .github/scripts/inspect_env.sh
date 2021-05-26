@@ -82,7 +82,7 @@ inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$
 
 if [ ! -z "$INSPECT_GROUPS" ]; then
   groups=$(printf "%s" "$INSPECT_GROUPS" | sed 's/^[[:space:]]*//g' | sed '/^$/d' )
-  log inspect_groups
+  log INSPECT_GROUPS
   for group in $groups; do
     group=$(printf "%s" "$group" | xargs)
     gkey=$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')
