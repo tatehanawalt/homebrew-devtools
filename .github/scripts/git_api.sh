@@ -21,7 +21,6 @@ request_status=0
 [ -z "$GITHUB_REPOSITORY" ]       && GITHUB_REPOSITORY="tatehanawalt/homebrew-devtools"
 [ -z "$GITHUB_REPOSITORY_OWNER" ] && GITHUB_REPOSITORY_OWNER="tatehanawalt"
 [ -z "$GITHUB_WORKSPACE" ]        && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
-
 OWNER="$GITHUB_REPOSITORY_OWNER"
 REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
 
@@ -240,7 +239,6 @@ run_input() {
       ;;
     workflow_run_jobs)
       QUERY_BASE=actions/runs/$ID/jobs
-      # repos/tatehanawalt/homebrew-devtools/actions/runs/874204741/jobs
       ;;
 
     user_repos)
