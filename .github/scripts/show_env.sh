@@ -18,7 +18,6 @@ log() {
     [ $in_ci -eq 0 ] && echo "::endgroup::";
     in_log=0
   fi
-
   # Do we need to start a group?
   if [ ! -z "$1" ]; then
     [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1:"
@@ -69,8 +68,6 @@ inspect_fields() {
     for entry in ${keyval[@]}; do printf "\t     - %s\n" $entry; done
   done
 }
-
-printf "%-${max_field_len}s" "$key:"
 
 inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
 [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS
