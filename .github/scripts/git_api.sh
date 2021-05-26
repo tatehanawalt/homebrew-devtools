@@ -268,6 +268,7 @@ run_input() {
   echo "QUERY_URL=$QUERY_URL"
   echo "SEARCH_FIELD=$SEARCH_FIELD"
   echo "SEARCH_STRING=$SEARCH_STRING"
+  echo "ID=$ID"
 
   response=""
   if [ $WITH_DELETE -eq 0 ]; then
@@ -306,6 +307,7 @@ run_input() {
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   request_status=$((${request_status} + 0))
   [ $request_status -eq 200 ] && request_status=0
+  [ $request_status -eq 204 ] && request_status=0
   log RESPONSE
   echo $output | jq
   if [ ! -z "$SEARCH_STRING" ]; then
