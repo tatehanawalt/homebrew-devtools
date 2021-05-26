@@ -55,7 +55,8 @@ formula_paths() {
   return_set=()
   file_paths=($(ls $GITHUB_WORKSPACE/Formula/*.rb | tr -s ' ' | tr ' ' '\n'))
   for item in "${file_paths[@]}"; do
-    return_set+=(${item#$GITHUB_WORKSPACE/});
+    formula=$(echo "${item#$GITHUB_WORKSPACE/Formula/}" | sed 's/\..*//')
+    return_set+=("$formula\t${item#$GITHUB_WORKSPACE/}");
   done
   printf "%s\n" ${return_set[@]}
 }
@@ -66,8 +67,6 @@ formula_names() {
     return_set+=($(printf "%s" $item | sed 's/.*\///g' | sed 's/\..*//'));
   done
   printf "%s\n" ${return_set[@]}
-
-  # echo "${return_set[@]}"
 }
 
 formula_sha() {
@@ -99,14 +98,22 @@ formula_urls() {
     url="$(formula_url $item $1)"
     return_set+=("$item\t${url}")
   done
-  printf "%s\n" "${return_set[@]}"
+  printf "%s\n" ${return_set[@]}
 }
+
+formula_paths
+
+
+exit 0
+
 
 case $template in
   formula_names)
     echo "::set-output name=RESULT::$(join_by , $(formula_names))"
     ;;
   formula_paths)
+    result=$(join_by , $(formula_paths))
+
     echo "::set-output name=RESULT::$(join_by , $(formula_paths))"
     ;;
   formula_shas)
