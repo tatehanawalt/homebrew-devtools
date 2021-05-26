@@ -72,18 +72,18 @@ inspect_fields() {
 
 inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
 [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS
-if [ ! -z "$INSPECT_GROUPS" ]; then
-  log INSPECT_GROUPS
-  groups=$(printf "%s" "$INSPECT_GROUPS" | sed 's/^[[:space:]]*//g' | sed '/^$/d' )
-  for group in $groups; do
-    group=$(printf "%s" "$group" | xargs)
-    printf "\t%s\n" "$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')"
-  done
-  for group in $groups; do
-    group=$(printf "%s" "$group" | xargs)
-    inspect_fields $(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]') $(printf "%s" "$group" | sed 's/.*=//')
-  done
-fi
-log
+[ -z "$INSPECT_GROUPS" ] && exit 0
 
+log INSPECT_GROUPS
+groups=$(printf "%s" "$INSPECT_GROUPS" | sed 's/^[[:space:]]*//g' | sed '/^$/d' )
+for group in $groups; do
+  group=$(printf "%s" "$group" | xargs)
+  printf "\t%s\n" "$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')"
+done
+for group in $groups; do
+  group=$(printf "%s" "$group" | xargs)
+  inspect_fields $(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]') $(printf "%s" "$group" | sed 's/.*=//')
+done
+
+log
 exit 0
