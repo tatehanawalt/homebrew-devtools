@@ -1,19 +1,55 @@
-name: bashtest
-on: [push]
+name: devtools
+# on: [push]
+
+env:
+  COMPARE_BRANCH: main
+
 jobs:
-  exec-bash-job:
+  lint-tag:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      - name: Install Rubocop gem
-        run: gem install rubocop
-      - name: 'action'
-        run: ./.github/scripts/parseaction.sh
+      - id: diff
+        name: diff
+        run: ./.github/scripts/diff_files.sh
         shell: bash
+        env:
+            COMPARE_BRANCH: ${{ env.COMPARE_BRANCH }}
+      - name: 'inspect_env'
+        run: ./.github/scripts/inspect_env.sh
+        shell: bash
+        env:
+          DIFF_BRANCH: "${{ steps.diff.outputs.DIFF_BRANCH }}"
+          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+          DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
+#      - name: 'action'
+#        run: ./.github/scripts/parseaction.sh
+#        shell: bash
+#      - uses: actions/setup-ruby@v1
+#        with:
+#          ruby-version: 2.6
+#      - name: Install Rubocop gem
+#        run: gem install rubocop
+#      - name: 'action'
+#        run: ./.github/scripts/parseaction.sh
+#        shell: bash
 
+# DO NOT DELETE - this is the on push lint runner
+# name: bashtest
+# on: [push]
+# jobs:
+#   exec-bash-job:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: actions/setup-ruby@v1
+#         with:
+#           ruby-version: 2.6
+#       - name: Install Rubocop gem
+#         run: gem install rubocop
+#       - name: 'action'
+#         run: ./.github/scripts/parseaction.sh
+#         shell: bash
 
 # Event Triggers:
 # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
@@ -35,7 +71,6 @@ jobs:
 # Or you can specify for read/write all
 # permissions: read-all|write-all
 # -----------------------------------------------------------------------------
-
 
 # ENV:
 # -----------------------------------------------------------------------------

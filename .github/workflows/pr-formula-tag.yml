@@ -1,0 +1,117 @@
+name: pr-formula-tag
+on: [pull_request]
+env:
+  COMPARE_BRANCH: main
+jobs:
+  inspect-env:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # A user's repos
+      - name: user_repo_names
+        id: user_repo_names
+        run: ./.github/scripts/git_api.sh
+        shell: bash
+        env:
+          template: user_repo_names
+          USER: tatehanawalt
+
+      # List of labels for this repository
+      - name: label_names
+        id: label_names
+        run: ./.github/scripts/git_api.sh
+        shell: bash
+        env:
+          template: label_names
+
+      # Branch names from this repo
+      - name: repo_branche_names
+        id: repo_branche_names
+        run: ./.github/scripts/git_api.sh
+        shell: bash
+        env:
+          template: repo_branche_names
+
+      # Workflows from this repo
+      - name: repo_workflow_ids
+        id: repo_workflow_ids
+        run: ./.github/scripts/git_api.sh
+        shell: bash
+        env:
+          template: repo_workflow_ids
+
+      # Lists the files, directories
+      - id: diff
+        name: diff
+        run: ./.github/scripts/diff_files.sh
+        shell: bash
+        # env:
+        #    COMPARE_BRANCH: ${{ env.COMPARE_BRANCH }} # Use to specify a specific compare branch
+
+      # Show the formula files that were changed in the HEAD vs the BASE branch
+      - id: diff_formula
+        name: diff_formula
+        run: ./.github/scripts/diff_formula.sh
+        shell: bash
+        env:
+          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+
+      # Print the values from introspection
+      - name: inspect_env
+        run: ./.github/scripts/inspect_env.sh
+        shell: bash
+        env:
+          # INTROSPECTION
+          USER_REPO_NAMES: "${{ steps.user_repo_names.outputs.RESULT }}"
+          REPO_BRANCH_NAMES: "${{ steps.repo_branche_names.outputs.RESULT }}"
+          REPO_WORKFLOW_IDS: "${{ steps.repo_workflow_ids.outputs.RESULT }}"
+          LABELS: ${{ steps.label_names.outputs.RESULT }}
+
+          # DIFF
+          DIFF_BRANCH: "${{ steps.diff.outputs.DIFF_BRANCH }}"
+          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+          DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
+
+          # SPECIFIC
+          DIFF_FORMULA: "${{ steps.diff_formula.outputs.DIFF_FORMULA }}"
+
+          # INSPECT_ENV_FIELDS: "GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE"
+          INSPECT_GROUPS: '
+            git_env=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
+            INTROSPECTION=DIFF_BRANCH,DIFF_FILES,DIFF_DIRS
+            introspect=USER_REPO_NAMES,REPO_WORKFLOW_IDS,REPO_BRANCH_NAMES,LABELS,USER_REPO_NAMES
+            specific=DIFF_FORMULA
+            '
+
+#  lint-tag:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+
+
+#      - id: list_labels
+#        name: list_labels
+#        run: ./.github/scripts/list_labels.sh
+#        shell: bash
+#      - name: inspect_env
+#        run: ./.github/scripts/inspect_env.sh
+#        shell: bash
+#        env:
+#          DIFF_BRANCH: "${{ steps.diff.outputs.DIFF_BRANCH }}"
+#          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+#          DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
+#          DIFF_FORMULA: "${{ steps.diff_formula.outputs.DIFF_FORMULA }}"
+#          LABELS: ${{ steps.list_labels.outputs.RESULT }}
+#          INSPECT_GROUPS: '
+#            git_env=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
+#            user_env=DIFF_BRANCH,DIFF_FILES,DIFF_DIRS,DIFF_FORMULA,LABELS
+#            '
+#      - name: formula_tag_pr
+#        run: ./.github/scripts/label.sh
+#        shell: bash
+#        env:
+#          DIFF_BRANCH: "${{ steps.diff.outputs.DIFF_BRANCH }}"
+#          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+#          DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
+#          DIFF_FORMULA: "${{ steps.diff_formula.outputs.DIFF_FORMULA }}"

@@ -1,13 +1,16 @@
-#==============================================================================
+# ==============================================================================
 # title   :dempoython
 # version :0.0.0
 # desc    :python cli built as part of the homebrew demo/dev tools project
 # auth    :Dan Henderson(dphender@mtu.edu), Tate Hanawalt(tate@tatehanawalt.com)
 # date    :1621396284
-#==============================================================================
+# ==============================================================================
 # exit    :0=success, 1=input error 2=execution error
 # usage   :See the repo README file for usage
-#==============================================================================
+# ==============================================================================
+# frozen_string_literal: true
+
+# Demopython Formula - brew formula for an example python script
 class Demopython < Formula
   bottle :unneeded                        # formula installed without compilation
   desc "Brew install demopython"          # formula description

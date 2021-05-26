@@ -1,0 +1,22 @@
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Test scenario tags'
+jobs:
+  inspect-env:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Print the values from introspection
+      - name: inspect_env
+        run: ./.github/scripts/inspect_env.sh
+        shell: bash
+        env:
+          LOG_LEVEL: "${{ github.event.inputs.logLevel }}"
+          TAGS: "${{ github.event.inputs.tags }}"
+# workflow_dispatch
