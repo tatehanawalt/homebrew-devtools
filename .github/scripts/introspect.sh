@@ -101,12 +101,6 @@ formula_urls() {
   printf "%s\n" ${return_set[@]}
 }
 
-formula_paths
-
-
-exit 0
-
-
 case $template in
   formula_names)
     echo "::set-output name=RESULT::$(join_by , $(formula_names))"
