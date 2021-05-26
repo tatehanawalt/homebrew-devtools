@@ -1,67 +1,48 @@
 #!/bin/bash
-
 # Used as a debugging script to see what an environment looks like
-#
-# Specify INSPECT_ENV_FIELDS=<field>,<field2>... to see a list of specific
-# fields
-# Specify a specific set with INSPECT_ENV_FIELDS=<field>,<field2>... to see a list of specific
-#
-# or specify groups of inspect sets with
-# INSPECT_GROUPS='
-#   groupname1=<key1>,<key2...>
-#   groupname2=<key1>,<key2...>
-# '
-# Where groupname is the name of the group
-# for example:
-# INSPECT_GROUPS='
-#   git_env=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE"
-#   user_env=DIFF_BRANCH,DIFF_FILES,DIFF_DIRS,DIFF_FORMULA,LABELS
-# '
+
 # DO NOT MODIFY IFS!
 IFS="
 "
 prefix="\t"
 in_log=0
 in_ci=1
+
 # IF RUN BY CI vs Locally
 [ "$CI" = "true" ] && prefix="" && in_ci=0
+
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 log() {
   if [ $in_log -ne 0 ]; then
-    if [ $in_ci -eq 0 ]; then
-      echo "::endgroup::";
-    fi
+    [ $in_ci -eq 0 ] && echo "::endgroup::";
     in_log=0
   fi
+
   # Do we need to start a group?
   if [ ! -z "$1" ]; then
-    if [ $in_ci -eq 0 ]; then
-      echo "::group::$1";
-    else
-      echo "$1:"
-    fi
+    [ $in_ci -eq 0 ] && echo "::group::$1"; || echo "$1:"
     in_log=1
   fi
 }
 
 log VERSIONS
-  echo "BASH:"
-  printf "\t%s\n" $(bash --version)
-  printf "\t- %s\n" $(which bash)
-  echo
-  echo "BREW:"
-  printf "\t%s\n" $(brew --version)
-  printf "\t- %s\n" $(which brew)
-  echo
-  echo "GIT:"
-  printf "\t%s\n" $(git --version)
-  printf "\t- %s\n" $(which git)
-  echo
-  echo "JQ:"
-  printf "\t%s\n" $(jq --version)
-  printf "\t- %s\n" $(which jq)
-  echo
+echo "BASH:"
+printf "\t%s\n" $(bash --version)
+printf "\t- %s\n" $(which bash)
+echo
+echo "BREW:"
+printf "\t%s\n" $(brew --version)
+printf "\t- %s\n" $(which brew)
+echo
+echo "GIT:"
+printf "\t%s\n" $(git --version)
+printf "\t- %s\n" $(which git)
+echo
+echo "JQ:"
+printf "\t%s\n" $(jq --version)
+printf "\t- %s\n" $(which jq)
+echo
 
 # Normalize input inspect_groups
 [ ! -z "$INSPECT_GROUPS" ] && INSPECT_GROUPS=$(printf "%s" "$INSPECT_GROUPS" | sed "s/  */\n/g" | sed '/^$/d' | sed 's/^[^[:space:]]/\t&/')
