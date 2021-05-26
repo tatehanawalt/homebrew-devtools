@@ -23,13 +23,28 @@ log() {
   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
   in_log=1
 }
+join_by () { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
+write_result_set() {
+  result="$1"
+  result=$(echo -e "$result" | sed 's/"//g')
+  result="${result//'%'/'%25'}"
+  result="${result//$'\n'/'%0A'}"
+  result="${result//$'\r'/'%0D'}"
+  printf "\nwrite_result_set: $1\n"
+  printf "\nwrite_result_set: ${#@}\n"
+  echo
+  echo $result
+  echo
+  echo "::set-output name=RESULT::$(echo -e $result)"
+}
+
+
+
 
 log PARAMS
 echo "template=$template"
 echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
 log
-
-function join_by { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
 
 formula_method_signatures() {
   formula_path="$GITHUB_WORKSPACE/Formula/$1.rb"
@@ -99,21 +114,6 @@ formula_urls() {
   printf "%s\n" ${return_set[@]}
 }
 
-
-write_result_set() {
-  result="$1"
-  result=$(echo -e "$result" | sed 's/"//g')
-  result="${result//'%'/'%25'}"
-  result="${result//$'\n'/'%0A'}"
-  result="${result//$'\r'/'%0D'}"
-  printf "\nwrite_result_set: $1\n"
-  printf "\nwrite_result_set: ${#@}\n"
-  echo
-  echo $result
-  echo
-  echo "::set-output name=RESULT::$(echo -e $result)"
-}
-
 case $template in
   formula_names)
     write_result_set $(join_by , $(formula_names))
@@ -131,6 +131,7 @@ case $template in
     write_result_set $(join_by , $(formula_urls head))
     ;;
 esac
+
 exit 0
 
 
