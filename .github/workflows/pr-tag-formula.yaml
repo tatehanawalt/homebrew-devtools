@@ -19,6 +19,7 @@ jobs:
         shell: bash
         env:
           ID: "${{ steps.action_data.outputs.PR_ID }}"
+          template: pull_request_label_names
 
       # Lists the files, directories modified in HEAD vs BASE
       - id: diff
