@@ -88,10 +88,13 @@ case $template in
     WITH_AUTH=0
     # /repos/{owner}/{repo}/collaborators/{username}
     ;;
+
   labels)
+    QUERY_BASE=labels
+    ;;
+  label_names)
     SEARCH_FIELD=name
     QUERY_BASE=labels
-    WITH_SEARCH=0
     ;;
 
   pull_request)
@@ -279,9 +282,11 @@ if [ ! -z "$SEARCH_STRING" ]; then
   echo "SEARCHED:"
   echo "$ESCAPED"
   ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
+
   # ESCAPED="${ESCAPED//'%'/'%25'}"
   # ESCAPED="${ESCAPED//$'\n'/'%0A'}"
   # ESCAPED="${ESCAPED//$'\r'/'%0D'}"
+
   echo "EXIT_CODE=$jq_exit_code"
   printf "%s" "$ESCAPED"
   echo

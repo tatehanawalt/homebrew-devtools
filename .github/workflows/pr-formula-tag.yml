@@ -17,6 +17,14 @@ jobs:
           template: user_repo_names
           USER: tatehanawalt
 
+      # List of labels for this repository
+      - name: label_names
+        id: label_names
+        run: ./.github/scripts/git_api.sh
+        shell: bash
+        env:
+          template: label_names
+
       # Branch names from this repo
       - name: repo_branche_names
         id: repo_branche_names
@@ -40,6 +48,14 @@ jobs:
         shell: bash
         # env:
         #    COMPARE_BRANCH: ${{ env.COMPARE_BRANCH }} # Use to specify a specific compare branch
+
+      # Show the formula files that were changed in the HEAD vs the BASE branch
+      - id: diff_formula
+        name: diff_formula
+        run: ./.github/scripts/diff_formula.sh
+        shell: bash
+        env:
+          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
 
       # Print the values from introspection
       - name: inspect_env
@@ -66,18 +82,8 @@ jobs:
 #    runs-on: ubuntu-latest
 #    steps:
 #      - uses: actions/checkout@v2
-#      - id: diff
-#        name: diff
-#        run: ./.github/scripts/diff_files.sh
-#        shell: bash
-#        env:
-#            COMPARE_BRANCH: ${{ env.COMPARE_BRANCH }}
-#      - id: diff_formula
-#        name: diff_formula
-#        run: ./.github/scripts/diff_formula.sh
-#        shell: bash
-#        env:
-#          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+
+
 #      - id: list_labels
 #        name: list_labels
 #        run: ./.github/scripts/list_labels.sh
