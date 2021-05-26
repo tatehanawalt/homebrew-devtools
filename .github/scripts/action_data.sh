@@ -15,6 +15,24 @@ log() {
   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
   in_log=1
 }
+join_by () {
+  local d=${1-} f=${2-};
+  if shift 2; then
+    printf %s "$f" "${@/#/$d}";
+  fi;
+}
+write_result_set() {
+  result="$1"
+  result=$(echo -e "$result" | sed 's/"//g')
+  result="${result//'%'/'%25'}"
+  result="${result//$'\n'/'%0A'}"
+  result="${result//$'\r'/'%0D'}"
+  KEY="RESULT"
+  [ ! -z "$2" ] && KEY="$2"
+  echo "$KEY:"
+  echo $result
+  echo "::set-output name=$KEY::$(echo -e $result)"
+}
 
 log EVENT_FILE
 if [ -f "$GITHUB_EVENT_PATH" ]; then
@@ -26,14 +44,20 @@ else
 fi
 log
 
-
+log PRE_EVENT
 printf "GITHUB_EVENT_NAME=%s\n" "$GITHUB_EVENT_NAME"
 REPOSITORY_JSON=$(cat $GITHUB_EVENT_PATH | jq '.repository')
-REPOSITORY_ID=$(echo "$REPOSITORY_JSON" | jq -r '.id')
-printf "REPOSITORY_ID=%s\n" "$REPOSITORY_ID"
-REPO=$(echo "$REPOSITORY_JSON" | jq -r '.name')
-printf "REPO=%s\n" "$REPO"
 
+
+
+
+REPOSITORY_ID=$(echo "$REPOSITORY_JSON" | jq -r '.id')
+write_result_set "$REPOSITORY_ID" "REPOSITORY_ID"
+
+REPO=$(echo "$REPOSITORY_JSON" | jq -r '.name')
+write_result_set "$REPO" "REPO"
+
+log
 case $GITHUB_EVENT_NAME in
   pull_request)
     log PULL_REQUEST
@@ -42,22 +66,13 @@ case $GITHUB_EVENT_NAME in
     PULL_REQUEST_JSON=$(cat $GITHUB_EVENT_PATH | jq '.pull_request')
 
     ID=$(cat $GITHUB_EVENT_PATH | jq '.number')
-    printf "ID=%s\n" "$ID"
-    echo "::set-output name=ID::$ID"
+    write_result_set "$ID" "ID"
 
     OWNER=$(printf "%s" "$GITHUB_REPOSITORY" | sed 's/\/.*//')
-    printf "OWNER=%s\n" "$OWNER"
-    echo "::set-output name=OWNER::$OWNER"
+    write_result_set "$OWNER" "OWNER"
 
-    # LABELS=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels[]? | [].name | join(",")')
-    # printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels[]? | [].name | join(",")'
-    printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels'
-
-    #printf "LABELS=%s\n" "${LABELS[@]}"
-
-
-    # echo "::set-output name=LABELS::$LABELS"
-
+    LABELS=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name) | join(",")')
+    write_result_set "$LABELS" "LABELS"
     ;;
   *)
     printf "\n\nUNHANDLED GITHUB_EVENT_NAME GITHUB_EVENT_NAME\n"
