@@ -6,6 +6,8 @@ WITH_DELETE=1
 TOPIC=repos
 in_log=0
 in_ci=1
+request_status=0
+
 [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
 
 # This function starts a git actions log group. Call with 0 args to end a log
@@ -267,46 +269,58 @@ run_input() {
   echo "SEARCH_FIELD=$SEARCH_FIELD"
   echo "SEARCH_STRING=$SEARCH_STRING"
 
+  status=1
+  response=""
+
   if [ $WITH_DELETE -eq 0 ]; then
-    curl -X DELETE -H "Authorization: token $GITHUB_AUTH_TOKEN" -H "Accept: application/vnd.github.v3+json" $QUERY_URL
+    response=$(curl \
+      -X DELETE \
+      -s \
+      -w "HTTPSTATUS:%{http_code}" \
+      -H "Authorization: token $GITHUB_AUTH_TOKEN" \
+      -H "Accept: application/vnd.github.v3+json" \
+      $QUERY_URL)
   else
-    if [ -z "$output" ]; then
-      if [ $WITH_AUTH -eq 0 ]; then
-        output=$(curl \
-          -s \
-          -H "Authorization: token $GITHUB_AUTH_TOKEN" \
-          -H "Accept: application/vnd.github.v3+json" \
-          $QUERY_URL)
-          output_exit_code=$?
-          output=$(printf "$output" | tr '\r\n' ' ')
-      else
-        output=$(curl -s -H 'Accept: application/vnd.github.v3+json' $QUERY_URL)
-        output_exit_code=$?
-        output=$(printf "$output" | tr '\r\n' ' ')
-      fi
-      log RESPONSE
-      echo $output | jq
-      echo "EXIT_CODE=$output_exit_code"
+    if [ $WITH_AUTH -eq 0 ]; then
+      response=$(curl \
+        -s \
+        -w "HTTPSTATUS:%{http_code}" \
+        -H "Authorization: token $GITHUB_AUTH_TOKEN" \
+        -H "Accept: application/vnd.github.v3+json" \
+        $QUERY_URL)
+    else
+      response=$(curl \
+        -s \
+        -w "HTTPSTATUS:%{http_code}" \
+        -H 'Accept: application/vnd.github.v3+json' \
+        $QUERY_URL)
     fi
-    log SEARCH
-    if [ ! -z "$SEARCH_STRING" ]; then
-      # Search the response json
-      ESCAPED=$(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING" )
-      jq_exit_code=$?
-      echo "SEARCHED:"
-      echo "$ESCAPED"
-      ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
-      # ESCAPED="${ESCAPED//'%'/'%25'}"
-      # ESCAPED="${ESCAPED//$'\n'/'%0A'}"
-      # ESCAPED="${ESCAPED//$'\r'/'%0D'}"
-      echo "EXIT_CODE=$jq_exit_code"
-      printf "%s" "$ESCAPED"
-      echo
-    fi
-    log
   fi
-  echo "::set-output name=RESULT::${ESCAPED}"
+
+  output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
+
+  request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+  request_status=$((${request_status} + 0))
+  [ $request_status -eq 200 ] && request_status=0
+  log RESPONSE
+  echo $output | jq
+  if [ ! -z "$SEARCH_STRING" ]; then
+    log SEARCH
+    result=$(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING" )
+    jq_exit_code=$?
+    echo "result:\n$result"
+  fi
+  log
+  echo "::set-output name=RESULT::${result}"
 }
+
+#   ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
+#   # ESCAPED="${ESCAPED//'%'/'%25'}"
+#   # ESCAPED="${ESCAPED//$'\n'/'%0A'}"
+#   # ESCAPED="${ESCAPED//$'\r'/'%0D'}"
+#   echo "EXIT_CODE=$jq_exit_code"
+#   printf "%s" "$ESCAPED"
+#   echo
 
 if [ ! -z "$ID" ]; then
   IDS=$(printf "%s" $ID | tr ',' '\n')
@@ -314,8 +328,15 @@ if [ ! -z "$ID" ]; then
   if [ $lines -gt 1 ]; then
     for entry in $IDS; do
       ID=$entry
+      request_status=0
       run_input $template
+      if [ $request_status -ne 0 ]; then
+        echo "REQUEST FAILED"
+        echo "request_status: $request_status\n"
+        break
+      fi
     done
+
   else
     run_input $template
   fi
@@ -323,4 +344,25 @@ else
   run_input $template
 fi
 
-exit 0
+exit $request_status
+
+#exit 0
+# ID=870212720,870210320,870174988,870154963,870147712,870145568,870139109,870137494,870132974,870125352,870116776,870113884,870097591,870090034,869929300,869800565,869750414,869746094,869740494,869738864,869730655,869707000,869705237,869695785,869686073,869485000
+# log RESPONSE
+# echo $output | jq
+# echo "EXIT_CODE=$output_exit_code"
+# log SEARCH
+# if [ ! -z "$SEARCH_STRING" ]; then
+#   # Search the response json
+#   ESCAPED=$(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING" )
+#   jq_exit_code=$?
+#   echo "SEARCHED:"
+#   ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
+#   # ESCAPED="${ESCAPED//'%'/'%25'}"
+#   # ESCAPED="${ESCAPED//$'\n'/'%0A'}"
+#   # ESCAPED="${ESCAPED//$'\r'/'%0D'}"
+#   echo "EXIT_CODE=$jq_exit_code"
+#   printf "%s" "$ESCAPED"
+#   echo
+# fi
+# log
