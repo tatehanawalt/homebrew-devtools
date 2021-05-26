@@ -15,14 +15,6 @@ jobs:
         env:
           template: label_names
 
-      # Get the set of formula paths
-      - name: formula_paths
-        id: formula_paths
-        run: ./.github/scripts/introspect.sh
-        shell: bash
-        env:
-          template: formula_paths
-
       # Get the set of formula names
       - name: formula_names
         id: formula_names
@@ -31,6 +23,23 @@ jobs:
         env:
           template: formula_names
 
+      # Get the set of formula paths
+      - name: formula_paths
+        id: formula_paths
+        run: ./.github/scripts/introspect.sh
+        shell: bash
+        env:
+          template: formula_paths
+
+      # Get the set of formula paths
+      - name: formula_shas
+        id: formula_shas
+        run: ./.github/scripts/introspect.sh
+        shell: bash
+        env:
+          template: formula_shas
+
+
       # For debugging and troubleshooting - introspective environment audit
       - name: show_env
         run: ./.github/scripts/show_env.sh
@@ -38,6 +47,7 @@ jobs:
         env:
           FORMULA_NAMES: "${{ steps.formula_names.outputs.RESULT }}"
           FORMULA_PATHS: "${{ steps.formula_paths.outputs.RESULT }}"
+          FORMULA_SHAS: "${{ steps.formula_shas.outputs.RESULT }}"
           INSPECT_GROUPS: '
               git=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
               reference=FORMULA_NAMES,FORMULA_PATHS,LABEL_NAMES
