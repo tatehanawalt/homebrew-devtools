@@ -63,6 +63,7 @@ echo "HEAD=$HEAD"
 echo "BASE=$BASE"
 echo "USER=$USER"
 echo "TAG=$TAG"
+echo "ID=$ID"
 echo "template=$template"
 
 
@@ -219,6 +220,11 @@ case $template in
 
   workflow_runs)
     QUERY_BASE=actions/workflows/$ID/runs
+    ;;
+  workflow_run_ids)
+    QUERY_BASE=actions/workflows/$ID/runs
+    SEARCH_FIELD=id
+    SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
     ;;
   workflow_run_job)
     QUERY_BASE=actions/jobs/$ID
