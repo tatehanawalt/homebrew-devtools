@@ -23,13 +23,21 @@ jobs:
         env:
           template: formula_paths
 
-      # Get the set of formula paths
+      # Get the set of formula names
       - name: formula_names
         id: formula_names
         run: ./.github/scripts/introspect.sh
         shell: bash
         env:
           template: formula_names
+
+      # Get the set of formula paths
+      - name: formula_paths
+        id: formula_paths
+        run: ./.github/scripts/introspect.sh
+        shell: bash
+        env:
+          template: formula_paths
 
       # For debugging and troubleshooting - introspective environment audit
       - name: show_env

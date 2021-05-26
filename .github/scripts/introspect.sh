@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # Returns values about a repo specific to our repo implementation
+# TEST VALUES:
+
+FORMULA=demogolang
 
 [ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
 
@@ -28,35 +31,56 @@ log() {
 # log PARAMS
 echo "template=$template"
 echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+echo
 
 formula_paths() {
-  file_paths=$(ls $GITHUB_WORKSPACE/Formula/*.rb)
+  file_paths=($(ls $GITHUB_WORKSPACE/Formula/*.rb | tr -s ' ' | tr ' ' '\n'))
   formula_paths=()
-  for f_path in $file_paths; do formula_paths+=(${f_path#$GITHUB_WORKSPACE/}); done
-
-  #echo "${formula_paths[@]}" | sed 's/ /,/g'
+  for item in "${file_paths[@]}"; do
+    formula_paths+=(${item#$GITHUB_WORKSPACE/});
+  done
   echo "${formula_paths[@]}"
 }
+formula_names() {
+  formula_names=()
+  file_paths=($(formula_paths))
+  for item in "${file_paths[@]}"; do
+    formula_names+=($(printf "%s" $item | sed 's/.*\///g' | sed 's/\..*//'));
+  done
+  echo "${formula_names[@]}"
+}
+formula_sha() {
+  formula_file_path="$GITHUB_WORKSPACE/Formula/$1.rb"
+  cat $formula_file_path | \
+    awk '/stable/,/sha256.*/' | \
+    tail -1 | sed 's/^.[^"]*//' | \
+    sed 's/\"//g'
+}
+formula_shas() {
+  formula_shas=()
+  formulas=($(formula_names))
+  for item in "${formulas[@]}"; do
+    formula_shas+=("$item=$(formula_sha $item)")
+  done
+  echo "${formula_shas[@]}"
+}
 
-echo
 case $template in
-  formula_paths)
-    # file_paths=$(ls $GITHUB_WORKSPACE/Formula/*.rb)
-    # formula_paths=()
-    # for f_path in $file_paths; do formula_paths+=(${f_path#$GITHUB_WORKSPACE/}); done
-    item_set=$(formula_paths | sed 's/ /,/g')
-    echo "formula_paths=$item_set"
-    echo "::set-output name=RESULT::$item_set"
-    ;;
   formula_names)
-    formulas=()
-    item_set=$(formula_paths)
-    for item in $item_set; do
-      formulas+=($(printf "%s\n" $item | sed 's/.*\///g' | sed 's/\..*//'));
-    done
-    formulas=$(echo "${formulas[@]}" | sed 's/ /,/g')
-    echo "formula_names=$formulas"
-    echo "::set-output name=RESULT::$formulas"
+    result=$(formula_names | sed 's/ /,/g')
+    echo -e "formula_names=$result\n"
+    echo "::set-output name=RESULT::$result"
+    ;;
+  formula_paths)
+    result=$(formula_paths | sed 's/ /,/g')
+    echo -e "formula_paths=$result\n"
+    echo "::set-output name=RESULT::$result"
+    ;;
+  formula_shas)
+    result=$(formula_shas | sed 's/ /,/g')
+    echo -e "formula_shas=$result\n"
+    echo "::set-output name=RESULT::$result"
     ;;
 esac
+
 echo
