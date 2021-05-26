@@ -309,15 +309,19 @@ function run_input() {
   echo "::set-output name=RESULT::${ESCAPED}"
 }
 
-IDS=$(printf "%s" $ID | tr ',' '\n')
-lines=$(printf "$IDS" | wc -l)
-if [ $lines -gt 1 ]; then
-  for entry in $IDS; do
-    ID=$entry
+if [ ! -z "$ID" ]; then
+  IDS=$(printf "%s" $ID | tr ',' '\n')
+  lines=$(printf "$IDS" | wc -l)
+  if [ $lines -gt 1 ]; then
+    for entry in $IDS; do
+      ID=$entry
+      run_input $template
+    done
+  else
     run_input $template
-  done
+  fi
 else
-  run_input "$template"
+  run_input $template
 fi
 
 exit 0
