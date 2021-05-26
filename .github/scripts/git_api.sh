@@ -283,6 +283,7 @@ log
 
 echo "::set-output name=RESULT::${ESCAPED}"
 
+exit 0
 
 
 # USER=tatehanawalt
