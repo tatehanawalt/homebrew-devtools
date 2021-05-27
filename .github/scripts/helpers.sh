@@ -21,7 +21,6 @@ White='\033[1;37m'
 NC='\033[0m'
 HELPERS_LOG_TOPICS=()
 
-INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | sed 's/^[^[:alpha:]]*//g')
 export prefix='\t'
 export IN_LOG=0
 export IN_CI=1
