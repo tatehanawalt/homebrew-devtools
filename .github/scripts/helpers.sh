@@ -45,7 +45,10 @@ contains() {
   check=$1
   shift
   printf "$prefix%s\n" "$check"
-  [[ $@ =~ (^|[[:space:]])$check($|[[:space:]]) ]] && return 0 || return 1
+  if [[ $@ =~ "(^|[[:space:]])$check($|[[:space:]])" ]]; then
+    return 0
+  fi
+  return 1
 }
 
 # examples:
