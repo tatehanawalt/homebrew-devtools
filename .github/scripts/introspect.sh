@@ -138,7 +138,6 @@ all() {
     formula_head_urls
   )
   write_result_set $(join_by , ${call_fns[@]}) functions
-
   for method in ${call_fns[@]}; do
     log $method
     write_result_set $(join_by , $($method)) $method
@@ -163,22 +162,3 @@ case $template in
     ;;
 esac
 exit 0
-
-# formula_names)
-#   # write_result_set $(join_by , $(formula_names)) formula_names
-#   ;;
-# formula_paths)
-#   # write_result_set $(join_by , $(formula_paths))
-#   ;;
-# formula_stable_shas)
-#   # write_result_set $(join_by , $(formula_stable_shas))
-#   ;;
-# formula_head_shas)
-#   # write_result_set $(join_by , $(formula_head_shas))
-#   ;;
-# formula_stable_urls)
-#   # write_result_set $(join_by , $(formula_stable_urls))
-#   ;;
-# formula_head_urls)
-#   # write_result_set $(join_by , $(formula_head_urls))
-#   ;;

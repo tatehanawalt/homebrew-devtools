@@ -40,9 +40,7 @@ command_log_which() {
 }
 
 before_exit() {
-  log BEFORE_EXIT
   write_result_set $(join_by , ${HELPERS_LOG_TOPICS[@]}) outputs
-  log
 }
 
 log() {
@@ -71,9 +69,6 @@ contains() {
   return 1
 }
 
-# examples:
-#   write_result_set $(join_by , ${exampleset[@]})
-#   write_result_set $(join_by , ${exampleset[@]}) $LOG_TOPIC
 write_result_set() {
   result=$1
   key=$2
@@ -85,11 +80,11 @@ write_result_set() {
   [ -z "$key" ] && key="result"
   key=$(echo $key | tr [[:lower:]] [[:upper:]])
   HELPERS_LOG_TOPICS+=($key)
-  printf "$key:\n"
-  values=($(echo -e $result | tr ',' '\n'))
-  printf "\t%s\n" ${values[@]}
-  printf "$key=$result\n"
 
+  log $key
+  values=($(echo -e $result | tr ',' '\n'))
+  printf "$prefix%s\n" ${values[@]}
+  printf "$key=$result\n"
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
 }
 
@@ -106,19 +101,6 @@ write_result_set() {
 # printf "%s" "$INSPECT_GROUPS" | sed 's/^[[:space:]]*//g' | sed '/^$/d'
 # exit 0
 
-# write_result_set() {
-#   result="$1"
-#   result=$(echo -e "$result" | sed 's/"//g')
-#   result="${result//'%'/'%25'}"
-#   result="${result//$'\n'/'%0A'}"
-#   result="${result//$'\r'/'%0D'}"
-#   printf "\nwrite_result_set: $1\n"
-#   printf "\nwrite_result_set: ${#@}\n"
-#   echo
-#   echo $result
-#   echo
-#   echo "::set-output name=RESULT::$(echo -e $result)"
-# }
 
 # ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
 # ESCAPED="${ESCAPED//'%'/'%25'}"
@@ -165,18 +147,6 @@ write_result_set() {
 #     printf %s "$f" "${@/#/$d}";
 #   fi;
 # }
-# write_result_set() {
-#   result="$1"
-#   result=$(echo -e "$result" | sed 's/"//g')
-#   result="${result//'%'/'%25'}"
-#   result="${result//$'\n'/'%0A'}"
-#   result="${result//$'\r'/'%0D'}"
-#   KEY="RESULT"
-#   [ ! -z "$2" ] && KEY="$2"
-#   echo "$KEY:"
-#   echo $result
-#   echo "::set-output name=$KEY::$(echo -e $result)"
-# }
 
 
 
@@ -188,19 +158,6 @@ write_result_set() {
 #   IN_LOG=1
 # }
 # join_by () { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
-# write_result_set() {
-#   result="$1"
-#   result=$(echo -e "$result" | sed 's/"//g')
-#   result="${result//'%'/'%25'}"
-#   result="${result//$'\n'/'%0A'}"
-#   result="${result//$'\r'/'%0D'}"
-#   KEY="RESULT"
-#   [ ! -z "$2" ] && KEY="$2"
-#   echo "$KEY:"
-#   echo $result
-#   echo
-#   echo "::set-output name=$KEY::$(echo -e $result)"
-# }
 
 
 # log() {
@@ -305,19 +262,6 @@ write_result_set() {
 #   IN_LOG=1
 # }
 # join_by () { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
-# write_result_set() {
-#   result="$1"
-#   result=$(echo -e "$result" | sed 's/"//g')
-#   result="${result//'%'/'%25'}"
-#   result="${result//$'\n'/'%0A'}"
-#   result="${result//$'\r'/'%0D'}"
-#   printf "\nwrite_result_set: $1\n"
-#   printf "\nwrite_result_set: ${#@}\n"
-#   echo
-#   echo $result
-#   echo
-#   echo "::set-output name=RESULT::$(echo -e $result)"
-# }
 
 
 
@@ -343,27 +287,11 @@ write_result_set() {
 #     printf %s "$f" "${@/#/$d}";
 #   fi;
 # }
-# write_result_set() {
-#   result="$1"
-#   result=$(echo -e "$result" | sed 's/"//g')
-#   result="${result//'%'/'%25'}"
-#   result="${result//$'\n'/'%0A'}"
-#   result="${result//$'\r'/'%0D'}"
-#   KEY="RESULT"
-#   [ ! -z "$2" ] && KEY="$2"
-#   echo "$KEY:"
-#   echo "$result"
-#   echo "::set-output name=$KEY::$(echo -e $result)"
-# }
-
-
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 # IN_LOG=0
 # IN_CI=1
 # [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-
-
 # DO NOT MODIFY IFS!
 # "
 # IN_LOG=0
