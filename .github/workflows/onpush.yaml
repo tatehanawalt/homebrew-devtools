@@ -17,7 +17,6 @@ jobs:
         run: ./.github/scripts/show_env.sh
         shell: bash
 
-
       # Get the workflow id from the workflow name=$NAME
       - name: label_names
         id: label_names

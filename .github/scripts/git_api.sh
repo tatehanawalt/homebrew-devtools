@@ -1,9 +1,7 @@
 #!/bin/sh
 # Setup the default parameters
 
-source "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
-
-
+. "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
 
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
