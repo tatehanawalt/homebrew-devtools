@@ -2,15 +2,10 @@
 
 . "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
 
-# DO NOT DELETE - USEFUL FOR DEBUGGING!
-# log VERSIONS
-# command_log_which bash "$(bash --version)"
-# command_log_which brew "$(brew --version)"
-# command_log_which git "$(git --version)"
-# command_log_which jq "$(jq --version)"
 
 # Pass this function the set of comma-separated keys to inspect the environment
 # variable value of each key
+
 inspect_fields() {
   log $1
   fields=($(printf "%s" "$2" | sed 's/^,//' | sed 's/,$//' | tr ',' '\n' | sort -u | sed '/^$/d' | sed 's/^[[:space:]]//g'))
@@ -20,8 +15,8 @@ inspect_fields() {
     [ $key_len -gt $max_field_len ] && max_field_len=$(($key_len + 1))
     printf "%s=%s\n" $key "$(eval "echo \"\$$key\"")"
   done
-  log
-  # log "${1}_TABLE"
+
+  log $1_table
   for key in ${fields[@]}; do
     keyval=($(eval "echo -e \"\$$key\"" | tr ',' '\n'))
     if [ ${#keyval[@]} -lt 2 ]; then
@@ -46,11 +41,19 @@ write_result_set $(join_by , ${groups[@]}) inspect_groups
 for entry in "${INSPECT_GROUPS[@]}"; do
   group=$(echo $entry | sed 's/=.*//')
   fields=$(echo $entry | sed 's/.*=//')
-  write_result_set $fields $group
+  write_result_set $fields $group_group
   inspect_fields $group $fields
 done
 
 exit 0
+
+# DO NOT DELETE - USEFUL FOR DEBUGGING!
+# log VERSIONS
+# command_log_which bash "$(bash --version)"
+# command_log_which brew "$(brew --version)"
+# command_log_which git "$(git --version)"
+# command_log_which jq "$(jq --version)"
+
 
 # INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | sed 's/^[^[:alpha:]]*//g')
 
