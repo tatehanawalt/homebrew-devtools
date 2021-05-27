@@ -1,12 +1,6 @@
 #!/bin/bash
 
-# This function starts a git actions log group. Call with 0 args to end a log
-# group without starting a new one
-
 INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | sed 's/^[^[:alpha:]]*//g')
-
-# IFS="
-# "
 export prefix='\t'
 export IN_LOG=0
 export IN_CI=1
@@ -469,3 +463,9 @@ write_result_set() {
 # printf "%s\n" "$0"
 # Used as a debugging script to see what an environment looks like
 # source "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
+
+
+# This function starts a git actions log group. Call with 0 args to end a log
+# group without starting a new one
+# IFS="
+# "
