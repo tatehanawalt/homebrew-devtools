@@ -3,9 +3,11 @@
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 
+INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | sed 's/^[^[:alpha:]]*//g')
+
 IFS="
 "
-prefix="\t"
+prefix="    "
 in_log=0
 in_ci=1
 [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
@@ -33,7 +35,7 @@ join_by () { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}";
 contains() {
   check=$1
   shift
-  printf "\t%s\n" "$check"
+  printf "$prefix%s\n" "$check"
   [[ $@ =~ (^|[[:space:]])$check($|[[:space:]]) ]] && return 0 || return 1
 }
 
@@ -59,10 +61,17 @@ write_result_set() {
 
 
 
+# . $GITHUB_WORKSPACE/.github/scripts/helpers.sh
+# Normalize input inspect_groups
+# [ ! -z "$INSPECT_GROUPS" ] && INSPECT_GROUPS=$(printf "%s" "$INSPECT_GROUPS" | sed "s/  */\n/g" | sed '/^$/d' | sed 's/^[^[:space:]]/\t&/')
 
 
 
 
+
+# printf "%s" "$INSPECT_GROUPS"
+# printf "%s" "$INSPECT_GROUPS" | sed 's/^[[:space:]]*//g' | sed '/^$/d'
+# exit 0
 
 # write_result_set() {
 #   result="$1"
@@ -416,3 +425,21 @@ write_result_set() {
 # in_log=0
 # in_ci=1
 # [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
+
+
+
+# for group in ${groups[@]}; do
+  # printf "\t%s\n" "$group"
+  # group=$(printf "%s" "$group" | xargs)
+  # printf "$prefix%s\n" "$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')"
+# done
+
+# groups=($(printf "%s" "${INSPECT_GROUPS[@]}" | xargs | tr '[:space:]' '\n'))
+# printf "%s\n" ${groups[@]}
+# for g in "${groups[@]}"; do
+#  printf "g: %s\n\n" "$g"
+# done
+
+# groups=$(printf "%s" "$INSPECT_GROUPS" | sed 's/^ \s*//g' | sed '/^$/d' )
+# groups=$(printf "%s" "$INSPECT_GROUPS" | tr -s ' ' | sed '/^$/d' )
+# groups=($(printf "%s" "$INSPECT_GROUPS" | tr -s ' ' | sed '/^$/d' ))
