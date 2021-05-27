@@ -7,7 +7,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: test_script
         id: test_script
-        run: ./.github/scripts/test.sh
+        run: ./.github/scripts/testing.sh
         shell: bash
 
 
