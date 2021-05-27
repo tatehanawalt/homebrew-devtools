@@ -16,6 +16,10 @@ export IN_CI=1
 
 helpers_log_topics=() # Store log headers for pre-exit introspect
 
+test_method() {
+  return 20
+}
+
 before_exit() {
   log BEFORE_EXIT
   printf "%s\n" "${helpers_log_topics[@]}"
@@ -25,11 +29,8 @@ before_exit() {
 
 log() {
   [ $IN_LOG -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
-
   IN_LOG=0
-
   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-
   echo "::group::$1"
   IN_LOG=1
 }

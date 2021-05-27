@@ -1,6 +1,25 @@
 #!/bin/bash
+
+SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+source "$SCRIPTPATH/helpers.sh"
+
+# echo $(dirname %0)
+# printf "SCRIPTPATH: %s\n\n" "$SCRIPTPATH"
+# source $(pwd)/helpers.sh
+# printf "%s\n" "$0"
+
+
 # Used as a debugging script to see what an environment looks like
-source "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
+# source "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
+
+
+
+
+test_method
+printf "test_method: %d\n" $?
+
+
+exit 0
 
 log VERSIONS
 echo "BASH:"
