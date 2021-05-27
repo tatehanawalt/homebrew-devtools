@@ -1,14 +1,10 @@
-name: labelpr
+name: steptests
 on: [workflow_dispatch]
 jobs:
   inspect-env:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
-
-
-      # Get id of this pr
       - name: test_script
         id: test_script
         run: ./.github/scripts/test.sh
