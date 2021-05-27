@@ -1,6 +1,4 @@
 name: pr-formula-tag
-author: Tate Hanawalt
-description: Pull request label creator
 on: [pull_request]
 jobs:
   inspect-env:
