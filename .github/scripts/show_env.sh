@@ -3,29 +3,12 @@
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 source "$SCRIPTPATH/helpers.sh"
 
-
-
-
-
-log VERSIONS
-command_log_which bash "$(bash --version)"
-command_log_which brew "$(brew --version)"
-command_log_which git "$(git --version)"
-command_log_which jq "$(jq --version)"
-
-
-# echo "BASH:"
-# printf "$prefix%s\n" "$(bash --version)"
-# printf "$prefix%s %s\n" "-" $(which bash)
-# echo "BREW:"
-# printf "$prefix%s\n" "$(brew --version)"
-# printf "$prefix%s %s\n" "-" $(which brew)
-# echo "GIT:"
-# printf "$prefix%s\n" "$(git --version)"
-# printf "$prefix%s %s\n" "-" $(which git)
-# echo "JQ:"
-# printf "$prefix%s\n" "$(jq --version)"
-# printf "$prefix%s %s\n" "-" $(which jq)
+# DO NOT DELETE - USEFUL FOR DEBUGGING!
+# log VERSIONS
+# command_log_which bash "$(bash --version)"
+# command_log_which brew "$(brew --version)"
+# command_log_which git "$(git --version)"
+# command_log_which jq "$(jq --version)"
 
 # Pass this function the set of comma-separated keys to inspect the environment
 # variable value of each key

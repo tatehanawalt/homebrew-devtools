@@ -20,8 +20,8 @@ test_method() {
 }
 
 command_log_which() {
-  printf "%s=%s\n" $1 "$(which $1)"
-  printf "%s\n" "$2"
+  printf "%s\t%s\n" $1 "$(which $1)"
+  printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
 }
 
 before_exit() {
@@ -74,10 +74,6 @@ write_result_set() {
 # Normalize input inspect_groups
 # [ ! -z "$INSPECT_GROUPS" ] && INSPECT_GROUPS=$(printf "%s" "$INSPECT_GROUPS" | sed "s/  */\n/g" | sed '/^$/d' | sed 's/^[^[:space:]]/\t&/')
 
-
-
-
-
 # printf "%s" "$INSPECT_GROUPS"
 # printf "%s" "$INSPECT_GROUPS" | sed 's/^[[:space:]]*//g' | sed '/^$/d'
 # exit 0
@@ -95,11 +91,6 @@ write_result_set() {
 #   echo
 #   echo "::set-output name=RESULT::$(echo -e $result)"
 # }
-
-
-
-
-
 
 # ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
 # ESCAPED="${ESCAPED//'%'/'%25'}"
@@ -453,8 +444,6 @@ write_result_set() {
 # groups=$(printf "%s" "$INSPECT_GROUPS" | tr -s ' ' | sed '/^$/d' )
 # groups=($(printf "%s" "$INSPECT_GROUPS" | tr -s ' ' | sed '/^$/d' ))
 
-
-
 # Takes a compare branch and outputs the files that have changed between
 # the latest compare branch and the commit that fired the action
 # TESTING:
@@ -465,13 +454,11 @@ write_result_set() {
 # IN_CI=1
 # [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 
-
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 # IN_LOG=0
 # IN_CI=1
 # [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-
 
 # echo $(dirname %0)
 # printf "SCRIPTPATH: %s\n\n" "$SCRIPTPATH"
