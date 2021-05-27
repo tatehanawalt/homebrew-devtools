@@ -40,14 +40,12 @@ before_exit() {
 }
 log() {
   if [ $IN_LOG -ne 0 ]; then
-    echo
     [ $IN_CI -eq 0 ] && echo "::endgroup::"
   fi
   IN_LOG=0
   if [ ! -z "$1" ]; then
     [ $IN_CI -eq 0 ] && echo "::group::$1" || printf "$1:\n"
     IN_LOG=1
-    echo
   fi
 }
 join_by () {
