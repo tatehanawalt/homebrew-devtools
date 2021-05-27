@@ -64,20 +64,16 @@ contains() {
   return 1
 }
 write_result_set() {
-  result=$1
+  result=$(echo -e "$1" | sed 's/"//g')
   key=$2
-  result=$(echo -e "$result" | sed 's/"//g')
   result="${result//'%'/'%25'}"
   result="${result//$'\n'/'%0A'}"
   result="${result//$'\r'/'%0D'}"
-  HELPERS_LOG_TOPICS+=($KEY)
   [ -z "$key" ] && key="result"
   key=$(echo $key | tr [[:lower:]] [[:upper:]])
   HELPERS_LOG_TOPICS+=($key)
-
   log $key
-  values=($(echo -e $result | tr ',' '\n'))
-  printf "$prefix%s\n" ${values[@]}
+  printf "$prefix%s\n" $(echo -e $result | tr ',' '\n')
   printf "$key=$result\n"
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
 }
@@ -86,7 +82,6 @@ write_result_set() {
 
 
 # [ $IN_CI -eq 0 ] && prefix=""
-
 # ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
 # ESCAPED="${ESCAPED//'%'/'%25'}"
 # ESCAPED="${ESCAPED//$'\n'/'%0A'}"
