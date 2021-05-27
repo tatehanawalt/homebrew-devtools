@@ -45,7 +45,7 @@ jobs:
           SET: ${{ steps.pull_request_label_names.outputs.RESULT }}
           KEYS: ${{ steps.diff_formula.outputs.DIFF_FORMULA }}
 
-      #  Set of all label names
+      #  Set of all existing label names
       - name: label_names
         id: label_names
         run: ./.github/scripts/git_api.sh
@@ -62,6 +62,7 @@ jobs:
           EXISTING_LABELS: "${{ steps.label_names.outputs.RESULT }}"
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Adds specified labels (CSV) to a pull request
       - name: label_pr
         run: ./.github/scripts/label_pr.sh
         shell: bash
