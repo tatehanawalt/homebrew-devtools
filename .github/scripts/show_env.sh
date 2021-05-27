@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
+. "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
 
 # DO NOT DELETE - USEFUL FOR DEBUGGING!
 # log VERSIONS
