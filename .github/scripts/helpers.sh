@@ -3,11 +3,11 @@
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 
-export IFS="
+IFS="
 "
-export prefix="\t"
-export in_log=0
-export in_ci=1
+prefix="\t"
+in_log=0
+in_ci=1
 [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
 [ $in_ci -eq 0 ] && prefix=""
 

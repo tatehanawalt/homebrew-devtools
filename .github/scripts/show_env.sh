@@ -3,26 +3,25 @@
 
 . $GITHUB_WORKSPACE/.github/scripts/helpers.sh
 
+
 log VERSIONS
 echo "BASH:"
 printf "\t%s\n" $(bash --version)
 printf "\t- %s\n" $(which bash)
-echo
 echo "BREW:"
 printf "\t%s\n" $(brew --version)
 printf "\t- %s\n" $(which brew)
-echo
 echo "GIT:"
 printf "\t%s\n" $(git --version)
 printf "\t- %s\n" $(which git)
-echo
 echo "JQ:"
 printf "\t%s\n" $(jq --version)
 printf "\t- %s\n" $(which jq)
-echo
+
 
 # Normalize input inspect_groups
 [ ! -z "$INSPECT_GROUPS" ] && INSPECT_GROUPS=$(printf "%s" "$INSPECT_GROUPS" | sed "s/  */\n/g" | sed '/^$/d' | sed 's/^[^[:space:]]/\t&/')
+
 
 # Pass this function the set of comma-separated keys to inspect the environment
 # variable value of each key
@@ -50,6 +49,7 @@ inspect_fields() {
 inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
 [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS
 [ -z "$INSPECT_GROUPS" ] && exit 0
+
 
 log INSPECT_GROUPS
 groups=$(printf "%s" "$INSPECT_GROUPS" | sed 's/^[[:space:]]*//g' | sed '/^$/d' )

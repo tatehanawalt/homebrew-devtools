@@ -33,7 +33,6 @@ printf "\t%s\n" ${create_labels[@]} | sort -u
 printf "OWNER: %s\n" "$OWNER"
 printf "REPO: %s\n"  "$REPO"
 
-
 create_label() {
   REQUEST_URL="https://api.github.com/repos/$OWNER/$REPO/labels"
   printf "REQUEST_URL: %s\n"  "$REQUEST_URL"
