@@ -55,11 +55,9 @@ case $GITHUB_EVENT_NAME in
     ;;
 esac
 
-
-printf "helpers_log_topics\n"
-printf "%s\n" ${helpers_log_topics[@]}
-
-
+before_exit
+# printf "helpers_log_topics\n"
+# printf "%s\n" ${helpers_log_topics[@]}
 
 log
 exit 0
