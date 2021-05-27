@@ -7,11 +7,10 @@ INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | sed 's/^[^[:alpha:]]*//g')
 
 # IFS="
 # "
-
 export prefix='\t'
 export IN_LOG=0
 export IN_CI=1
-# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+[ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 [ $IN_CI -eq 0 ] && prefix=""
 
 helpers_log_topics=() # Store log headers for pre-exit introspect

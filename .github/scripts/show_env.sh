@@ -54,9 +54,13 @@ inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$
 [ -z "$INSPECT_GROUPS" ] && exit 0
 groups=($(echo "${INSPECT_GROUPS[@]}" | sed 's/^[^[:alpha:]]*//g'))
 log INSPECT_GROUPS
+for group in ${groups[@]};  do
+  printf "%s\n" $group | sed 's/=.*//'
+done
 for group in ${groups[@]}; do
   group=$(printf "%s" "$group" | xargs)
   inspect_fields $(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]') $(printf "%s" "$group" | sed 's/.*=//')
 done
+
 log
 exit 0
