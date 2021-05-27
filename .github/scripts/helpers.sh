@@ -5,10 +5,10 @@
 
 INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | sed 's/^[^[:alpha:]]*//g')
 
-IFS="
-"
+# IFS="
+# "
 
-export prefix="   "
+export prefix='   '
 export IN_LOG=0
 export IN_CI=1
 [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
@@ -467,3 +467,11 @@ write_result_set() {
 # IN_LOG=0
 # IN_CI=1
 # [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+
+
+# echo $(dirname %0)
+# printf "SCRIPTPATH: %s\n\n" "$SCRIPTPATH"
+# source $(pwd)/helpers.sh
+# printf "%s\n" "$0"
+# Used as a debugging script to see what an environment looks like
+# source "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"

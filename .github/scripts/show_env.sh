@@ -3,36 +3,18 @@
 SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 source "$SCRIPTPATH/helpers.sh"
 
-# echo $(dirname %0)
-# printf "SCRIPTPATH: %s\n\n" "$SCRIPTPATH"
-# source $(pwd)/helpers.sh
-# printf "%s\n" "$0"
-
-
-# Used as a debugging script to see what an environment looks like
-# source "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
-
-
-
-
-test_method
-printf "test_method: %d\n" $?
-
-
-exit 0
-
 log VERSIONS
 echo "BASH:"
-printf "$prefix%s\n" $(bash --version)
+printf "$prefix%s\n" "$(bash --version)"
 printf "$prefix%s %s\n" "-" $(which bash)
 echo "BREW:"
-printf "$prefix%s\n" $(brew --version)
+printf "$prefix%s\n" "$(brew --version)"
 printf "$prefix%s %s\n" "-" $(which brew)
 echo "GIT:"
-printf "$prefix%s\n" $(git --version)
+printf "$prefix%s\n" "$(git --version)"
 printf "$prefix%s %s\n" "-" $(which git)
 echo "JQ:"
-printf "$prefix%s\n" $(jq --version)
+printf "$prefix%s\n" "$(jq --version)"
 printf "$prefix%s %s\n" "-" $(which jq)
 
 # Pass this function the set of comma-separated keys to inspect the environment
