@@ -13,7 +13,7 @@ export IN_CI=1
 [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 [ $IN_CI -eq 0 ] && prefix=""
 
-helpers_log_topics=() # Store log headers for pre-exit introspect
+# helpers_log_topics=() # Store log headers for pre-exit introspect
 
 test_method() {
   return 20
