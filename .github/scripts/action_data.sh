@@ -1,16 +1,18 @@
 #!/bin/bash
 
-SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-source "$SCRIPTPATH/helpers.sh"
-
-log EVENT_FILE
-if [ -f "$GITHUB_EVENT_PATH" ]; then
-  cat $GITHUB_EVENT_PATH | jq
-else
+if [ ! -f "$GITHUB_EVENT_PATH" ]; then
   printf "GITHUB_EVENT_PATH FILE NOT FOUND\n"
   printf "GITHUB_EVENT_PATH=%s\n" "$GITHUB_EVENT_PATH"
   exit 1
 fi
+
+[ ! -z "$GITHUB_WORKSPACE" ] && \
+  SCRIPTPATH="$GITHUB_WORKSPACE/.github/scripts" || \
+  SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+source "$SCRIPTPATH/helpers.sh"
+
+log EVENT_FILE
+cat $GITHUB_EVENT_PATH | jq
 
 log EVENT_$(echo $GITHUB_EVENT_NAME | tr [:lower:] [:upper:])
 REPOSITORY_JSON=$(cat $GITHUB_EVENT_PATH | jq '.repository')
@@ -33,9 +35,25 @@ case $GITHUB_EVENT_NAME in
     labels_str=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name) | join(",")')
     write_result_set "${labels_str[@]}" LABELS
     ;;
+  push)
+    printf "PUSH:\n"
+    #printf "\n\nPUSH\n\n"
+    # "after",
+    # "base_ref",
+    # "before",
+    # "commits",
+    # "compare",
+    # "created",
+    # "deleted",
+    # "forced",
+    # "head_commit",
+    # "pusher",
+    # "ref",
+    # "repository",
+    # "sender"
+    ;;
   workflow_dispatch)
     printf "WORKFLOW_DISPATCH:\n"
-
     ;;
   *)
     printf "\n\nUNHANDLED GITHUB_EVENT_NAME GITHUB_EVENT_NAME\n"
