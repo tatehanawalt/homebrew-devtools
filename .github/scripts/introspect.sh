@@ -139,7 +139,6 @@ all() {
   )
   write_result_set $(join_by , ${call_fns[@]}) functions
   for method in ${call_fns[@]}; do
-    log $method
     write_result_set $(join_by , $($method)) $method
   done
   before_exit

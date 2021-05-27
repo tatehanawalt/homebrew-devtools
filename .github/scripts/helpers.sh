@@ -26,22 +26,18 @@ export prefix='\t'
 export IN_LOG=0
 export IN_CI=1
 [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-[ $IN_CI -eq 0 ] && prefix=""
 
 # helpers_log_topics=() # Store log headers for pre-exit introspect
 test_method() {
   return 20
 }
-
 command_log_which() {
   printf "%s\t%s\n" $1 "$(which $1)"
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
 }
-
 before_exit() {
   write_result_set $(join_by , ${HELPERS_LOG_TOPICS[@]}) outputs
 }
-
 log() {
   if [ $IN_LOG -ne 0 ]; then
     [ $IN_CI -eq 0 ] && echo "::endgroup::"
@@ -67,7 +63,6 @@ contains() {
   fi
   return 1
 }
-
 write_result_set() {
   result=$1
   key=$2
@@ -90,16 +85,7 @@ write_result_set() {
 
 
 
-
-
-# . $GITHUB_WORKSPACE/.github/scripts/helpers.sh
-# Normalize input inspect_groups
-# [ ! -z "$INSPECT_GROUPS" ] && INSPECT_GROUPS=$(printf "%s" "$INSPECT_GROUPS" | sed "s/  */\n/g" | sed '/^$/d' | sed 's/^[^[:space:]]/\t&/')
-
-# printf "%s" "$INSPECT_GROUPS"
-# printf "%s" "$INSPECT_GROUPS" | sed 's/^[[:space:]]*//g' | sed '/^$/d'
-# exit 0
-
+# [ $IN_CI -eq 0 ] && prefix=""
 
 # ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
 # ESCAPED="${ESCAPED//'%'/'%25'}"
@@ -132,45 +118,6 @@ write_result_set() {
 # GITHUB_REPOSITORY       - tatehanawalt/homebrew-devtools
 # GITHUB_REPOSITORY_OWNER - tatehanawalt
 # DEFAULTS
-
-# log() {
-#   [ $IN_LOG -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
-#   IN_LOG=0
-#   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-#   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
-#   IN_LOG=1
-# }
-# join_by () {
-#   local d=${1-} f=${2-};
-#   if shift 2; then
-#     printf %s "$f" "${@/#/$d}";
-#   fi;
-# }
-
-
-
-# log() {
-#   [ $IN_LOG -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
-#   IN_LOG=0
-#   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-#   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
-#   IN_LOG=1
-# }
-# join_by () { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
-
-
-# log() {
-#   [ $IN_LOG -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
-#   IN_LOG=0
-#   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-#   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
-#   IN_LOG=1
-# }
-# contains() {
-#   check=$1
-#   shift
-#   [[ $@ =~ (^|[[:space:]])$check($|[[:space:]]) ]] && return 0 || return 1
-# }
 
 
 
@@ -261,106 +208,3 @@ write_result_set() {
 #   IN_LOG=1
 # }
 # join_by () { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
-
-
-
-# printf "helpers_log_topics\n"
-# printf "%s\n" ${helpers_log_topics[@]}
-# HEAD is the branch
-# BASE is the main
-# This function starts a git actions log group. Call with 0 args to end a log
-# group without starting a new one
-# IN_LOG=0
-# IN_CI=1
-# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-# log() {
-#   [ $IN_LOG -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::" || echo -e "\n"
-#   IN_LOG=0
-#   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-#   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
-#   IN_LOG=1
-# }
-# join_by () {
-#   local d=${1-} f=${2-};
-#   if shift 2; then
-#     printf %s "$f" "${@/#/$d}";
-#   fi;
-# }
-# This function starts a git actions log group. Call with 0 args to end a log
-# group without starting a new one
-# IN_LOG=0
-# IN_CI=1
-# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-# DO NOT MODIFY IFS!
-# "
-# IN_LOG=0
-# IN_CI=1
-# IF RUN BY CI vs Locally
-# [ "$CI" = "true" ] && IN_CI=0
-
-
-
-# This function starts a git actions log group. Call with 0 args to end a log
-# group without starting a new one
-# log() {
-#   if [ $IN_LOG -ne 0 ]; then
-#     [ $IN_CI -eq 0 ] && echo "::endgroup::";
-#     IN_LOG=0
-#   fi
-#   # Do we need to start a group?
-#   if [ ! -z "$1" ]; then
-#     [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1:"
-#     IN_LOG=1
-#   fi
-# }
-
-
-# printf "inc"
-# IN_LOG=0
-# IN_CI=1
-# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-
-
-
-# for group in ${groups[@]}; do
-  # printf "\t%s\n" "$group"
-  # group=$(printf "%s" "$group" | xargs)
-  # printf "$prefix%s\n" "$(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]')"
-# done
-
-# groups=($(printf "%s" "${INSPECT_GROUPS[@]}" | xargs | tr '[:space:]' '\n'))
-# printf "%s\n" ${groups[@]}
-# for g in "${groups[@]}"; do
-#  printf "g: %s\n\n" "$g"
-# done
-
-# groups=$(printf "%s" "$INSPECT_GROUPS" | sed 's/^ \s*//g' | sed '/^$/d' )
-# groups=$(printf "%s" "$INSPECT_GROUPS" | tr -s ' ' | sed '/^$/d' )
-# groups=($(printf "%s" "$INSPECT_GROUPS" | tr -s ' ' | sed '/^$/d' ))
-
-# Takes a compare branch and outputs the files that have changed between
-# the latest compare branch and the commit that fired the action
-# TESTING:
-# export GITHUB_BASE_REF=<base branch>
-# export GITHUB_HEAD_REF=<this branch>
-# export GITHUB_WORKSPACE=</path/to/repo>
-# IN_LOG=0
-# IN_CI=1
-# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-
-# This function starts a git actions log group. Call with 0 args to end a log
-# group without starting a new one
-# IN_LOG=0
-# IN_CI=1
-# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-
-# echo $(dirname %0)
-# printf "SCRIPTPATH: %s\n\n" "$SCRIPTPATH"
-# source $(pwd)/helpers.sh
-# printf "%s\n" "$0"
-# Used as a debugging script to see what an environment looks like
-# source "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
-
-
-# This function starts a git actions log group. Call with 0 args to end a log
-# group without starting a new one
