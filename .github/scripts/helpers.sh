@@ -3,29 +3,21 @@
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 
-
 IFS="
 "
 prefix="\t"
-
 in_log=0
 in_ci=1
 [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
 [ $in_ci -eq 0 ] && prefix=""
-
-
-
 helpers_log_topics=() # Store log headers for pre-exit introspect
+
 before_exit() {
-  printf "\n\n"
-  printf "BEFORE_EXIT:\n"
   log BEFORE_EXIT
   printf "%s\n" "${helpers_log_topics[@]}"
-  printf "\n\n"
   write_result_set $(join_by , ${helpers_log_topics[@]}) BEFORE_EXIT
   log
 }
-
 
 log() {
   [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
@@ -60,6 +52,14 @@ write_result_set() {
   echo $result
   echo "::set-output name=$KEY::$(echo -e $result)"
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -409,3 +409,9 @@ write_result_set() {
 #     in_log=1
 #   fi
 # }
+
+
+# printf "inc"
+# in_log=0
+# in_ci=1
+# [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally

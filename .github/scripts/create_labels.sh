@@ -4,7 +4,6 @@
 
 
 TOPIC=repos
-
 [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
 [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
 [ -z "$GITHUB_HEAD_REF" ]         && GITHUB_HEAD_REF="main"
@@ -21,7 +20,6 @@ existing_labels=($(echo -e "${EXISTING_LABELS[@]}" | tr ',' '\n'))
 check_create_labels=($(echo -e "${CHECK_CREATE_LABELS[@]}" | tr ',' '\n'))
 
 log EXISTING_LABELS
-
 printf "\t%s\n" ${existing_labels[@]} | sort -u
 
 log CHECK_LABELS

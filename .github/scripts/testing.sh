@@ -4,7 +4,7 @@
 
 
 
-printf "\n\nGITHUB_WORKSPACE=$GITHUB_WORKSPACE\n\n"
+printf "GITHUB_WORKSPACE=$GITHUB_WORKSPACE\n"
 printf "pwd: %s\n" $(pwd)
 # source "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
 

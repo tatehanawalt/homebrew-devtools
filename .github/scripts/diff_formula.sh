@@ -1,4 +1,8 @@
 #!/bin/sh
+
+
+
+
 # Takes a list if files (relative paths) of a git repo and returns the list of
 # formula names that are found in the set of file paths
 DIFF_FILES=$(echo $DIFF_FILES | tr ',' '\n')

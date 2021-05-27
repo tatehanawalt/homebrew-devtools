@@ -2,10 +2,6 @@
 
 . $GITHUB_WORKSPACE/.github/scripts/helpers.sh
 
-printf "inc"
-in_log=0
-in_ci=1
-[ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
 
 log EVENT_FILE
 if [ -f "$GITHUB_EVENT_PATH" ]; then
@@ -16,13 +12,13 @@ else
   exit 1
 fi
 
+
 log EVENT_$(echo $GITHUB_EVENT_NAME | tr [:lower:] [:upper:])
 REPOSITORY_JSON=$(cat $GITHUB_EVENT_PATH | jq '.repository')
 REPOSITORY_ID=$(echo "$REPOSITORY_JSON" | jq -r '.id')
 write_result_set "$REPOSITORY_ID" "REPOSITORY_ID"
 REPO=$(echo "$REPOSITORY_JSON" | jq -r '.name')
 write_result_set "$REPO" "REPO"
-
 
 
 case $GITHUB_EVENT_NAME in
@@ -41,8 +37,6 @@ case $GITHUB_EVENT_NAME in
     ;;
   workflow_dispatch)
     printf "WORKFLOW_DISPATCH:\n"
-
-
 
     ;;
   *)
