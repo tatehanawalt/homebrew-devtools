@@ -43,7 +43,7 @@ case $GITHUB_EVENT_NAME in
     ;;
   workflow_dispatch)
 
-    printf "WORKFLOW_DISPATCH:"
+    printf "WORKFLOW_DISPATCH:\n"
 
 
 
@@ -56,6 +56,7 @@ case $GITHUB_EVENT_NAME in
 esac
 
 
+printf "helpers_log_topics"
 printf "%s\n" ${helpers_log_topics[@]}
 
 
