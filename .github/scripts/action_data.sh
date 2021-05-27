@@ -2,6 +2,9 @@
 
 . $GITHUB_WORKSPACE/.github/scripts/helpers.sh
 
+
+printf "inc"
+
 in_log=0
 in_ci=1
 [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
