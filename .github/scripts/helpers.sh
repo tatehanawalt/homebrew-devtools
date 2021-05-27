@@ -11,7 +11,7 @@ INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | sed 's/^[^[:alpha:]]*//g')
 export prefix='\t'
 export IN_LOG=0
 export IN_CI=1
-[ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 [ $IN_CI -eq 0 ] && prefix=""
 
 helpers_log_topics=() # Store log headers for pre-exit introspect
@@ -21,12 +21,9 @@ test_method() {
 }
 
 command_log_which() {
-  printf "%s\n%s\n- %s\n" "$1" "$2" "$(which $1)"
-
-
-# echo "BASH:"
-  # printf "$prefix%s\n" "$(bash --version)"
-  # printf "$prefix%s %s\n" "-" $(which bash)
+  printf "%s=%s\n" $1 "$(which $1)"
+  printf "%s\n" "$2" | sed 's/^/\t/'
+  printf "\n"
 }
 
 before_exit() {
