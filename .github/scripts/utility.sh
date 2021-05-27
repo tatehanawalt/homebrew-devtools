@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. $GITHUB_WORKSPACE/.github/scripts/helpers.sh
+SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+source "$SCRIPTPATH/helpers.sh"
 
 # UTILITY provides multiple utility functions for processing raw data
 # this script probably shouldn't call any apis or anything...

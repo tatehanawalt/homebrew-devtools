@@ -1,7 +1,7 @@
 #!/bin/bash
 
-. $GITHUB_WORKSPACE/.github/scripts/helpers.sh
-
+SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+source "$SCRIPTPATH/helpers.sh"
 
 log EVENT_FILE
 if [ -f "$GITHUB_EVENT_PATH" ]; then
@@ -12,14 +12,12 @@ else
   exit 1
 fi
 
-
 log EVENT_$(echo $GITHUB_EVENT_NAME | tr [:lower:] [:upper:])
 REPOSITORY_JSON=$(cat $GITHUB_EVENT_PATH | jq '.repository')
 REPOSITORY_ID=$(echo "$REPOSITORY_JSON" | jq -r '.id')
 write_result_set "$REPOSITORY_ID" "REPOSITORY_ID"
 REPO=$(echo "$REPOSITORY_JSON" | jq -r '.name')
 write_result_set "$REPO" "REPO"
-
 
 case $GITHUB_EVENT_NAME in
   pull_request)
