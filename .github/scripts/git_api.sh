@@ -5,10 +5,7 @@
 
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
-  if [ -z "$template" ]; then
-    echo "NO TEMPLATE SPECIFIED"
-    exit 1
-  fi
+  [ -z "$template" ] && echo "NO TEMPLATE SPECIFIED" && exit 1
 fi
 
 WITH_AUTH=1
@@ -26,25 +23,11 @@ request_status=0
 OWNER="$GITHUB_REPOSITORY_OWNER"
 REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
 
-log FIELDS
-echo "CI=$IN_CI"
-echo "OWNER=$OWNER"
-echo "NAME=$NAME"
-echo "REPO=$REPO"
-echo "HEAD=$HEAD"
-echo "BASE=$BASE"
-echo "USER=$USER"
-echo "TAG=$TAG"
-echo "ID=$ID"
-echo "template=$template"
-
 run_input() {
-
   case $1 in
     artifacts)
       QUERY_BASE=actions/artifacts
       ;;
-
     collaborators)
       QUERY_BASE=collaborators
       WITH_AUTH=0
@@ -58,62 +41,61 @@ run_input() {
       QUERY_BASE=collaborators/$USER
       WITH_AUTH=0
       ;;
-
-#    help)
-#      echo "
-#      artifacts
-#      collaborators
-#      collaborator_usernames
-#      is_collaborator
-#      labels
-#      label_names
-#      label_ids
-#      pull_request
-#      pull_request_labels
-#      pull_request_label_names
-#      pull_request_commits
-#      pull_request_files
-#      pull_request_merged
-#      pull_requests
-#      release
-#      releases
-#      release_assets
-#      release_latest
-#      release_latest_id
-#      release_latest_tag
-#      tagged
-#      repo_branches
-#      repo_branche_names
-#      repo_user_permissions
-#      repo_contributors
-#      repo_contributor_names
-#      repo_languages
-#      repo_language_names
-#      repo_tags
-#      repo_teams
-#      repo_topics
-#      repo_workflow
-#      repo_workflows
-#      repo_workflow_id
-#      repo_workflow_ids
-#      repo_workflow_names
-#      repo_workflow_runs
-#      repo_workflow_completed_runs
-#      repo_workflow_run_ids
-#      repo_workflow_completed_run_ids
-#      repo_workflow_usage
-#      workflow_runs
-#      workflow_completed_runs
-#      workflow_run_ids
-#      workflow_completed_run_ids
-#      delete_workflow_run
-#      workflow_run_numbers
-#      workflow_run_job
-#      workflow_run_jobs
-#      user_repos
-#      user_repo_names" | sort
-#      exit 1
-#      ;;
+    help)
+      echo "
+      artifacts
+      collaborators
+      collaborator_usernames
+      is_collaborator
+      labels
+      label_names
+      label_ids
+      pull_request
+      pull_request_labels
+      pull_request_label_names
+      pull_request_commits
+      pull_request_files
+      pull_request_merged
+      pull_requests
+      release
+      releases
+      release_assets
+      release_latest
+      release_latest_id
+      release_latest_tag
+      tagged
+      repo_branches
+      repo_branche_names
+      repo_user_permissions
+      repo_contributors
+      repo_contributor_names
+      repo_languages
+      repo_language_names
+      repo_tags
+      repo_teams
+      repo_topics
+      repo_workflow
+      repo_workflows
+      repo_workflow_id
+      repo_workflow_ids
+      repo_workflow_names
+      repo_workflow_runs
+      repo_workflow_completed_runs
+      repo_workflow_run_ids
+      repo_workflow_completed_run_ids
+      repo_workflow_usage
+      workflow_runs
+      workflow_completed_runs
+      workflow_run_ids
+      workflow_completed_run_ids
+      delete_workflow_run
+      workflow_run_numbers
+      workflow_run_job
+      workflow_run_jobs
+      user_repos
+      user_repo_names" | sort
+      exit 1
+      ;;
 
     labels)
       QUERY_BASE=labels
@@ -166,13 +148,11 @@ run_input() {
       ;;
     release_latest_id)
       QUERY_BASE=releases/latest
-      SEARCH_FIELD=id
-      SEARCH_STRING='.[$field_name]'
+      SEARCH_STRING='.id'
       ;;
     release_latest_tag)
       QUERY_BASE=releases/latest
-      SEARCH_FIELD=tag_name
-      SEARCH_STRING='.[$field_name]'
+      SEARCH_STRING='.tag_name'
       ;;
 
     tagged)
@@ -282,8 +262,7 @@ run_input() {
       ;;
     workflow_run_numbers)
       QUERY_BASE=actions/workflows/$ID/runs
-      SEARCH_FIELD=run_number
-      SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
+      SEARCH_STRING='.workflow_runs | map(.run_number) | join(",")'
       ;;
     workflow_run_job)
       QUERY_BASE=actions/jobs/$ID
@@ -313,16 +292,6 @@ run_input() {
   [ ! -z "$SEARCH_FIELD" ] && WITH_SEARCH=0
   [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ] && SEARCH_STRING='map(.[$field_name]) | join(",")'
 
-  echo "QUERY_BASE=$QUERY_BASE"
-  echo "TOPIC=$TOPIC"
-  echo "WITH_SEARCH=$WITH_SEARCH"
-  echo "WITH_AUTH=$WITH_AUTH"
-  echo "WITH_DELETE=$WITH_DELETE"
-  echo "QUERY_URL=$QUERY_URL"
-  echo "SEARCH_FIELD=$SEARCH_FIELD"
-  echo "SEARCH_STRING=$SEARCH_STRING"
-  echo "ID=$ID"
-
   response=""
   if [ $WITH_DELETE -eq 0 ]; then
     response=$(curl \
@@ -348,13 +317,11 @@ run_input() {
         $QUERY_URL)
     fi
   fi
-
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   request_status=$((${request_status} + 0))
   [ $request_status -eq 200 ] && request_status=0
   [ $request_status -eq 204 ] && request_status=0
-
   log RESPONSE
   echo $output | jq
   if [ ! -z "$SEARCH_STRING" ]; then
@@ -378,4 +345,26 @@ for entry in $IDS; do
   run_input $template
   [ $request_status -ne 0 ] && break
 done
+
 exit $request_status
+
+# echo "CI=$IN_CI"
+# echo "OWNER=$OWNER"
+# echo "NAME=$NAME"
+# echo "REPO=$REPO"
+# echo "HEAD=$HEAD"
+# echo "BASE=$BASE"
+# echo "USER=$USER"
+# echo "TAG=$TAG"
+# echo "ID=$ID"
+# echo "template=$template"
+
+# echo "QUERY_BASE=$QUERY_BASE"
+# echo "TOPIC=$TOPIC"
+# echo "WITH_SEARCH=$WITH_SEARCH"
+# echo "WITH_AUTH=$WITH_AUTH"
+# echo "WITH_DELETE=$WITH_DELETE"
+# echo "QUERY_URL=$QUERY_URL"
+# echo "SEARCH_FIELD=$SEARCH_FIELD"
+# echo "SEARCH_STRING=$SEARCH_STRING"
+# echo "ID=$ID"

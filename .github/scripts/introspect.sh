@@ -31,6 +31,7 @@ IN_CI=1
 log PARAMS
 echo "template=$template"
 echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+echo
 log
 
 formula_method_signatures() {
@@ -63,10 +64,10 @@ formula_paths() {
 formula_names() {
   return_set=()
   file_paths=($(formula_paths))
-  for item in ${file_paths[@]}; do
+  for item in "${file_paths[@]}"; do
     return_set+=($(printf "%s" $item | sed 's/.*\///g' | sed 's/\..*//'));
   done
-  printf "%s\n" ${return_set[@]}
+  printf "%s\n" "${return_set[@]}"
 }
 
 formula_sha() {
@@ -79,11 +80,24 @@ formula_sha() {
 formula_shas() {
   return_set=()
   formulas=($(formula_names))
-  for item in ${formulas[@]}; do
+  for item in "${formulas[@]}"; do
     return_set+=("$item\t$(formula_sha $item)")
   done
   printf "%s\n" ${return_set[@]}
 }
+formula_shas2() {
+  return_set=()
+  formulas=($(formula_names))
+  for item in "${formulas[@]}"; do
+    shaval=$(formula_sha $item)
+    # kvset=$(printf "%s\t%s\n" $item $shaval)
+    # return_set+=($(printf "$item\t%s" $shaval))
+    # # return_set+=("$item\t$(formula_sha $item)")
+    printf "$item\t%s\n" $shaval
+  done
+  # printf "%s\n" ${return_set[@]}
+}
+
 
 formula_url() {
   formula_method_body $1 $2 | \
@@ -101,6 +115,41 @@ formula_urls() {
   printf "%s\n" ${return_set[@]}
 }
 
+
+
+# IFS='\n'
+
+test_var=("$(formula_shas2 | sed 's/[^[:alnum:]]$//g' | tr '\n' ',')")
+
+
+printf "%s\n" "$test_var" | cat -et
+# printf "%s\n" "$test_var" | cat -et
+
+
+# echo
+#echo
+# echo "$(join_by , ${test_var[@]})"
+
+
+
+# echo "$test_var" | cat -v
+# formula_names
+# formula_shas2
+
+exit 0
+
+# strset=$(formula_shas)
+# printf "1.\n%s\n" "$strset"
+# printf "\n\n"
+# printf "2.\n%s\n" "${strset[@]}"
+# printf "\n\n"
+# write_result_set $(join_by , "$(formula_shas)")
+
+exit 0
+
+
+
+
 case $template in
   formula_names)
     write_result_set $(join_by , $(formula_names))
@@ -109,7 +158,7 @@ case $template in
     write_result_set $(join_by , $(formula_paths))
     ;;
   formula_shas)
-    write_result_set $(join_by , $(formula_shas))
+    write_result_set $(join_by , "$(formula_shas)")
     ;;
   formula_stable_urls)
     write_result_set $(join_by , $(formula_urls stable))
