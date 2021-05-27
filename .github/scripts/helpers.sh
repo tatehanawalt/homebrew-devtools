@@ -7,11 +7,11 @@ INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | sed 's/^[^[:alpha:]]*//g')
 
 IFS="
 "
-prefix="    "
-in_log=0
-in_ci=1
-[ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
-[ $in_ci -eq 0 ] && prefix=""
+export prefix="   "
+export in_log=0
+export IN_CI=1
+[ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+[ $IN_CI -eq 0 ] && prefix=""
 
 helpers_log_topics=() # Store log headers for pre-exit introspect
 
@@ -23,10 +23,10 @@ before_exit() {
 }
 
 log() {
-  [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
+  [ $in_log -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
   in_log=0
   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-  [ $in_ci -eq 1 ] && echo "::group::$1" || echo "$1"
+  [ $IN_CI -eq 1 ] && echo "::group::$1" || echo "$1"
   in_log=1
 }
 
@@ -179,10 +179,10 @@ write_result_set() {
 
 
 # log() {
-#   [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
+#   [ $in_log -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
 #   in_log=0
 #   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-#   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
+#   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
 #   in_log=1
 # }
 # join_by () {
@@ -207,10 +207,10 @@ write_result_set() {
 
 
 # log() {
-#   [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
+#   [ $in_log -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
 #   in_log=0
 #   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-#   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
+#   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
 #   in_log=1
 # }
 # join_by () { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
@@ -235,10 +235,10 @@ write_result_set() {
 
 
 # log() {
-#   [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
+#   [ $in_log -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
 #   in_log=0
 #   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-#   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
+#   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
 #   in_log=1
 # }
 # contains() {
@@ -330,10 +330,10 @@ write_result_set() {
 
 
 # log() {
-#   [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
+#   [ $in_log -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
 #   in_log=0
 #   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-#   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
+#   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
 #   in_log=1
 # }
 # join_by () { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
@@ -360,13 +360,13 @@ write_result_set() {
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 # in_log=0
-# in_ci=1
-# [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
+# IN_CI=1
+# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 # log() {
-#   [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::" || echo -e "\n"
+#   [ $in_log -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::" || echo -e "\n"
 #   in_log=0
 #   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-#   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
+#   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
 #   in_log=1
 # }
 # join_by () {
@@ -392,17 +392,17 @@ write_result_set() {
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 # in_log=0
-# in_ci=1
-# [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
+# IN_CI=1
+# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 
 
 # DO NOT MODIFY IFS!
 # IFS="
 # "
 # in_log=0
-# in_ci=1
+# IN_CI=1
 # IF RUN BY CI vs Locally
-# [ "$CI" = "true" ] && in_ci=0
+# [ "$CI" = "true" ] && IN_CI=0
 
 
 
@@ -410,12 +410,12 @@ write_result_set() {
 # group without starting a new one
 # log() {
 #   if [ $in_log -ne 0 ]; then
-#     [ $in_ci -eq 0 ] && echo "::endgroup::";
+#     [ $IN_CI -eq 0 ] && echo "::endgroup::";
 #     in_log=0
 #   fi
 #   # Do we need to start a group?
 #   if [ ! -z "$1" ]; then
-#     [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1:"
+#     [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1:"
 #     in_log=1
 #   fi
 # }
@@ -423,8 +423,8 @@ write_result_set() {
 
 # printf "inc"
 # in_log=0
-# in_ci=1
-# [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
+# IN_CI=1
+# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 
 
 
