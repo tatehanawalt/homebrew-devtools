@@ -20,7 +20,8 @@ inspect_fields() {
     [ $key_len -gt $max_field_len ] && max_field_len=$(($key_len + 1))
     printf "%s=%s\n" $key "$(eval "echo \"\$$key\"")"
   done
-  log "${1}_TABLE"
+  log
+  # log "${1}_TABLE"
   for key in ${fields[@]}; do
     keyval=($(eval "echo -e \"\$$key\"" | tr ',' '\n'))
     if [ ${#keyval[@]} -lt 2 ]; then

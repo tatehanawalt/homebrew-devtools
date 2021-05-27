@@ -82,14 +82,7 @@ write_result_set() {
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
 }
 
-
-
-
 # [ $IN_CI -eq 0 ] && prefix=""
-# ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
-# ESCAPED="${ESCAPED//'%'/'%25'}"
-# ESCAPED="${ESCAPED//$'\n'/'%0A'}"
-# ESCAPED="${ESCAPED//$'\r'/'%0D'}"
 
 # core.addPath	Accessible using environment file GITHUB_PATH
 # core.debug	debug
@@ -110,14 +103,6 @@ write_result_set() {
 # [ ! -z "$GITHUB_BASE_REF" ] && BASE=$GITHUB_BASE_REF
 # [ ! -z "$GITHUB_REPOSITORY_OWNER" ] && OWNER=$GITHUB_REPOSITORY_OWNER
 # [ ! -z "$GITHUB_WORKSPACE" ] && REPO=$GITHUB_WORKSPACE
-# GITHUB_API_URL          - https://api.github.com
-# GITHUB_AUTH_TOKEN       -
-# GITHUB_BASE_REF         - main
-# GITHUB_HEAD_REF         - diff_files_Action
-# GITHUB_REPOSITORY       - tatehanawalt/homebrew-devtools
-# GITHUB_REPOSITORY_OWNER - tatehanawalt
-# DEFAULTS
-
 
 
 # for item in ${result[@]}; do printf "%s\n" "$item"; done
@@ -196,14 +181,3 @@ write_result_set() {
 #     echo "$formula_file" | awk "/$block\$/,/^  end/" | sed 1d | sed '$d'
 #   done
 # }
-
-
-
-# log() {
-#   [ $IN_LOG -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
-#   IN_LOG=0
-#   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-#   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
-#   IN_LOG=1
-# }
-# join_by () { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
