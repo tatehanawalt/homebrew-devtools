@@ -20,7 +20,7 @@ printf "$prefix- %s\n" $(which jq)
 # variable value of each key
 inspect_fields() {
   log $1
-  fields=($(printf "%s" "$2" | sed 's/^,//' | sed 's/,$//' | tr ',' '\n' | sort -u | sed '/^$/d' | sed 's/^[:space:]//g'))
+  fields=($(printf "%s" "$2" | sed 's/^,//' | sed 's/,$//' | tr ',' '\n' | sort -u | sed '/^$/d' | sed 's/^[[:space:]]//g'))
   max_field_len=0
   for key in ${fields[@]}; do
     key_len=${#key}
