@@ -22,8 +22,7 @@ test_method() {
 
 command_log_which() {
   printf "%s=%s\n" $1 "$(which $1)"
-  printf "%s\n" "$2" | sed 's/^/\t/'
-  printf "\n"
+  printf "%s\n" "$2"
 }
 
 before_exit() {
