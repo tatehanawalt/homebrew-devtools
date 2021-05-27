@@ -41,26 +41,26 @@ command_log_which() {
 
 before_exit() {
   log BEFORE_EXIT
-  printf "%s\n" "${helpers_log_topics[@]}"
   write_result_set $(join_by , ${HELPERS_LOG_TOPICS[@]}) outputs
   log
 }
 
 log() {
-  [ $IN_LOG -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
+  if [ $IN_LOG -ne 0 ]; then
+    [ $IN_CI -eq 0 ] && echo "::endgroup::"
+  fi
   IN_LOG=0
-  [ -z "$1" ] && return # Input specified we do not need to start a new log group
-  echo "::group::$1"
-  IN_LOG=1
+  if [ ! -z "$1" ]; then
+    [ $IN_CI -eq 0 ] && echo "::group::$1"
+    IN_LOG=1
+  fi
 }
-
 join_by () {
   local d=${1-} f=${2-};
   if shift 2; then
     printf %s "$f" "${@/#/$d}" | sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
   fi
 }
-
 contains() {
   check=$1
   shift
@@ -77,25 +77,20 @@ contains() {
 write_result_set() {
   result=$1
   key=$2
-
   result=$(echo -e "$result" | sed 's/"//g')
   result="${result//'%'/'%25'}"
   result="${result//$'\n'/'%0A'}"
   result="${result//$'\r'/'%0D'}"
-
   HELPERS_LOG_TOPICS+=($KEY)
-
   [ -z "$key" ] && key="result"
   key=$(echo $key | tr [[:lower:]] [[:upper:]])
-
   HELPERS_LOG_TOPICS+=($key)
+  printf "$key:\n"
+  values=($(echo -e $result | tr ',' '\n'))
+  printf "\t%s\n" ${values[@]}
+  printf "$key=$result\n"
 
-  echo "$key:"
-  echo
-  printf "\t%s\n" $result
-  echo
-  echo "::set-output name=$key::$(echo -e $result)"
-  echo
+  [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
 }
 
 

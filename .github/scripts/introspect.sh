@@ -137,8 +137,7 @@ all() {
     formula_stable_urls
     formula_head_urls
   )
-  printf "%s\n" ${call_fns[@]}
-  log
+  write_result_set $(join_by , ${call_fns[@]}) functions
 
   for method in ${call_fns[@]}; do
     log $method
