@@ -10,3 +10,13 @@ jobs:
         id: test_script
         run: ./.github/scripts/testing.sh
         shell: bash
+
+      - name: action_data
+        id: action_data_1
+        run: ./.github/scripts/action_data.sh
+        shell: bash
+
+      - name: action_data
+        id: action_data_2
+        run: ./.github/scripts/action_data.sh
+        shell: bash

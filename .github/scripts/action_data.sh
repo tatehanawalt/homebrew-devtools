@@ -50,7 +50,6 @@ exit 0
 
 # HEAD is the branch
 # BASE is the main
-
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 # in_log=0
