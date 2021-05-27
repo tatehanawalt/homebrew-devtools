@@ -3,17 +3,6 @@
 
 . $GITHUB_WORKSPACE/.github/scripts/helpers.sh
 
-# DO NOT MODIFY IFS!
-IFS="
-"
-prefix="\t"
-in_log=0
-in_ci=1
-
-# IF RUN BY CI vs Locally
-[ "$CI" = "true" ] && in_ci=0
-[ $in_ci -eq 0 ] && prefix=""
-
 log VERSIONS
 echo "BASH:"
 printf "\t%s\n" $(bash --version)
@@ -75,18 +64,3 @@ done
 
 log
 exit 0
-
-
-# This function starts a git actions log group. Call with 0 args to end a log
-# group without starting a new one
-# log() {
-#   if [ $in_log -ne 0 ]; then
-#     [ $in_ci -eq 0 ] && echo "::endgroup::";
-#     in_log=0
-#   fi
-#   # Do we need to start a group?
-#   if [ ! -z "$1" ]; then
-#     [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1:"
-#     in_log=1
-#   fi
-# }
