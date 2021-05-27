@@ -29,7 +29,6 @@ export IN_CI=1
 [ $IN_CI -eq 0 ] && prefix=""
 
 # helpers_log_topics=() # Store log headers for pre-exit introspect
-
 test_method() {
   return 20
 }
@@ -49,7 +48,7 @@ log() {
   fi
   IN_LOG=0
   if [ ! -z "$1" ]; then
-    [ $IN_CI -eq 0 ] && echo "::group::$1"
+    [ $IN_CI -eq 0 ] && echo "::group::$1" || printf "$1:\n"
     IN_LOG=1
   fi
 }

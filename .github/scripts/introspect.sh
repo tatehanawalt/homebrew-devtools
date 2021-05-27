@@ -110,9 +110,9 @@ formula_stable_urls() {
 
 testfn() {
   printf "${Red}%s${Cyan}\n" $(echo "$1" | tr [[:lower:]] [[:upper:]])
-  printf "\t%s\n" $($1)
+  printf "$prefix%s\n" $($1)
   printf "${Red}%s${Cyan}\n" $(echo "$1_CSV" | tr [[:lower:]] [[:upper:]])
-  printf "\t%s\n" $(join_by , $($1))
+  printf "$prefix%s\n" $(join_by , $($1))
   printf "${NC}\n"
 }
 
