@@ -68,7 +68,6 @@ echo "ID=$ID"
 echo "template=$template"
 
 run_input() {
-
   case $1 in
     artifacts)
       QUERY_BASE=actions/artifacts
@@ -89,6 +88,62 @@ run_input() {
       # /repos/{owner}/{repo}/collaborators/{username}
       ;;
 
+    help)
+      echo "
+      artifacts
+      collaborators
+      collaborator_usernames
+      is_collaborator
+      labels
+      label_names
+      label_ids
+      pull_request
+      pull_request_labels
+      pull_request_label_names
+      pull_request_commits
+      pull_request_files
+      pull_request_merged
+      pull_requests
+      release
+      releases
+      release_assets
+      release_latest
+      release_latest_id
+      release_latest_tag
+      tagged
+      repo_branches
+      repo_branche_names
+      repo_user_permissions
+      repo_contributors
+      repo_contributor_names
+      repo_languages
+      repo_language_names
+      repo_tags
+      repo_teams
+      repo_topics
+      repo_workflow
+      repo_workflows
+      repo_workflow_id
+      repo_workflow_ids
+      repo_workflow_names
+      repo_workflow_runs
+      repo_workflow_completed_runs
+      repo_workflow_run_ids
+      repo_workflow_completed_run_ids
+      repo_workflow_usage
+      workflow_runs
+      workflow_completed_runs
+      workflow_run_ids
+      workflow_completed_run_ids
+      delete_workflow_run
+      workflow_run_numbers
+      workflow_run_job
+      workflow_run_jobs
+      user_repos
+      user_repo_names
+      " | sort
+      exit 1
+      ;;
     labels)
       QUERY_BASE=labels
       ;;
@@ -386,3 +441,56 @@ exit $request_status
 # GITHUB_REPOSITORY       - tatehanawalt/homebrew-devtools
 # GITHUB_REPOSITORY_OWNER - tatehanawalt
 # DEFAULTS
+
+#
+# artifacts)
+# collaborators)
+# collaborator_usernames)
+# is_collaborator)
+# labels)
+# label_names)
+# label_ids)
+# pull_request)
+# pull_request_labels)
+# pull_request_label_names)
+# pull_request_commits)
+# pull_request_files)
+# pull_request_merged)
+# pull_requests)
+# release)
+# releases)
+# release_assets)
+# release_latest)
+# release_latest_id)
+# release_latest_tag)
+# tagged)
+# repo_branches)
+# repo_branche_names)
+# repo_user_permissions)
+# repo_contributors)
+# repo_contributor_names)
+# repo_languages)
+# repo_language_names)
+# repo_tags)
+# repo_teams)
+# repo_topics)
+# repo_workflow)
+# repo_workflows)
+# repo_workflow_id)
+# repo_workflow_ids)
+# repo_workflow_names)
+# repo_workflow_runs)
+# repo_workflow_completed_runs)
+# repo_workflow_run_ids)
+# repo_workflow_completed_run_ids)
+# repo_workflow_usage)
+# workflow_runs)
+# workflow_completed_runs)
+# workflow_run_ids)
+# workflow_completed_run_ids)
+# delete_workflow_run)
+# workflow_run_numbers)
+# workflow_run_job)
+# workflow_run_jobs)
+# user_repos)
+# user_repo_names)
