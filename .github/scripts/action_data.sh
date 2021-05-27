@@ -56,7 +56,7 @@ case $GITHUB_EVENT_NAME in
 esac
 
 
-printf "helpers_log_topics"
+printf "helpers_log_topics\n"
 printf "%s\n" ${helpers_log_topics[@]}
 
 

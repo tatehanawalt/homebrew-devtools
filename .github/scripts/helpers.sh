@@ -13,7 +13,6 @@ log() {
   in_log=0
   [ -z "$1" ] && return # Input specified we do not need to start a new log group
   [ $in_ci -eq 1 ] && echo "::group::$1" || echo "$1"
-  helpers_log_topics+=($1)
   in_log=1
 }
 
@@ -31,6 +30,9 @@ write_result_set() {
   KEY="RESULT"
   [ ! -z "$2" ] && KEY="$2"
   echo "$KEY:"
+
+  helpers_log_topics+=($KEY)
+
   echo $result
   echo "::set-output name=$KEY::$(echo -e $result)"
 }
