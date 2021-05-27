@@ -50,14 +50,20 @@ contains() {
 #   write_result_set $(join_by , ${exampleset[@]}) $LOG_TOPIC
 write_result_set() {
   result="$1"
+
   result=$(echo -e "$result" | sed 's/"//g')
   result="${result//'%'/'%25'}"
   result="${result//$'\n'/'%0A'}"
   result="${result//$'\r'/'%0D'}"
   KEY="RESULT"
-  [ ! -z "$2" ] && KEY="$2"
-  echo "$KEY:"
+
   helpers_log_topics+=($KEY)
+
+  if [ ! -z "$2" ]; then
+    KEY="$2"
+  fi
+
+  echo "$KEY:"
   echo $result
   echo "::set-output name=$KEY::$(echo -e $result)"
 }
