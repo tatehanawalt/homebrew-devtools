@@ -37,15 +37,18 @@ command_log_which() {
 }
 before_exit() {
   write_result_set $(join_by , ${HELPERS_LOG_TOPICS[@]}) outputs
+  log
 }
 log() {
   if [ $IN_LOG -ne 0 ]; then
+    echo
     [ $IN_CI -eq 0 ] && echo "::endgroup::"
   fi
   IN_LOG=0
   if [ ! -z "$1" ]; then
     [ $IN_CI -eq 0 ] && echo "::group::$1" || printf "$1:\n"
     IN_LOG=1
+    echo
   fi
 }
 join_by () {
@@ -74,6 +77,7 @@ write_result_set() {
   HELPERS_LOG_TOPICS+=($key)
   log $key
   printf "$prefix%s\n" $(echo -e $result | tr ',' '\n')
+  echo
   printf "$key=$result\n"
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
 }

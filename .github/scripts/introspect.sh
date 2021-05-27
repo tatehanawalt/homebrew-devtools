@@ -141,7 +141,6 @@ all() {
   for method in ${call_fns[@]}; do
     write_result_set $(join_by , $($method)) $method
   done
-  before_exit
 }
 
 IFS=$'\n'
@@ -160,4 +159,7 @@ case $template in
     exit 1
     ;;
 esac
+
+before_exit
+
 exit 0
