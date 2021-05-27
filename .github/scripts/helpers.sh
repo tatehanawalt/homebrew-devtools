@@ -44,7 +44,8 @@ log() {
   fi
   IN_LOG=0
   if [ ! -z "$1" ]; then
-    [ $IN_CI -eq 0 ] && echo "::group::$1" || printf "$1:\n"
+    group=$(echo $1 | tr [[:lower:]] [[:upper:]])
+    [ $IN_CI -eq 0 ] && echo "::group::$group" || printf "$group:\n"
     IN_LOG=1
   fi
 }
@@ -74,7 +75,6 @@ write_result_set() {
   HELPERS_LOG_TOPICS+=($key)
   log $key
   printf "$prefix%s\n" $(echo -e $result | tr ',' '\n')
-  echo
   printf "$key=$result\n"
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
 }

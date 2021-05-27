@@ -41,7 +41,8 @@ write_result_set $(join_by , ${groups[@]}) inspect_groups
 for entry in "${INSPECT_GROUPS[@]}"; do
   group=$(echo $entry | sed 's/=.*//')
   fields=$(echo $entry | sed 's/.*=//')
-  write_result_set $fields $group_group
+  write_result_set $fields ${group}
+
   inspect_fields $group $fields
 done
 
