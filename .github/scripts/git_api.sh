@@ -1,8 +1,12 @@
 #!/bin/sh
 # Setup the default parameters
 
-SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+[ ! -z "$GITHUB_WORKSPACE" ] && \
+  SCRIPTPATH="$GITHUB_WORKSPACE/.github/scripts" || \
+  SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 source "$SCRIPTPATH/helpers.sh"
+
+
 
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
