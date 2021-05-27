@@ -6,12 +6,14 @@ in_log=0
 in_ci=1
 [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
 
+helpers_log_topics=()
 
 log() {
   [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
   in_log=0
   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-  [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
+  [ $in_ci -eq 1 ] && echo "::group::$1" || echo "$1"
+  helpers_log_topics+=($1)
   in_log=1
 }
 

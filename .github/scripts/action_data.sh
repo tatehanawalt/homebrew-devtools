@@ -55,6 +55,11 @@ case $GITHUB_EVENT_NAME in
     ;;
 esac
 
+
+printf "%s\n" ${helpers_log_topics[@]}
+
+
+
 log
 exit 0
 
