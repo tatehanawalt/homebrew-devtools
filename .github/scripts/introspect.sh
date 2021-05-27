@@ -2,14 +2,12 @@
 
 . "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
 
-
 # Introspection generates / parses data related to the contents of the
 # specific repository by parsing the local filesystem resources
 #
 #
 # IF any results require curl or any other network requests they should not
 # be part of this file
-
 
 # Returns values about a repo specific to our repo implementation
 # TEST VALUES:
@@ -29,15 +27,29 @@ IN_CI=1
 [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 
 log PARAMS
+FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
 echo "template=$template"
 echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
-echo
+echo "FORMULA_DIR=$FORMULA_DIR"
 log
+[ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
 
+formula_path() {
+  [ ! -d $FORMULA_DIR ] && return 1
+  [ ! -f "$FORMULA_DIR/$1.rb" ] && return 1
+  printf "$FORMULA_DIR/$1.rb"
+  return 0
+}
+formula_file() {
+  formula_path=$(formula_path $1)
+  [ $? -ne 0 ] && printf "$1 formula path not found\n" && return 1
+  cat $formula_path
+  return 0
+}
 formula_method_signatures() {
-  formula_path="$GITHUB_WORKSPACE/Formula/$1.rb"
-  formula_file=$(cat $formula_path)
-  blocks=($(echo "$formula_file" | grep "^  [[:alpha:]].*"))
+  file_body=$(formula_file $1)
+  [ $? -ne 0 ] && printf $file_body && return 1
+  blocks=($(echo $file_body | grep "^  [[:alpha:]].*"))
   header_blocks=()
   for ((i=0; i<${#blocks[@]}; i++)); do
     if  [[ "${blocks[$i]}" =~ ^[[:space:]]+end ]]; then
@@ -47,125 +59,127 @@ formula_method_signatures() {
   printf "%s\n" ${header_blocks[@]}
 }
 formula_method_body() {
-  formula_path="$GITHUB_WORKSPACE/Formula/$1.rb"
-  formula_file=$(cat $formula_path)
-  printf "%s\n" "$formula_file" | awk "/$2/,/^[[:space:]][[:space:]]end/"
+  file_body=$(formula_file $1)
+  [ $? -ne 0 ] && printf "$file_body" && return 1
+  printf "%s\n" $file_body | awk "/$2/,/^[[:space:]][[:space:]]end/"
 }
-
-formula_paths() {
-  return_set=()
-  file_paths=($(ls $GITHUB_WORKSPACE/Formula/*.rb | tr -s ' ' | tr ' ' '\n'))
-  for item in "${file_paths[@]}"; do
-    formula=$(echo "${item#$GITHUB_WORKSPACE/Formula/}" | sed 's/\..*//')
-    return_set+=("$formula\t${item#$GITHUB_WORKSPACE/}");
-  done
-  printf "%s\n" ${return_set[@]}
-}
-formula_names() {
-  return_set=()
-  file_paths=($(formula_paths))
-  for item in "${file_paths[@]}"; do
-    return_set+=($(printf "%s" $item | sed 's/.*\///g' | sed 's/\..*//'));
-  done
-  printf "%s\n" "${return_set[@]}"
-}
-
 formula_sha() {
-  formula_file_path="$GITHUB_WORKSPACE/Formula/$1.rb"
-  cat $formula_file_path | \
-    awk '/stable/,/sha256.*/' | \
-    tail -1 | sed 's/^.[^"]*//' | \
-    sed 's/\"//g'
+  formula_method_body $1 $2 | \
+    grep "sha256.*" | \
+    tr \' \" |
+    sed 's/.*"\(.*\)".*/\1/'
 }
-formula_shas() {
-  return_set=()
-  formulas=($(formula_names))
-  for item in "${formulas[@]}"; do
-    return_set+=("$item\t$(formula_sha $item)")
-  done
-  printf "%s\n" ${return_set[@]}
-}
-formula_shas2() {
-  return_set=()
-  formulas=($(formula_names))
-  for item in "${formulas[@]}"; do
-    shaval=$(formula_sha $item)
-    # kvset=$(printf "%s\t%s\n" $item $shaval)
-    # return_set+=($(printf "$item\t%s" $shaval))
-    # # return_set+=("$item\t$(formula_sha $item)")
-    printf "$item\t%s\n" $shaval
-  done
-  # printf "%s\n" ${return_set[@]}
-}
-
-
 formula_url() {
   formula_method_body $1 $2 | \
     grep 'url.*' | \
     sed "s/\'/\"/g" | \
     cut -d '"' -f 2
 }
-formula_urls() {
-  return_set=()
-  formulas=($(formula_names))
+
+formula_names() {
+  formulas=($(find $FORMULA_DIR -maxdepth 1 -type f -name "*.rb" | sort))
   for item in ${formulas[@]}; do
-    url="$(formula_url $item $1)"
-    return_set+=("$item\t${url}")
+    printf "%s$IFS" $(basename ${item%%.*})
   done
-  printf "%s\n" ${return_set[@]}
+}
+formula_paths() {
+  for item in $(formula_names); do
+    printf "%s %s$IFS" $item $(formula_path $item)
+  done
+}
+formula_stable_shas() {
+  for item in $(formula_names); do
+    printf "%s %s$IFS" $item $(formula_sha $item stable)
+  done
+}
+formula_head_shas() {
+  for item in $(formula_names); do
+    printf "%s %s$IFS" $item $(formula_sha $item head)
+  done
+}
+formula_head_urls() {
+  for item in $(formula_names); do
+    printf "%s %s$IFS" $item $(formula_url $item head)
+  done
+}
+formula_stable_urls() {
+  for item in $(formula_names); do
+    printf "%s %s$IFS" $item $(formula_url $item stable)
+  done
 }
 
+testfn() {
+  printf "${Red}%s${Cyan}\n" $(echo "$1" | tr [[:lower:]] [[:upper:]])
+  printf "\t%s\n" $($1)
+  printf "${Red}%s${Cyan}\n" $(echo "$1_CSV" | tr [[:lower:]] [[:upper:]])
+  printf "\t%s\n" $(join_by , $($1))
+  printf "${NC}\n"
+}
 
+test_all() {
+  echo
+  testfn formula_names
+  testfn formula_paths
+  testfn formula_stable_shas
+  testfn formula_head_shas
+  testfn formula_stable_urls
+  testfn formula_head_urls
+  echo
+}
 
-# IFS='\n'
+all() {
+  log all
+  call_fns=(
+    formula_names
+    formula_paths
+    formula_stable_shas
+    formula_head_shas
+    formula_stable_urls
+    formula_head_urls
+  )
+  printf "%s\n" ${call_fns[@]}
+  log
 
-test_var=("$(formula_shas2 | sed 's/[^[:alnum:]]$//g' | tr '\n' ',')")
+  for method in ${call_fns[@]}; do
+    log $method
+    write_result_set $(join_by , $($method)) $method
+  done
+  before_exit
+}
 
-
-printf "%s\n" "$test_var" | cat -et
-# printf "%s\n" "$test_var" | cat -et
-
-
-# echo
-#echo
-# echo "$(join_by , ${test_var[@]})"
-
-
-
-# echo "$test_var" | cat -v
-# formula_names
-# formula_shas2
-
-exit 0
-
-# strset=$(formula_shas)
-# printf "1.\n%s\n" "$strset"
-# printf "\n\n"
-# printf "2.\n%s\n" "${strset[@]}"
-# printf "\n\n"
-# write_result_set $(join_by , "$(formula_shas)")
-
-exit 0
-
-
-
-
+IFS=$'\n'
 case $template in
-  formula_names)
-    write_result_set $(join_by , $(formula_names))
+  all)
+    all
     ;;
-  formula_paths)
-    write_result_set $(join_by , $(formula_paths))
+  formula*)
+    write_result_set $(join_by , $($1)) $1
     ;;
-  formula_shas)
-    write_result_set $(join_by , "$(formula_shas)")
+  test)
+    test_all
     ;;
-  formula_stable_urls)
-    write_result_set $(join_by , $(formula_urls stable))
-    ;;
-  formula_head_urls)
-    write_result_set $(join_by , $(formula_urls head))
+  *)
+    printf "UNHANDLED TARGET: $1"
+    exit 1
     ;;
 esac
-
 exit 0
+
+# formula_names)
+#   # write_result_set $(join_by , $(formula_names)) formula_names
+#   ;;
+# formula_paths)
+#   # write_result_set $(join_by , $(formula_paths))
+#   ;;
+# formula_stable_shas)
+#   # write_result_set $(join_by , $(formula_stable_shas))
+#   ;;
+# formula_head_shas)
+#   # write_result_set $(join_by , $(formula_head_shas))
+#   ;;
+# formula_stable_urls)
+#   # write_result_set $(join_by , $(formula_stable_urls))
+#   ;;
+# formula_head_urls)
+#   # write_result_set $(join_by , $(formula_head_urls))
+#   ;;

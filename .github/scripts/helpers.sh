@@ -1,5 +1,26 @@
 #!/bin/bash
 
+Black='\033[0;30m'
+DarkGray='\033[1;30m'
+Red='\033[0;31m'
+LightRed='\033[1;31m'
+Green='\033[0;32m'
+LightGreen='\033[1;32m'
+BrownOrange='\033[0;33m'
+Yellow='\033[1;33m'
+Blue='\033[0;34m'
+LightBlue='\033[1;34m'
+Purple='\033[0;35m'
+LightPurple='\033[1;35m'
+Cyan='\033[0;36m'
+LightCyan='\033[1;36m'
+LightGray='\033[0;37m'
+White='\033[1;37m'
+
+# No Color
+NC='\033[0m'
+HELPERS_LOG_TOPICS=()
+
 INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | sed 's/^[^[:alpha:]]*//g')
 export prefix='\t'
 export IN_LOG=0
@@ -21,7 +42,7 @@ command_log_which() {
 before_exit() {
   log BEFORE_EXIT
   printf "%s\n" "${helpers_log_topics[@]}"
-  write_result_set $(join_by , ${helpers_log_topics[@]}) BEFORE_EXIT
+  write_result_set $(join_by , ${HELPERS_LOG_TOPICS[@]}) outputs
   log
 }
 
@@ -33,7 +54,12 @@ log() {
   IN_LOG=1
 }
 
-join_by () { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
+join_by () {
+  local d=${1-} f=${2-};
+  if shift 2; then
+    printf %s "$f" "${@/#/$d}" | sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
+  fi
+}
 
 contains() {
   check=$1
@@ -49,23 +75,27 @@ contains() {
 #   write_result_set $(join_by , ${exampleset[@]})
 #   write_result_set $(join_by , ${exampleset[@]}) $LOG_TOPIC
 write_result_set() {
-  result="$1"
+  result=$1
+  key=$2
 
   result=$(echo -e "$result" | sed 's/"//g')
   result="${result//'%'/'%25'}"
   result="${result//$'\n'/'%0A'}"
   result="${result//$'\r'/'%0D'}"
-  KEY="RESULT"
 
-  helpers_log_topics+=($KEY)
+  HELPERS_LOG_TOPICS+=($KEY)
 
-  if [ ! -z "$2" ]; then
-    KEY="$2"
-  fi
+  [ -z "$key" ] && key="result"
+  key=$(echo $key | tr [[:lower:]] [[:upper:]])
 
-  echo "$KEY:"
-  echo $result
-  echo "::set-output name=$KEY::$(echo -e $result)"
+  HELPERS_LOG_TOPICS+=($key)
+
+  echo "$key:"
+  echo
+  printf "\t%s\n" $result
+  echo
+  echo "::set-output name=$key::$(echo -e $result)"
+  echo
 }
 
 
@@ -178,11 +208,6 @@ write_result_set() {
 # }
 
 
-#IFS="
-#"
-
-
-
 # log() {
 #   [ $IN_LOG -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
 #   IN_LOG=0
@@ -198,7 +223,6 @@ write_result_set() {
 
 
 
-# IFS="\t"
 # for item in ${result[@]}; do printf "%s\n" "$item"; done
 # result=$(formula_urls | sed 's/ /,/g')
 #formulas=($(formula_names))
@@ -346,7 +370,6 @@ write_result_set() {
 
 
 # DO NOT MODIFY IFS!
-# IFS="
 # "
 # IN_LOG=0
 # IN_CI=1
@@ -419,5 +442,3 @@ write_result_set() {
 
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
-# IFS="
-# "
