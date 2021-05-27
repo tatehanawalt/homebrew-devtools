@@ -1,6 +1,9 @@
 #!/bin/bash
 
-SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+[ ! -z "$GITHUB_WORKSPACE" ] && \
+  SCRIPTPATH="$GITHUB_WORKSPACE/.github/scripts" || \
+  SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
 source "$SCRIPTPATH/helpers.sh"
 
 # DO NOT DELETE - USEFUL FOR DEBUGGING!
