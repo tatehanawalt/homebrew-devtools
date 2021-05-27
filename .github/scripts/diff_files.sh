@@ -2,17 +2,6 @@
 
 . $GITHUB_WORKSPACE/.github/scripts/helpers.sh
 
-
-# Takes a compare branch and outputs the files that have changed between
-# the latest compare branch and the commit that fired the action
-# TESTING:
-# export GITHUB_BASE_REF=<base branch>
-# export GITHUB_HEAD_REF=<this branch>
-# export GITHUB_WORKSPACE=</path/to/repo>
-in_log=0
-IN_CI=1
-[ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-
 #  Compare against the main branch
 [ -z "$GITHUB_BASE_REF" ] && GITHUB_BASE_REF=main
 [ -z "$GITHUB_HEAD_REF" ] && GITHUB_HEAD_REF=main
@@ -32,7 +21,6 @@ if [ ! -d "$GITHUB_WORKSPACE" ]; then
   echo "GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
   exit 2
 fi
-
 
 cd $GITHUB_WORKSPACE
 

@@ -26,12 +26,6 @@ request_status=0
 OWNER="$GITHUB_REPOSITORY_OWNER"
 REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
 
-# This function starts a git actions log group. Call with 0 args to end a log
-# group without starting a new one
-in_log=0
-IN_CI=1
-[ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-
 log FIELDS
 echo "CI=$IN_CI"
 echo "OWNER=$OWNER"
