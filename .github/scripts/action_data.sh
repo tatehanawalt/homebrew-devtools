@@ -22,6 +22,8 @@ write_result_set "$REPOSITORY_ID" "REPOSITORY_ID"
 REPO=$(echo "$REPOSITORY_JSON" | jq -r '.name')
 write_result_set "$REPO" "REPO"
 
+
+
 case $GITHUB_EVENT_NAME in
   pull_request)
     # log PULL_REQUEST
@@ -35,6 +37,13 @@ case $GITHUB_EVENT_NAME in
     write_result_set $(join_by , $OWNER) OWNER
     labels_str=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name) | join(",")')
     write_result_set "${labels_str[@]}" LABELS
+    ;;
+  workflow_dispatch)
+
+
+
+
+
     ;;
   *)
     printf "\n\nUNHANDLED GITHUB_EVENT_NAME GITHUB_EVENT_NAME\n"
