@@ -1,6 +1,8 @@
 #!/bin/sh
 # Setup the default parameters
 
+. $GITHUB_WORKSPACE/.github/scripts/helpers.sh
+
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
   if [ -z "$template" ]; then
@@ -29,31 +31,6 @@ REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
 in_log=0
 in_ci=1
 [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
-log() {
-  [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
-  in_log=0
-  [ -z "$1" ] && return # Input specified we do not need to start a new log group
-  [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
-  in_log=1
-}
-join_by () {
-  local d=${1-} f=${2-};
-  if shift 2; then
-    printf %s "$f" "${@/#/$d}";
-  fi;
-}
-write_result_set() {
-  result="$1"
-  result=$(echo -e "$result" | sed 's/"//g')
-  result="${result//'%'/'%25'}"
-  result="${result//$'\n'/'%0A'}"
-  result="${result//$'\r'/'%0D'}"
-  KEY="RESULT"
-  [ ! -z "$2" ] && KEY="$2"
-  echo "$KEY:"
-  echo $result
-  echo "::set-output name=$KEY::$(echo -e $result)"
-}
 
 log FIELDS
 echo "CI=$in_ci"
@@ -494,3 +471,30 @@ exit $request_status
 # workflow_run_jobs)
 # user_repos)
 # user_repo_names)
+
+
+# log() {
+#   [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
+#   in_log=0
+#   [ -z "$1" ] && return # Input specified we do not need to start a new log group
+#   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
+#   in_log=1
+# }
+# join_by () {
+#   local d=${1-} f=${2-};
+#   if shift 2; then
+#     printf %s "$f" "${@/#/$d}";
+#   fi;
+# }
+# write_result_set() {
+#   result="$1"
+#   result=$(echo -e "$result" | sed 's/"//g')
+#   result="${result//'%'/'%25'}"
+#   result="${result//$'\n'/'%0A'}"
+#   result="${result//$'\r'/'%0D'}"
+#   KEY="RESULT"
+#   [ ! -z "$2" ] && KEY="$2"
+#   echo "$KEY:"
+#   echo $result
+#   echo "::set-output name=$KEY::$(echo -e $result)"
+# }

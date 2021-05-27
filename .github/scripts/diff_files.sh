@@ -1,4 +1,8 @@
 #!/bin/bash
+
+. $GITHUB_WORKSPACE/.github/scripts/helpers.sh
+
+
 # Takes a compare branch and outputs the files that have changed between
 # the latest compare branch and the commit that fired the action
 # TESTING:
@@ -9,27 +13,7 @@
 in_log=0
 in_ci=1
 [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
-log() {
-  [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
-  in_log=0
-  [ -z "$1" ] && return # Input specified we do not need to start a new log group
-  [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
-  in_log=1
-}
-join_by () { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
-write_result_set() {
-  result="$1"
-  result=$(echo -e "$result" | sed 's/"//g')
-  result="${result//'%'/'%25'}"
-  result="${result//$'\n'/'%0A'}"
-  result="${result//$'\r'/'%0D'}"
-  KEY="RESULT"
-  [ ! -z "$2" ] && KEY="$2"
-  echo "$KEY:"
-  echo $result
-  echo
-  echo "::set-output name=$KEY::$(echo -e $result)"
-}
+
 #  Compare against the main branch
 [ -z "$GITHUB_BASE_REF" ] && GITHUB_BASE_REF=main
 [ -z "$GITHUB_HEAD_REF" ] && GITHUB_HEAD_REF=main
@@ -69,4 +53,29 @@ for file_path in ${diff_files[@]}; do
 done
 diff_dirs=($(printf "%s\n" ${diff_dirs[@]} | sed 's/[[:space:]]$//g' | sed 's/^[[:space:]]//g' | sort -u))
 write_result_set $(join_by , ${diff_dirs[@]}) "DIFF_DIRS"
+
+log
 exit 0
+
+
+# log() {
+#   [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
+#   in_log=0
+#   [ -z "$1" ] && return # Input specified we do not need to start a new log group
+#   [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
+#   in_log=1
+# }
+# join_by () { local d=${1-} f=${2-}; if shift 2; then printf %s "$f" "${@/#/$d}"; fi; }
+# write_result_set() {
+#   result="$1"
+#   result=$(echo -e "$result" | sed 's/"//g')
+#   result="${result//'%'/'%25'}"
+#   result="${result//$'\n'/'%0A'}"
+#   result="${result//$'\r'/'%0D'}"
+#   KEY="RESULT"
+#   [ ! -z "$2" ] && KEY="$2"
+#   echo "$KEY:"
+#   echo $result
+#   echo
+#   echo "::set-output name=$KEY::$(echo -e $result)"
+# }
