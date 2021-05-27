@@ -40,7 +40,7 @@ case $GITHUB_EVENT_NAME in
     ;;
   workflow_dispatch)
 
-
+    printf "WORKFLOW_DISPATCH:"
 
 
 
