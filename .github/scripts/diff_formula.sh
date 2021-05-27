@@ -1,7 +1,4 @@
-#!/bin/sh
-
-
-
+#!/bin/bash
 
 # Takes a list if files (relative paths) of a git repo and returns the list of
 # formula names that are found in the set of file paths

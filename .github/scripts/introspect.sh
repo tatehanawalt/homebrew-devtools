@@ -1,5 +1,8 @@
 #!/bin/bash
 
+. "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
+
+
 # Introspection generates / parses data related to the contents of the
 # specific repository by parsing the local filesystem resources
 #
