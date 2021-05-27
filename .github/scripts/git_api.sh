@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Setup the default parameters
 
 . "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
