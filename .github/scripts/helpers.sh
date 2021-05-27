@@ -3,13 +3,14 @@
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
 
-IFS="
+export IFS="
 "
-prefix="\t"
-in_log=0
-in_ci=1
+export prefix="\t"
+export in_log=0
+export in_ci=1
 [ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
 [ $in_ci -eq 0 ] && prefix=""
+
 helpers_log_topics=() # Store log headers for pre-exit introspect
 
 before_exit() {

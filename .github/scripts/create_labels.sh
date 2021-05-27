@@ -2,7 +2,6 @@
 
 . $GITHUB_WORKSPACE/.github/scripts/helpers.sh
 
-
 TOPIC=repos
 [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
 [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
