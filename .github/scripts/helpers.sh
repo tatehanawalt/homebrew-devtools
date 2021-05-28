@@ -72,8 +72,6 @@ contains() {
   return 1
 }
 
-
-
 get_prefix() {
   printf "\t"
 }
@@ -81,11 +79,6 @@ get_prefix() {
 command_log_which() {
   printf "%s\t%s\n" $1 "$(which $1)"
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
-}
-before_exit() {
-  [ -z "$HELPERS_LOG_TOPICS" ] && return
-  write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
-  log
 }
 log() {
   [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
@@ -119,11 +112,17 @@ write_result_set() {
   HELPERS_LOG_TOPICS+=($key)
 }
 
+before_exit() {
+  [ -z "$HELPERS_LOG_TOPICS" ] && return
+  write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
+  log
+}
+
+
+
 # log $key
 # printf "$key=$result\n"
-
 # helpers_log_topics=() # Store log headers for pre-exit introspect
-
 # [ $IN_CI -eq 0 ] && prefix=""
 # core.addPath	Accessible using environment file GITHUB_PATH
 # core.debug	debug

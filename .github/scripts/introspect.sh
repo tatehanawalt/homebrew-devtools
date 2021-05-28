@@ -128,12 +128,15 @@ formula_signatures() {
 }
 
 testfn() {
+  IFS=$'\n'
   printf "${Red}%s${Cyan}\n" $(echo "$1" | tr [[:lower:]] [[:upper:]])
   data=$($1)
   printf "${Cyan}$(get_prefix)%s\n" $data
   printf "${Red}%s\n" $(echo "${1}_CSV" | tr [[:lower:]] [[:upper:]])
   data_lcsv=$(join_by , $data)
-  printf "${Cyan}$(get_prefix)%s${NC}\n" $data_lcsv
+  printf "${Cyan}$(get_prefix)%s\n" $data_lcsv
+  printf "${NC}"
+
   [ ! -z "$data_lcsv" ] && echo
 }
 
@@ -152,6 +155,7 @@ test_all() {
 }
 
 all() {
+  IFS=$'\n'
   call_fns=(
     formula_names
     formula_paths
