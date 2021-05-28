@@ -18,6 +18,9 @@
 . "$(dirname $0)/helpers.sh"
 
 max_field_len=0
+env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
+groups=($(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
+group_keys=()
 
 print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
@@ -32,9 +35,6 @@ print_field_table() {
   printf "$local_prefix%s\n" ${field_val[@]};
 }
 
-env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
-groups=($(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
-group_keys=()
 for entry in "${groups[@]}"; do
   kv=($(echo "$entry" | tr -d '[[:space:]]' | tr '=' '\n'))
   group_keys+=(${kv[0]})

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
+. "$(dirname $0)/helpers.sh"
 
 # Introspection generates / parses data related to the contents of the
 # specific repository by parsing the local filesystem resources
@@ -103,6 +103,17 @@ formula_head_urls() {
 formula_stable_urls() {
   for item in $(formula_names); do
     printf "%s %s$IFS" $item $(formula_url $item stable)
+  done
+}
+
+formula_signatures() {
+
+  printf "\n\n"
+
+  for item in $(formula_names); do
+    printf "%s\n"
+
+    # printf "%s %s$IFS" $item $(formula_method_signatures $item)
   done
 }
 
