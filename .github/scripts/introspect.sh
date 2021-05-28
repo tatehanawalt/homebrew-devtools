@@ -99,7 +99,10 @@ formula_head_shas() {
 }
 formula_head_urls() {
   for item in $(formula_names); do
-    printf "%s %s$IFS" $item $(formula_url $item head)
+    echo "$item"
+
+    formula_url $item head
+    # printf "%s %s$IFS" $item $(formula_url $item head)
   done
 }
 formula_stable_urls() {
@@ -146,7 +149,6 @@ all() {
 
   test_all
 
-  # write_result_set $(join_by , ${call_fns[@]}) functions
   log_result_set "$(join_by , ${call_fns[@]})" functions "FORMULA_FUNCTIONS"
   for method in ${call_fns[@]}; do
     write_result_set "$(join_by , $($method))" $method
