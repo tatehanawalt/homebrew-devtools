@@ -343,17 +343,17 @@ run_input() {
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   request_status=$((${request_status} + 0))
-
   [ $request_status -eq 200 ] && request_status=0
   [ $request_status -eq 204 ] && request_status=0
-
   if [[ "$request_status" =~ ^4[[:digit:]]* ]]; then
     printf "%s" "$response" | jq -r '.message'
     return 2
   fi
 
+  log "${1}_response"
   printf "%s" "$output" | jq
-
+  log
+  
   if [ ! -z "$SEARCH_STRING" ]; then
     IFS=$'\n'
     result=($(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING"))
@@ -367,7 +367,6 @@ run_input() {
   # log RESPONSE
   # printf "%s" "$output" | jq
   # echo $output | jq
-
   # result_label="$field_label"
   # [ -z "$result_label" ] && result_label="$template"
   # printf "request_status: %s\n" $request_status
@@ -383,14 +382,13 @@ write_result_set "$REPO" repo
 
 
 IDS=($(printf "%s" $ID | tr ',' '\n'))
-
-
 # templates=($(printf "%s" $template | tr ',' '\n'))
 
 write_result_set $template ${name}_template
 
 request_status=0
 for cmd in "$(printf %s $template | tr ',' '\n')"; do
+  log $cmd
   printf "cmd: %s\n" $cmd
   request_status=0
   run_input $cmd
