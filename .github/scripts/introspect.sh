@@ -44,7 +44,11 @@ formula_method_signatures() {
   # IFS=$'\n'
 
   formula_file $1 | \
-    sed 's/#.*//'
+    sed 's/#.*//' | \
+    grep -o '.*[[:alnum:]].*' | \
+    sed 's/.*".*//' | \
+    sed "s/.*'.*//" | \
+    sed '/^$/d'
 
     # grep "^[[:space:]]*[[:alpha:]].*" | \
     # sed 's/#.*//'
@@ -150,7 +154,7 @@ test_all() {
   for item in $(formula_names); do
     echo "$item"
 
-    formula_file "$item"
+    # formula_file "$item"
 
     formula_method_signatures "$item"
 
