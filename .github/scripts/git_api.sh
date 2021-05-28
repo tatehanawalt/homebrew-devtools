@@ -3,6 +3,8 @@
 
 . "$(dirname $0)/helpers.sh"
 
+export DEMO_VAR=testing
+
 [ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
 
 WITH_AUTH=1

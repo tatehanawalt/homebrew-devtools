@@ -20,6 +20,8 @@ jobs:
         shell: bash
         env:
           template: show_env
+          OUTPUTS: ${{ steps.vcs_info.outputs }}
+          TEMPLATE: ${{ steps.vcs_info.outputs.TEMPLATE }}
           USER: ${{ steps.vcs_info.outputs.USER }}
           OWNER: ${{ steps.vcs_info.outputs.OWNER }}
           REPO: ${{ steps.vcs_info.outputs.REPO }}
