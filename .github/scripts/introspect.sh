@@ -72,9 +72,13 @@ formula_url() {
 
 formula_names() {
   formulas=($(find $FORMULA_DIR -maxdepth 1 -type f -name "*.rb" | sort))
+  names=()
   for item in ${formulas[@]}; do
-    printf "$(basename ${item%%.*})$IFS"
+    names+=("$(basename ${item%%.*})")
+
+    # printf "$(basename ${item%%.*})$IFS"
   done
+  printf "%s\n" ${names[@]} | sort
 }
 formula_paths() {
   for item in $(formula_names); do
@@ -121,7 +125,7 @@ formula_signatures() {
 
 testfn() {
   printf "${Red}%s${Cyan}\n" $(echo "$1" | tr [[:lower:]] [[:upper:]])
-  printf "$prefix%s\n" $($1 | sort)
+  printf "$prefix%s\n" $($1)
   printf "${Red}%s${Cyan}\n" $(echo "$1_CSV" | tr [[:lower:]] [[:upper:]])
   printf "$prefix%s\n" $(join_by , $($1))
   printf "${NC}\n"
