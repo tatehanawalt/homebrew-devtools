@@ -13,7 +13,7 @@ jobs:
         shell: bash
         env:
           name: vcs_info
-          template: label_names,repo_branche_names,repo_language_names,collaborator_names
+          template: label_names,repo_branch_names,repo_language_names,collaborator_names
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Introspection - data about the file system
@@ -44,7 +44,7 @@ jobs:
           LABEL_NAMES: ${{ steps.vcs_info.outputs.LABEL_NAMES }}
           COLLABORATOR_NAMES: ${{ steps.vcs_info.outputs.COLLABORATOR_NAMES }}
           REPO_LANGUAGE_NAMES: ${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }}
-          REPO_BRANCHE_NAMES: ${{ steps.vcs_info.outputs.REPO_BRANCHE_NAMES }}
+          REPO_BRANCH_NAMES: ${{ steps.vcs_info.outputs.REPO_BRANCH_NAMES }}
           VCS_INFO_TEMPLATE: ${{ steps.vcs_info.outputs.VCS_INFO_TEMPLATE }}
           INSPECT_GROUPS: '
 

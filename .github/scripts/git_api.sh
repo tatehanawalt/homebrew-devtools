@@ -70,7 +70,7 @@ run_input() {
       release_latest_tag
       tagged
       repo_branches
-      repo_branche_names
+      repo_branch_names
       repo_user_permissions
       repo_contributors
       repo_contributor_names
@@ -167,7 +167,7 @@ run_input() {
     repo_branches)
       QUERY_BASE=branches
       ;;
-    repo_branche_names)
+    repo_branch_names)
       QUERY_BASE=branches
       SEARCH_FIELD=name
       ;;
@@ -370,8 +370,8 @@ write_result_set $(join_by , $(printf "%s\n" ${kv_map[@]})) ${name}_kv_store
 write_result_set $template ${name}_template
 
 
-# label_names,collaborator_names,repo_language_names,repo_branche_names
-# label_names,repo_branche_names
+# label_names,collaborator_names,repo_language_names,repo_branch_names
+# label_names,repo_branch_names
 
 request_status=0
 for cmd in $(echo "$template" | tr ',' '\n'); do
