@@ -3,31 +3,47 @@
 src_path=$(dirname $0)
 . "$src_path/helpers.sh"
 
-
-
-# if [ -f ./helpers.sh ]; then
-#   printf "\n./helpers.sh\n"
-# else
-#   . "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
-# fi
-
-env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
-max_field_len=$(csv_max_length $env_csv)
+# env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
+# max_field_len=$(csv_max_length $env_csv)
 
 print_field() {
-  field_val="$(eval "echo \"\$$1\"")"
-  printf "%s=%s\n" $1 $field_val
+  printf "%s=$(eval "echo \"\$$1\"")\n" $1
 }
 print_field_table() {
   printf "\t%-${max_field_len}s " "$1:"
-  field_val=("$(eval "echo \"\$$1\"")")
+  field_val=($(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g'))
   [ ${#field_val[@]} -ne 1 ] && printf "\n"
   [ ${#field_val[@]} -gt 1 ] && local_prefix="$(get_prefix)   - "
   for entry in ${field_val[@]}; do printf "$local_prefix%s\n" $entry; done
 }
 
-for_csv $env_csv print_field
-for_csv $env_csv print_field_table
+INSPECT_GROUPS=($(echo $INSPECT_GROUPS | sed 's/^[^[:alpha:]]*//g' | sed '/^$/d' | tr ' ' '\n'))
+INSPECT_GROUPS="env=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))\n$INSPECT_GROUPS"
+
+groups=()
+for entry in "${INSPECT_GROUPS[@]}"; do groups+=($(echo $entry | sed 's/=.*$//')); done
+for entry in "${groups[@]}"; do
+  group_fields=$(echo "${INSPECT_GROUPS[@]}" | grep -o "$entry[^ ]*" | sed 's/.*=//')
+  max_field_len=$(csv_max_length $group_fields)
+  log "$entry"
+  for_csv $group_fields print_field
+  log "${entry}_table"
+  for_csv $group_fields print_field_table
+done
+
+# write_result_set "$(join_by , ${groups[@]})" inspect_groups
+
+# log ENV
+# for_csv $env_csv print_field
+# log ENV_TABLE
+# for_csv $env_csv print_field_table
+
+#   for entry in "${INSPECT_GROUPS[@]}"; do
+#     group=$(echo $entry | sed 's/=.*//')
+#     fields=$(echo $entry | sed 's/.*=//')
+#     inspect_fields "$group" "$fields"
+#   done
+
 
 exit
 # Pass this function the set of comma-separated keys to inspect the environment
@@ -63,7 +79,6 @@ exit
 #   groups=()
 #   for entry in "${INSPECT_GROUPS[@]}"; do groups+=($(echo $entry | sed 's/=.*$//')); done
 #   write_result_set "$(join_by , ${groups[@]})" inspect_groups
-#
 #   for entry in "${INSPECT_GROUPS[@]}"; do
 #     group=$(echo $entry | sed 's/=.*//')
 #     fields=$(echo $entry | sed 's/.*=//')
@@ -88,9 +103,9 @@ exit
 # write_result_set "$(join_by , ${groups[@]})" inspect_groups
 # export INSPECT_GROUPS='
 #
-#    git=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
+#     git=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
 #
-#    formula=FORMULA_NAMES,FORMULA_PATHS,FORMULA_STABLE_SHAS,FORMULA_HEAD_SHAS,FORMULA_STABLE_URLS,FORMULA_HEAD_URLS
+#     formula=FORMULA_NAMES,FORMULA_PATHS,FORMULA_STABLE_SHAS,FORMULA_HEAD_SHAS,FORMULA_STABLE_URLS,FORMULA_HEAD_URLS
 #
 # '
 
