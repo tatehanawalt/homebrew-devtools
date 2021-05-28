@@ -11,18 +11,24 @@ DEFAULT_LABELS='[{"name":":beer:","description":"Somehow related to homebrew","c
 
 printf  "\n\n Called CREATE LABELS \n\n"
 printf "%s\n" "${ADD_LABELS[@]}"
+# CURRENT_LABELS
 
 # ADD_LABELS
 add_labels=($(printf "%s\n" "${ADD_LABELS[@]}" | tr , '\n' | tr [[:upper:]] [[:lower:]] | sort -u))
 for label in ${add_labels[@]}; do
   printf "add label: %s\n" $label
 
+  DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq --arg name "$label" '. | . + [{"name": "$name"}]')
+
 done
 
 exit
 for row in $(echo "${DEFAULT_LABELS}" | jq -r '.[] | @base64'); do
   _jq() { echo ${row} | base64 --decode | jq -r ${1}; }
-  # echo "$(_jq '.name') $(_jq '.color') $(_jq '.description')"
+  echo "$(_jq '.name') $(_jq '.color') $(_jq '.description')"
+
+  continue
+
   data=$(jq -n \
     --arg name "$(_jq '.name')" \
     --arg color "$(_jq '.color')" \
@@ -46,35 +52,14 @@ for row in $(echo "${DEFAULT_LABELS}" | jq -r '.[] | @base64'); do
 done
 
 
-# echo $DEFAULT_LABELS | jq
-# echo "$(_jq '.name') $(_jq '.color') $(_jq '.description')"
-# QQSTRING_START
-# export GITHUB_REPOSITORY=tatehanawalt/homebrew-devtools
-# export GITHUB_REPOSITORY_OWNER=tatehanawalt
 
 
 
 
 
 
-# echo  "$DEFAULT_LABELS" | jq
-# exit
-# [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
-# [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
-# [ -z "$GITHUB_HEAD_REF" ]         && GITHUB_HEAD_REF="main"
-# [ -z "$GITHUB_REPOSITORY" ]       && GITHUB_REPOSITORY="tatehanawalt/homebrew-devtools"
-# [ -z "$GITHUB_REPOSITORY_OWNER" ] && GITHUB_REPOSITORY_OWNER="tatehanawalt"
-# [ -z "$GITHUB_WORKSPACE" ]        && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
-# [ -z "$OWNER" ]                   && OWNER="$GITHUB_REPOSITORY_OWNER"
-# [ -z "$REPO" ]                    && REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
-# This function starts a git actions log group. Call with 0 args to end a log
-# group without starting a new one
-# IFS=$'\n'
-# current_labels=($(printf "%s\n" "${CURRENT_LABELS[@]}" | tr , '\n' | tr [[:upper:]] [[:lower:]] | sort -u))
-# write_result_set $(join_by , ${current_labels[@]}) current_labels
-# add_labels=($(printf "%s\n" "${ADD_LABELS[@]}" | tr , '\n' | tr [[:upper:]] [[:lower:]] | sort -u))
-# write_result_set $(join_by , "${add_labels[@]}") add_labels
-# create_labels=()
+
+
 # for label in "${add_labels[@]}"; do
 #   add=$(contains "$label" "${current_labels[@]}")
 #   exit_code=$?
