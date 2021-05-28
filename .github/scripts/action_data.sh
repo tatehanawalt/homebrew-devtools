@@ -16,6 +16,10 @@ REPO=$(echo "$REPOSITORY_JSON" | jq -r '.name')
 
 log EVENT_$GITHUB_EVENT_NAME
 
+echo "$event_file"
+
+echo -e "\n"
+
 write_result_set "$event_file_attributes_csv" event_file_attributes
 write_result_set "$REPOSITORY_ID" "REPOSITORY_ID"
 write_result_set "$REPO" "REPO"
