@@ -85,12 +85,10 @@ for ext in ${diff_ext[@]}; do
       ;;
     yml)
       printf "yml\n"
-      # echo "::warning file=app.js,line=1,col=5::Missing semicolon"
       ;;
     *)
       printf "UNHANDLED EXT: %s\n" $ext
       echo "::warning file=$(basename $0),line=$LINENO::Unhandled Extension: $ext in $(basename $0):$LINENO"
-      echo "::error file=app.js,line=10,col=15::ERROR Unhandled Extension: $ext in $(basename $0):$LINENO"
       ;;
   esac
 done
@@ -98,36 +96,21 @@ done
 for ext in ${diff_ext[@]}; do
   case $ext in
     Formula)
-
       printf "\n\n\nFOUND A Formula BREW TAG CHANGE!\n\n"
       add_label_set+=( "brew" )
-
-
       ;;
-
-
-
   esac
 done
 
 
 for fname in ${diff_files[@]}; do
-
-
   case $fname in
     Formula/*.rb)
-
-
       printf "\n\n\nFOUND A BREW TAG CHANGE!\n\n"
-
       add_label_set+=( "formula" )
       add_label_set+=( $(basename $fname | sed 's/\..*//') )
-
       ;;
-
-
   esac
-
 done
 
 
@@ -140,20 +123,16 @@ write_result_set "$diff_add_label_set_csv" diff_add_label_set
 
 
 
-printf "This is a debug statement\n"
-echo "::debug::Another the Octocat variable"
+before_exit
+exit 0
 
+
+# printf "This is a debug statement\n"
+# echo "::debug::Another the Octocat variable"
 # echo "::warning file=app.js,line=1,col=5::Missing semicolon"
-
-
-
 # printf "%s\n" ${diff_files[@]}
-
-
 #    sh)
 #      printf "shell\n"
 #      ;;
-
-
-before_exit
-exit 0
+# echo "::error file=app.js,line=10,col=15::ERROR Unhandled Extension: $ext in $(basename $0):$LINENO"
+# echo "::warning file=app.js,line=1,col=5::Missing semicolon"
