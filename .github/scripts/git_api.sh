@@ -21,6 +21,7 @@ OWNER="$GITHUB_REPOSITORY_OWNER"
 REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
 
 run_input() {
+  field_label=""
   case $1 in
     artifacts)
       QUERY_BASE=actions/artifacts
@@ -93,7 +94,6 @@ run_input() {
       user_repo_names" | sort
       exit 1
       ;;
-
     labels)
       QUERY_BASE=labels
       ;;
@@ -272,12 +272,14 @@ run_input() {
       TOPIC=users
       QUERY_BASE=repos
       QUERY_URL="$GITHUB_API_URL/$TOPIC/$USER/$QUERY_BASE"
+      field_label="${USER}_repos"
       ;;
     user_repo_names)
       TOPIC=users
       QUERY_BASE=repos
       QUERY_URL="$GITHUB_API_URL/$TOPIC/$USER/$QUERY_BASE"
       SEARCH_FIELD=name
+      field_label="${USER}"
       ;;
     *)
       printf "UNHANDLED TARGET: $1"
@@ -287,7 +289,16 @@ run_input() {
 
   [ -z "$QUERY_URL" ] && QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
   [ ! -z "$SEARCH_FIELD" ] && WITH_SEARCH=0
-  [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ] && SEARCH_STRING='map(.[$field_name]) | join(",")'
+  if [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ]; then
+
+    write_result_set "$OWNER" owner
+    write_result_set "$USER" user
+    write_result_set "$REPO" repo
+
+    # SEARCH_STRING='map(.[$field_name]) | join(",")'
+    # SEARCH_STRING='map(.[$field_name])'
+    SEARCH_STRING='.[] | .[$field_name]'
+  fi
 
   response=""
   if [ $WITH_DELETE -eq 0 ]; then
@@ -314,33 +325,56 @@ run_input() {
         $QUERY_URL)
     fi
   fi
+
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   request_status=$((${request_status} + 0))
+
   [ $request_status -eq 200 ] && request_status=0
   [ $request_status -eq 204 ] && request_status=0
-  log RESPONSE
-  echo $output | jq
+
   if [ ! -z "$SEARCH_STRING" ]; then
-    log SEARCH
-    result=$(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING")
-    echo "$result\n"
+    IFS=$'\n'
+    result=($(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING"))
+    if [ ! -z "$field_label" ]; then
+      write_result_map "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $template $field_label
+    else
+      write_result_set "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $template
+    fi
   fi
-  echo "::set-output name=RESULT::${result}"
-  log
+
+  # log RESPONSE
+  # printf "%s" "$output" | jq
+  # echo $output | jq
+
+  # result_label="$field_label"
+  # [ -z "$result_label" ] && result_label="$template"
+  # printf "request_status: %s\n" $request_status
+  # printf "field_label: %s" "$field_label"
+  # echo "::set-output name=RESULT::${result}"
+  # log
 }
 
-IDS=$(printf "%s" $ID | tr ',' '\n')
-lines=$(echo "$IDS" | wc -l)
-if [ $lines -le 1 ]; then
-  run_input $template
-  exit $request_status
-fi
-for entry in $IDS; do
+IDS=($(printf "%s" $ID | tr ',' '\n'))
+
+for entry in "$IDS"; do
+  # printf "entry: %d\n" $entry
+
   ID=$entry
   request_status=0
   run_input $template
   [ $request_status -ne 0 ] && break
 done
 
+
+before_exit
+
 exit $request_status
+
+
+# printf "id: %s\n" $IDS
+# lines=$(echo "$IDS" | wc -l)
+# if [ $lines -le 1 ]; then
+#   run_input $template
+#   exit $request_status
+# fi

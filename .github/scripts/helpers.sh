@@ -87,7 +87,8 @@ log() {
   IN_LOG=0
   if [ ! -z "$1" ]; then
     group=$(echo $1 | tr [[:lower:]] [[:upper:]])
-    [ $IN_CI -eq 0 ] && echo "::group::$group" || printf "${Purple}$group:${NC}\n"
+    [ $IN_CI -eq 0 ] && echo "::group::$group"
+    printf "${Purple}$group:${NC}\n"
     IN_LOG=1
   fi
   return 0
@@ -112,6 +113,25 @@ write_result_set() {
   HELPERS_LOG_TOPICS+=($key)
 }
 
+write_result_map() {
+  IFS=$'\n'
+  result=$(echo -e "$1" | sed 's/"//g')
+  [ -z "$result" ] && return 1
+  key=$2
+  [ -z "$key" ] && key="result"
+  key=$(echo $key | tr [[:lower:]] [[:upper:]])
+  log $key
+  log_result_set "$result" "$key"
+  result="${result//'%'/'%25'}"
+  result="${result//$'\n'/'%0A'}"
+  result="${result//$'\r'/'%0D'}"
+  printf "$key='$result'\n"
+  [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$3=$(echo -e $result)"
+  HELPERS_LOG_TOPICS+=($key)
+}
+
+
+
 print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
 }
@@ -124,7 +144,6 @@ print_field_table() {
   [ ${#field_val[@]} -gt 1 ] && echo && local_prefix="$(get_prefix)   - "
   printf "$local_prefix%s\n" ${field_val[@]};
 }
-
 
 before_exit() {
   [ -z "$HELPERS_LOG_TOPICS" ] && return
