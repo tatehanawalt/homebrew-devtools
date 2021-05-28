@@ -371,5 +371,4 @@ for cmd in $(echo "$template" | tr ',' '\n'); do
 done
 
 before_exit
-
 exit $request_status

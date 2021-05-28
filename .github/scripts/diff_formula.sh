@@ -21,3 +21,6 @@ echo "$formulas"
 DIFF_FORMULA="$(printf "$formulas" | tr '\n' ',')"
 echo "DIFF_FORMULA=$DIFF_FORMULA"
 echo "::set-output name=DIFF_FORMULA::$DIFF_FORMULA"
+
+before_exit
+exit 0

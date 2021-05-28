@@ -35,3 +35,6 @@ for label in ${create_labels[@]}; do
   exit_status=$?
   echo $result | jq -r | jq
 done
+
+before_exit
+exit 0

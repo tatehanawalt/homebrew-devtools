@@ -452,3 +452,20 @@ create_label() {
   # printf "field_label: %s" "$field_label"
   # echo "::set-output name=RESULT::${result}"
   # log
+
+
+  # printf "This is a debug statement\n"
+  # echo "::debug::Another the Octocat variable"
+  # printf "This is a debug statement\n"
+  # echo "::debug::Another the Octocat variable"
+  # echo "::warning file=app.js,line=1,col=5::Missing semicolon"
+  # printf "%s\n" ${diff_files[@]}
+  #    sh)
+  #      printf "shell\n"
+  #      ;;
+  # echo "::error file=app.js,line=10,col=15::ERROR Unhandled Extension: $ext in $(basename $0):$LINENO"
+  # echo "::warning file=app.js,line=1,col=5::Missing semicolon"
+  # echo "::warning file=$(basename $0),line=$LINENO::Unhandled Extension $ext in $(basename $0):$LINENO"
+  # printf "UNHANDLED EXT: %s\n" $ext
+  # printf "This is a debug statement\n"
+  # echo "::debug::Set the Octocat variable"

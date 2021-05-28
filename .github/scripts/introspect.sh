@@ -10,13 +10,11 @@ FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
 [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
 
 formula_path() {
-  IFS=$'\n'
   [ ! -d $FORMULA_DIR ] && return 1
   [ ! -f "$FORMULA_DIR/$1.rb" ] && return 1
   printf "$FORMULA_DIR/$1.rb"
 }
 formula_file() {
-  # IFS=$'\n'
   formula_path=$(formula_path $1)
   [ $? -ne 0 ] && printf "$1 formula path not found\n" && return 1
   cat $formula_path
@@ -191,5 +189,4 @@ case $template in
 esac
 
 before_exit
-
 exit 0
