@@ -290,11 +290,6 @@ run_input() {
   [ -z "$QUERY_URL" ] && QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
   [ ! -z "$SEARCH_FIELD" ] && WITH_SEARCH=0
   if [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ]; then
-
-    write_result_set "$OWNER" owner
-    write_result_set "$USER" user
-    write_result_set "$REPO" repo
-
     # SEARCH_STRING='map(.[$field_name]) | join(",")'
     # SEARCH_STRING='map(.[$field_name])'
     SEARCH_STRING='.[] | .[$field_name]'
@@ -355,11 +350,15 @@ run_input() {
   # log
 }
 
+write_result_set "$OWNER" owner
+write_result_set "$USER" user
+write_result_set "$REPO" repo
+
+
 IDS=($(printf "%s" $ID | tr ',' '\n'))
 
 for entry in "$IDS"; do
   # printf "entry: %d\n" $entry
-
   ID=$entry
   request_status=0
   run_input $template
