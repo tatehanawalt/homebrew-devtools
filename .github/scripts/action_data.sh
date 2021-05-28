@@ -14,7 +14,7 @@ REPOSITORY_JSON=$(cat $GITHUB_EVENT_PATH | jq '.repository')
 REPOSITORY_ID=$(echo "$REPOSITORY_JSON" | jq -r '.id')
 REPO=$(echo "$REPOSITORY_JSON" | jq -r '.name')
 
-log EVENT_$(echo $GITHUB_EVENT_NAME | tr [:lower:] [:upper:])
+log EVENT_$GITHUB_EVENT_NAME
 
 write_result_set "$event_file_attributes_csv" event_file_attributes
 write_result_set "$REPOSITORY_ID" "REPOSITORY_ID"
@@ -24,10 +24,11 @@ case $GITHUB_EVENT_NAME in
   pull_request)
     PULL_REQUEST_JSON=$(cat $GITHUB_EVENT_PATH | jq '.pull_request')
     ID=$(cat $GITHUB_EVENT_PATH | jq '.number')
-    write_result_set "$ID" ID
     OWNER=$(printf "%s" "$GITHUB_REPOSITORY" | sed 's/\/.*//')
-    write_result_set $(join_by , $OWNER) OWNER
     labels_str=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name) | join(",")')
+
+    write_result_set "$ID" ID
+    write_result_set $(join_by , $OWNER) OWNER
     write_result_set "${labels_str[@]}" LABELS
     ;;
   push)
