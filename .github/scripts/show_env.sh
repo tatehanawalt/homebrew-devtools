@@ -2,11 +2,20 @@
 
 . "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
 
+print_field() {
+  echo "print_field: $1\n"
+  
+}
+
 
 env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
 
-for_csv $env_csv
-csv_max_length $env_csv
+printf "max: %d\n" $(csv_max_length $env_csv)
+
+for_csv $env_csv print_field
+
+IFS=$'\n'
+printf "max: %d\n" $(csv_max_length $env_csv)
 
 exit
 # Pass this function the set of comma-separated keys to inspect the environment
