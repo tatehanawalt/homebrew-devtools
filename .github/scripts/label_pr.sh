@@ -13,7 +13,7 @@ args+=(--repo)
 args+=($(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'))
 args+=(--owner)
 args+=($GITHUB_REPOSITORY_OWNER)
-results=($(label_pr ${args[@]}))
+results=($(git_post ${args[@]}))
 printf "exit_code: %d\n" ${results[0]}
 echo "${results[@]:1}" | jq
 before_exit

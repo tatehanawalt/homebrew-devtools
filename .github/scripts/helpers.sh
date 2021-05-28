@@ -194,7 +194,7 @@ create_label() {
   return $request_status
 }
 
-label_pr() {
+git_post() {
   POSITIONAL=()
   req_url=""
   post_args=(-X POST)
