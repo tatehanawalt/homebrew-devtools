@@ -141,7 +141,7 @@ all() {
   # write_result_set $(join_by , ${call_fns[@]}) functions
   log_result_set "$(join_by , ${call_fns[@]})" functions "FORMULA_FUNCTIONS"
   for method in ${call_fns[@]}; do
-    write_result_set $(join_by , $($method)) $method
+    write_result_set "$(join_by , $($method))" $method
   done
 }
 
@@ -151,7 +151,7 @@ case $template in
     all
     ;;
   formula*)
-    write_result_set $(join_by , $($1)) $1
+    write_result_set "$(join_by , $($1))" $1
     ;;
   test)
     test_all

@@ -38,7 +38,7 @@ command_log_which() {
 
 before_exit() {
   log $(basename $0 | sed "s/\..*//")_${FUNCNAME[1]}
-  write_result_set $(join_by , ${HELPERS_LOG_TOPICS[@]}) outputs
+  write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
   log
 }
 
@@ -88,6 +88,8 @@ write_result_set() {
   result="${result//'%'/'%25'}"
   result="${result//$'\n'/'%0A'}"
   result="${result//$'\r'/'%0D'}"
+
+  [ -z "$result" ] && return 1
 
   printf "$key=$result\n"
 

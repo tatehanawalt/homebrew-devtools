@@ -34,17 +34,20 @@ INSPECT_GROUPS=($(echo "$INSPECT_GROUPS" | tr [[:space:]] '\n' | sed 's/^[^[:alp
 if [ ! -z "$INSPECT_GROUPS" ]; then
   groups=()
   for entry in "${INSPECT_GROUPS[@]}"; do groups+=($(echo $entry | sed 's/=.*//')); done
-  write_result_set $(join_by , ${groups[@]}) inspect_groups
+
+  write_result_set "$(join_by , ${groups[@]})" inspect_groups
+
+  log_result_set "$(join_by , ${groups[@]})" $(echo "inspect_groups" | tr [[:lower:]] [[:upser:]])
+
   for entry in "${INSPECT_GROUPS[@]}"; do
     group=$(echo $entry | sed 's/=.*//')
     fields=$(echo $entry | sed 's/.*=//')
-    log_result_set "$fields" $(echo $group | tr [[:lower:]] [[:upser:]])
+    # log_result_set "$fields" $(echo $group | tr [[:lower:]] [[:upser:]])
     inspect_fields $group $fields
   done
 fi
 
 before_exit
-
 exit 0
 
 # DO NOT DELETE - USEFUL FOR DEBUGGING!
