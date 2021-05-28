@@ -27,6 +27,7 @@ run_input() {
   WITH_SEARCH=1
   WITH_DELETE=1
   TOPIC=repos
+  SEARCH_STRING=''
 
   case $1 in
     artifacts)
@@ -299,7 +300,7 @@ run_input() {
   if [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ]; then
     # SEARCH_STRING='map(.[$field_name]) | join(",")'
     # SEARCH_STRING='map(.[$field_name])'
-    SEARCH_STRING='. | .[$field_name]'
+    SEARCH_STRING='.[] | .[$field_name]'
   fi
 
   printf "QUERY_URL=%s\n" "$QUERY_URL"
@@ -349,7 +350,7 @@ run_input() {
     # IFS=$'\n'
     result=($(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING"))
 
-    printf "- %s\n" ${result[@]}
+    printf "entry: %s\n" ${result[@]}
 
     # if [ ! -z "$field_label" ]; then
     #   write_result_map "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1 $field_label
@@ -376,6 +377,9 @@ kv_map+=($(echo "REPO=$REPO"))
 write_result_set $(join_by , $(printf "%s\n" ${kv_map[@]})) ${name}_kv_store
 write_result_set $template ${name}_template
 
+
+# label_names,collaborator_names,repo_language_names,repo_branche_names
+# label_names,repo_branche_names
 
 request_status=0
 for cmd in $(echo "$template" | tr ',' '\n'); do
