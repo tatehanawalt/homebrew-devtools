@@ -31,6 +31,8 @@ case $GITHUB_EVENT_NAME in
     OWNER=$(printf "%s" "$GITHUB_REPOSITORY" | sed 's/\/.*//')
     labels_str=$(printf "%s" "$PULL_REQUEST_JSON" | jq -r '.labels | map(.name) | join(",")')
 
+    printf "\nlabels_str: %s\n" $labels_str
+
     write_result_set "$ID" ID
     write_result_set $(join_by , $OWNER) OWNER
     write_result_set "${labels_str[@]}" LABELS
