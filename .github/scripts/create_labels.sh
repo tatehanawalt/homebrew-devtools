@@ -22,7 +22,6 @@ for label in ${add_labels[@]}; do
 
 done
 
-exit
 for row in $(echo "${DEFAULT_LABELS}" | jq -r '.[] | @base64'); do
   _jq() { echo ${row} | base64 --decode | jq -r ${1}; }
   echo "$(_jq '.name') $(_jq '.color') $(_jq '.description')"
