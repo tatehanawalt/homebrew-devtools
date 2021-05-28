@@ -340,17 +340,22 @@ run_input() {
     return 2
   fi
 
-  log "${1}_response"
+  printf "\n"
   printf "%s" "$output" | jq
   printf "REQUEST_STATUS=%d\n" $request_status
+  printf "\n"
+
   if [ ! -z "$SEARCH_STRING" ]; then
-    IFS=$'\n'
+    # IFS=$'\n'
     result=($(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING"))
-    if [ ! -z "$field_label" ]; then
-      write_result_map "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1 $field_label
-    else
-      write_result_set "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1
-    fi
+
+    printf "- %s\n" ${result[@]}
+
+    # if [ ! -z "$field_label" ]; then
+    #   write_result_map "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1 $field_label
+    # else
+    #   write_result_set "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1
+    # fi
   fi
 
   # log RESPONSE
