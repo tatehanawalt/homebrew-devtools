@@ -24,9 +24,7 @@ for row in $(echo "${DEFAULT_LABELS}" | jq -r '.[] | @base64'); do
   args+=(--json-body)
   args+=($(echo ${row} | base64 --decode))
   results=($(git_post ${args[@]}))
-
   printf "\nexit_code: %d\n\n%s\n" ${results[0]}
-
   echo "${results[@]:1}" | jq
   printf "\n"
 done
