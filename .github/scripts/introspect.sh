@@ -186,7 +186,7 @@ case $template in
     test_all
     ;;
   *)
-    printf "UNHANDLED TARGET: $1"
+    write_error "$(basename $0) target $target not recognized - line $LINENO"
     exit 1
     ;;
 esac
@@ -194,26 +194,3 @@ esac
 before_exit
 
 exit 0
-
-#groups=($(printf "$INSPECT_GROUPS\n env=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
-# formulas=($(find $FORMULA_DIR -maxdepth 1 -type f -name '*.rb' | sort))
-# names=()
-# printf "\n\n${#formulas[@]}\n"
-# for item in ${formulas[@]}; do
-  # names+=("$(basename ${item%%.*})")
-# done
-# printf "%s\n" ${names[@]} | sort
-# [ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
-#
-#
-# IF any results require curl or any other network requests they should not
-# be part of this file
-
-# Returns values about a repo specific to our repo implementation
-# TEST VALUES:
-# formula_signatures)
-#   formula_signatures
-#   ;;
-# formula_sha)
-  # $template $1 $2
-  #;;

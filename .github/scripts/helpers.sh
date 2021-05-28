@@ -54,6 +54,14 @@ for_csv() {
   done
 }
 
+write_error() {
+  echo "::error::$1"
+  printf "\n%b$1%b\n\n" "${Red}" "${NC}"
+}
+
+
+
+
 csv_max_length() {
   IFS=$'\n'
   max_field_len=0
@@ -62,7 +70,6 @@ csv_max_length() {
   done
   echo "$max_field_len"
 }
-
 join_by () {
   local d=${1-} f=${2-};
   if shift 2; then
@@ -71,7 +78,6 @@ join_by () {
     #printf %s "$f" "${@/#/$d}" | sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
   fi
 }
-
 contains() {
   IFS=$'\n'
   check=$1
@@ -83,16 +89,13 @@ contains() {
   done
   return 1
 }
-
 get_prefix() {
   printf "\t"
 }
-
 command_log_which() {
   printf "%s\t%s\n" $1 "$(which $1)"
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
 }
-
 log() {
   [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
   if [ $IN_LOG -ne 0 ]; then
@@ -107,7 +110,6 @@ log() {
   fi
   return 0
 }
-
 log_result_set() {
   printf "$(get_prefix)%s\n" $(echo -e $1 | tr ',' '\n')
 }
@@ -127,7 +129,6 @@ write_result_set() {
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }
-
 write_result_map() {
   IFS=$'\n'
   result=$(echo -e "$1" | sed 's/"//g')
@@ -144,11 +145,9 @@ write_result_map() {
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$3=$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }
-
 print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
 }
-
 print_field_table() {
   IFS=$'\n'
   field_val=$(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g' | sed '/^$/d' | sed 's/=/=\n/')
@@ -175,15 +174,11 @@ print_field_table() {
 
   # printf "$local_prefix%s\n" ${field_val[@]};
 }
-
 before_exit() {
   [ -z "$HELPERS_LOG_TOPICS" ] && return
   write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
   log
 }
-
-
-
 create_label() {
   label="$1"
   color="$2"
@@ -385,3 +380,81 @@ create_label() {
 #   [[ $@ =~ (^|[[:space:]])$check($|[[:space:]]) ]] && return 0 || return 1
 # }
 # DIFF_FORMULA=demozsh,devenv
+
+
+
+# printf "UNHANDLED TARGET: $1"
+# echo "::error file=app.js,line=10,col=15::ERROR Unhandled TARGET: $ext in $(basename $0):$LINENO"
+#groups=($(printf "$INSPECT_GROUPS\n env=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
+# formulas=($(find $FORMULA_DIR -maxdepth 1 -type f -name '*.rb' | sort))
+# names=()
+# printf "\n\n${#formulas[@]}\n"
+# for item in ${formulas[@]}; do
+  # names+=("$(basename ${item%%.*})")
+# done
+# printf "%s\n" ${names[@]} | sort
+# [ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
+#
+#
+# IF any results require curl or any other network requests they should not
+# be part of this file
+
+# Returns values about a repo specific to our repo implementation
+# TEST VALUES:
+# formula_signatures)
+#   formula_signatures
+#   ;;
+# formula_sha)
+  # $template $1 $2
+  #;;
+
+
+
+  # label_names,collaborator_names,repo_language_names,repo_branch_names
+  # label_names,repo_branch_names
+
+  # IDS=($(printf "%s" $ID | tr ',' '\n'))
+  # for cmd in ${template[@]}; do
+  #   printf "cmd: $cmd\n"
+  #   request_status=0
+  #   run_input $cmd
+  #   echo -e "\nrequest_status: $request_status\n"
+  #   [ $request_status -ne 0 ] && break
+  # done
+
+  # for entry in "$IDS"; do
+  #   # printf "entry: %d\n" $entry
+  #   ID=$entry
+  #   request_status=0
+  #   run_input $template
+  #   [ $request_status -ne 0 ] && break
+  # done
+
+  # printf "id: %s\n" $IDS
+  # lines=$(echo "$IDS" | wc -l)
+  # if [ $lines -le 1 ]; then
+  #   run_input $template
+  #   exit $request_status
+  # fi
+
+  # if [ $WITH_AUTH -eq 0 ]; then
+  #   response=$(curl \
+  #     -s \
+  #     -w "HTTPSTATUS:%{http_code}" \
+  #     -H "Authorization: token $GITHUB_AUTH_TOKEN" \
+  #     -H "Accept: application/vnd.github.v3+json" \
+  #     $QUERY_URL)
+  # else
+  #   response=$(curl \
+  #     -s \
+  #     -w "HTTPSTATUS:%{http_code}" \
+  #     -H 'Accept: application/vnd.github.v3+json' \
+  #     $QUERY_URL)
+  # fi
+
+  # result_label="$field_label"
+  # [ -z "$result_label" ] && result_label="$template"
+  # printf "request_status: %s\n" $request_status
+  # printf "field_label: %s" "$field_label"
+  # echo "::set-output name=RESULT::${result}"
+  # log

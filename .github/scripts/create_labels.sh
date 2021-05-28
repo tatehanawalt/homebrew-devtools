@@ -27,11 +27,11 @@ for label in "${add_labels[@]}"; do
   [ $exit_code -eq 0 ] && continue
   create_labels+=( "$label" )
 done
+
 write_result_set $(join_by , "${create_labels[@]}") create_labels
 
 for label in ${create_labels[@]}; do
   result=$(create_label "$label")
   exit_status=$?
-  # echo "response code: $?"
   echo $result | jq -r | jq
 done

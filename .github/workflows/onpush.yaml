@@ -7,6 +7,12 @@ jobs:
       # Github provided action to check out the source code
       - uses: actions/checkout@v2
 
+      # Get id of this pr
+      - name: action_data
+        id: action_data
+        run: ./.github/scripts/action_data.sh
+        shell: bash
+
       # Lists the files, directories modified in HEAD vs BASE
       - id: diff
         name: diff

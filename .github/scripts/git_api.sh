@@ -17,7 +17,6 @@ REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
 kv_map=()
 IFS=$'\n'
 
-
 run_input() {
   printf "run_input: $@\n"
 
@@ -290,8 +289,8 @@ run_input() {
       field_label="${USER}"
       ;;
     *)
-      printf "UNHANDLED TARGET: $1"
-      return 1
+      write_error "$(basename $0) target $1 not recognized - line $LINENO"
+      exit 1
       ;;
   esac
 
@@ -353,13 +352,6 @@ run_input() {
       write_result_set "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1
     fi
   fi
-
-  # result_label="$field_label"
-  # [ -z "$result_label" ] && result_label="$template"
-  # printf "request_status: %s\n" $request_status
-  # printf "field_label: %s" "$field_label"
-  # echo "::set-output name=RESULT::${result}"
-  # log
 }
 
 kv_map+=($(echo "OWNER=$OWNER"))
@@ -368,10 +360,6 @@ kv_map+=($(echo "REPO=$REPO"))
 
 write_result_set $(join_by , $(printf "%s\n" ${kv_map[@]})) ${name}_kv_store
 write_result_set $template ${name}_template
-
-
-# label_names,collaborator_names,repo_language_names,repo_branch_names
-# label_names,repo_branch_names
 
 request_status=0
 for cmd in $(echo "$template" | tr ',' '\n'); do
@@ -382,49 +370,6 @@ for cmd in $(echo "$template" | tr ',' '\n'); do
   # [ $request_status -ne 0 ] && break
 done
 
-
-# IDS=($(printf "%s" $ID | tr ',' '\n'))
-
-# for cmd in ${template[@]}; do
-#   printf "cmd: $cmd\n"
-#   request_status=0
-#   run_input $cmd
-#   echo -e "\nrequest_status: $request_status\n"
-#   [ $request_status -ne 0 ] && break
-# done
-
-# for entry in "$IDS"; do
-#   # printf "entry: %d\n" $entry
-#   ID=$entry
-#   request_status=0
-#   run_input $template
-#   [ $request_status -ne 0 ] && break
-# done
-
-
 before_exit
 
 exit $request_status
-
-
-# printf "id: %s\n" $IDS
-# lines=$(echo "$IDS" | wc -l)
-# if [ $lines -le 1 ]; then
-#   run_input $template
-#   exit $request_status
-# fi
-
-# if [ $WITH_AUTH -eq 0 ]; then
-#   response=$(curl \
-#     -s \
-#     -w "HTTPSTATUS:%{http_code}" \
-#     -H "Authorization: token $GITHUB_AUTH_TOKEN" \
-#     -H "Accept: application/vnd.github.v3+json" \
-#     $QUERY_URL)
-# else
-#   response=$(curl \
-#     -s \
-#     -w "HTTPSTATUS:%{http_code}" \
-#     -H 'Accept: application/vnd.github.v3+json' \
-#     $QUERY_URL)
-# fi
