@@ -94,6 +94,8 @@ log_result_set() {
 }
 
 write_result_set() {
+  IFS=$'\n'
+
   result=$(echo -e "$1" | sed 's/"//g')
   [ -z "$result" ] && return 1
   key=$2

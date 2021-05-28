@@ -121,7 +121,7 @@ formula_signatures() {
 
 testfn() {
   printf "${Red}%s${Cyan}\n" $(echo "$1" | tr [[:lower:]] [[:upper:]])
-  printf "$prefix%s\n" $($1)
+  printf "$prefix%s\n" $($1 | sort)
   printf "${Red}%s${Cyan}\n" $(echo "$1_CSV" | tr [[:lower:]] [[:upper:]])
   printf "$prefix%s\n" $(join_by , $($1))
   printf "${NC}\n"
@@ -177,6 +177,7 @@ case $template in
     formula_signatures
     ;;
   formula*)
+    IFS=$'\n'
     write_result_set "$(join_by , $($1))" $1
     ;;
   test)
@@ -196,8 +197,6 @@ exit 0
 # file_body=($(echo "$file_body"))
 # for row in ${file_body[@]}; do
 #header_blocks+=("$last_line")
-
-
 # echo "row:$row"
 # for ((i=0; i<${#blocks[@]}; i++)); do
 #   if  [[ "${blocks[$i]}" =~ ^[[:space:]]+end ]]; then
