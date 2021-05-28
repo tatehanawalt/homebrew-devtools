@@ -13,6 +13,8 @@ jobs:
         shell: bash
         env:
           template: label_names,collaborator_names,repo_language_names
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
       # show the environment
       - name: show_env
@@ -21,7 +23,6 @@ jobs:
         env:
           template: show_env
           OUTPUTS: ${{ steps.vcs_info.outputs }}
-          TEMPLATE: ${{ steps.vcs_info.outputs.TEMPLATE }}
           USER: ${{ steps.vcs_info.outputs.USER }}
           OWNER: ${{ steps.vcs_info.outputs.OWNER }}
           REPO: ${{ steps.vcs_info.outputs.REPO }}
