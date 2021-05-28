@@ -181,17 +181,16 @@ case $template in
     write_result_set "$(join_by , $($1))" $1
     ;;
   show_env)
+    IFS=$'\n'
     env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
-    groups=($(printf "$INSPECT_GROUPS\n env=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
-
+    groups=($(printf "${INSPECT_GROUPS[@]}\nenv=$env_csv" | tr ' ' '\n' | sort))
+    #groups=($(printf "$INSPECT_GROUPS\n env=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
     write_result_set "$(join_by , $(printf "%s\n" ${groups[@]} | sed 's/=.*//'))" inspect_groups
-
     for entry in ${groups[@]}; do
       kv=($(echo "$entry" | tr -d '[[:space:]]' | tr '=' '\n'))
       log ${kv[0]}
       for_csv ${kv[1]} print_field
     done
-
     for entry in ${groups[@]}; do
       kv=($(echo "$entry" | tr -d '[[:space:]]' | tr '=' '\n'))
       max_field_len=$(csv_max_length ${kv[1]})
