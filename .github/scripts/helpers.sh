@@ -23,6 +23,11 @@ White='\033[1;37m'
 
 # No Color
 NC='\033[0m'
+
+
+clr=$(printf %b $Red)
+nclr=$(printf %b $NC)
+
 HELPERS_LOG_TOPICS=()
 
 IN_LOG=0
@@ -48,6 +53,7 @@ for_csv() {
     $2 $field
   done
 }
+
 csv_max_length() {
   IFS=$'\n'
   max_field_len=0
@@ -56,6 +62,7 @@ csv_max_length() {
   done
   echo "$max_field_len"
 }
+
 join_by () {
   local d=${1-} f=${2-};
   if shift 2; then
@@ -64,6 +71,7 @@ join_by () {
     #printf %s "$f" "${@/#/$d}" | sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
   fi
 }
+
 contains() {
   check=$1
   shift
@@ -73,13 +81,16 @@ contains() {
   fi
   return 1
 }
+
 get_prefix() {
   printf "\t"
 }
+
 command_log_which() {
   printf "%s\t%s\n" $1 "$(which $1)"
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
 }
+
 log() {
   [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
   if [ $IN_LOG -ne 0 ]; then
@@ -89,11 +100,12 @@ log() {
   if [ ! -z "$1" ]; then
     group=$(echo $1 | tr [[:lower:]] [[:upper:]])
     [ $IN_CI -eq 0 ] && echo "::group::$group"
-    [ $IN_CI -eq 1 ] && printf "${Purple}$group:${NC}\n"
+    [ $IN_CI -eq 1 ] && printf "${Blue}$group:${NC}\n"
     IN_LOG=1
   fi
   return 0
 }
+
 log_result_set() {
   printf "$(get_prefix)%s\n" $(echo -e $1 | tr ',' '\n')
 }
@@ -130,18 +142,38 @@ write_result_map() {
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$3=$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }
+
 print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
 }
+
 print_field_table() {
   IFS=$'\n'
-  field_val=$(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g' | sed '/^$/d')
+  field_val=$(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g' | sed '/^$/d' | sed 's/=/=\n/')
   field_val=($(echo "$field_val"))
   local_prefix=""
   printf "\t%-${max_field_len}s" "$1:"
+  [ -z "$field_val" ] && echo && return
+
   [ ${#field_val[@]} -gt 1 ] && echo && local_prefix="$(get_prefix)   - "
-  printf "$local_prefix%s\n" ${field_val[@]};
+
+  # printf "$local_prefix%s\n" ${field_val[@]};
+  for field in "${field_val[@]}"; do
+    lbl_clr=''
+    if [[ "$field" =~ .*\=.* ]]; then
+      lbl_clr=$Yellow
+      field=$(echo $field | tr [[:lower:]] [[:upper:]] | sed "s/^/$clr/" | sed "s/=/=$nclr/" )
+
+      # field=$(echo $field | sed "s/\=/$( printf %b ${NC} )\=/ )")
+
+      # field=$(echo $field | sed s/$/$(printf %b $NC)$/)
+    fi
+    printf "$local_prefix%s\n" $field
+  done
+
+  # printf "$local_prefix%s\n" ${field_val[@]};
 }
+
 before_exit() {
   [ -z "$HELPERS_LOG_TOPICS" ] && return
   write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
