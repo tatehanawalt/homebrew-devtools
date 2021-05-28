@@ -45,6 +45,52 @@ diff_ext=($(printf "%s\n" ${diff_files[@]} | sed 's/.*\.//' | sort -u))
 diff_ext_csv=$(join_by , ${diff_ext[@]})
 write_result_set "$diff_ext_csv" "DIFF_EXT"
 
+for ext in ${diff_ext[@]}; do
+  case $ext in
+    c)
+      printf "c\n"
+      ;;
+    cpp)
+      printf "c++\n"
+      ;;
+    md)
+      printf "markdown\n"
+      ;;
+    json)
+      printf "json\n"
+      ;;
+    rb)
+      printf "ruby\n"
+      ;;
+    py)
+      printf "python\n"
+      ;;
+    yaml)
+      printf "yaml\n"
+      ;;
+    yml)
+      printf "yml\n"
+      # echo "::warning file=app.js,line=1,col=5::Missing semicolon"
+      ;;
+    *)
+      printf "nUNHANDLED EXT: %s\n" $ext
+      echo "::warning file=$(basename $0),line=$LINENO::Unhandled Exxtension=$ext"
+      ;;
+  esac
+done
+
+
+
+# echo "::warning file=app.js,line=1,col=5::Missing semicolon"
+
+
+
+# printf "%s\n" ${diff_files[@]}
+
+
+#    sh)
+#      printf "shell\n"
+#      ;;
 
 
 before_exit
