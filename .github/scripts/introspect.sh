@@ -78,43 +78,38 @@ formula_names() {
     sort -u
 }
 formula_paths() {
-  IFS=$'\n'
   for item in $(formula_names); do
     val=$(formula_path $item)
     [ -z "$val" ] && continue
-    printf "$item $val$IFS"
+    printf "${item} ${val}\n"
   done
 }
 formula_stable_shas() {
-  IFS=$'\n'
   for item in $(formula_names); do
     val=$(formula_sha $item stable)
     [ -z "$val" ] && continue
-    printf "$item $val$IFS"
+    printf "${item} ${val}\n"
   done
 }
 formula_head_shas() {
-  IFS=$'\n'
   for item in $(formula_names); do
     val=$(formula_sha $item head)
     [ -z "$val" ] && continue
-    printf "%s %s$IFS" "$item" "$val"
+    printf "${item} ${val}\n"
   done
 }
 formula_head_urls() {
-  IFS=$'\n'
   for item in $(formula_names); do
     val=$(formula_url "$item" "head")
     [ -z "$val" ] && continue
-    printf "$item $val$IFS"
+    printf "${item} ${val}\n"
   done
 }
 formula_stable_urls() {
-  IFS=$'\n'
   for item in $(formula_names); do
     val=$(formula_url "$item" "stable")
     [ -z "$val" ] && continue
-    printf "$item $val$IFS"
+    printf "${item} ${val}\n"
   done
 }
 formula_signatures() {
