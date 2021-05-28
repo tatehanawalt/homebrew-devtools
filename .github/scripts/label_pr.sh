@@ -1,8 +1,6 @@
 #!/bin/bash
 
-printf "LABEL PR\n"
-printf "ID=%s\n" "$ID"
-printf "LABELS=%s\n" "$LABELS"
+. "$(dirname $0)/helpers.sh" ${@}
 
 labels_csv=${LABELS[@]}
 labels=($(echo -e "${LABELS[@]}" | tr ',' '\n'))
@@ -10,15 +8,15 @@ write_result_set "$labels_csv" LABEL_PR_LABELS
 
 
 
-post_body=$(printf "\"%s\"," "${labels[@]}" | sed 's/,$//')
+post_body=$(printf "[%s]" $(printf "\"%s\"," "${labels[@]}" | sed 's/,$//'))
 
+
+printf "ID=%s\n" "$ID"
+printf "LABELS=%s\n" "$LABELS"
 printf "post_body: %s\n" "$post_body"
 
 
 exit 0
-
-post_body=$(printf "[%s]" "$post_body")
-printf "post_body: %s\n" "$post_body"
 
 [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
 [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
@@ -41,3 +39,5 @@ curl \
   "$REQUEST_URL"
 
 printf "\n"
+
+# post_body=$(printf "[%s]" "$post_body")
