@@ -36,6 +36,13 @@ if [ -z "$template" ]; then
 else
   HAS_TEMPLATE=0
 fi
+
+git_url() {
+  [ -z "$GITHUB_API_URL" ] && echo "https://api.github.com" && return
+  echo "$GITHUB_API_URL"
+  return
+}
+
 for_csv() {
   IFS=$'\n'
   for field in $(echo $1 | tr ',' '\n'); do
@@ -158,8 +165,6 @@ before_exit() {
   write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
   log
 }
-
-
 create_label() {
   label="$1"
   color="$2"
@@ -190,85 +195,82 @@ create_label() {
 }
 
 label_pr() {
-
-  printf "LABEL_PR Helper!\n"
   POSITIONAL=()
-  labels=()
-
-  while [[ $# -gt 0 ]]
+  req_url=""
+  post_args=(-X POST)
+  while [[ $# -gt 0 ]];
   do
   key="$1"
-
+  shift
   case $key in
-      --id)
-      ID="$2"
-      shift # past argument
-      shift # past value
-      write_result_set "$ID" LABEL_PR_ID
+    --url)
+      req_url="$1"
       ;;
-      --labels)
-      labels=($(echo -e "$2" | tr ',' '\n'))
-      shift # past argument
-      shift # past value
-      write_result_set $(join_by , $($labels[@])) LABEL_PR_LABELS
+    --id)
+      req_url=$(echo "$req_url" | sed s/\$ID/$1/)
       ;;
-      # -l|--lib)
-      # LIBPATH="$2"
-      # shift # past argument
-      # shift # past value
-      # ;;
-      # --default)
-      # DEFAULT=YES
-      # shift # past argument
-      # ;;
-      # *)    # unknown option
-      # POSITIONAL+=("$1") # save it in an array for later
-      # shift # past argument
-      # ;;
+    --labels_csv)
+      labels=($(echo -e $1 | tr , '\n'))
+      json_data=$(printf %s ${labels[@]} | jq -R . | jq -s .)
+      post_args+=(-d)
+      post_args+=("$json_data")
+      ;;
+    --repo)
+      req_url=$(echo "$req_url" | sed s/\$REPO/$1/)
+      ;;
+    --owner)
+      req_url=$(echo "$req_url" | sed s/\$OWNER/$1/)
+      ;;
+    *)
+      POSITIONAL+=("$key")
+      continue
+      ;;
   esac
+  shift
   done
+  post_args+=(-s)
+  post_args+=(-w)
+  post_args+=("HTTPSTATUS:%{http_code}")
+  if [ ! -z "$GITHUB_AUTH_TOKEN" ]; then
+    post_args+=(-H)
+    post_args+=("Authorization: token $GITHUB_AUTH_TOKEN")
+  fi
+  post_args+=(-H)
+  post_args+=("Accept: application/vnd.github.v3+json")
+  post_args+=("$(git_url)/$req_url")
 
+  # printf "\nARGS:\n"
+  # printf "\t%s\n" ${@}
+  # printf "• %s\n" "${post_args[@]}"
+  # return
 
+  response=$(curl "${post_args[@]}")
+  result=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
+  request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+  results=($request_status)
+  results+=($result)
 
-
-  # IFS=$'\n'
-  return
-
-  # printf "%s\n" ${@}
-  # printf '%s\n' "${@}" | jq -R . | jq -s .
-
-  # labels_csv=${LABELS[@]}
-  # labels=($(echo -e "${LABELS[@]}" | tr ',' '\n'))
-  # write_result_set "$labels_csv" LABEL_PR_LABELS
-  data=$(printf "[%s]" $(printf "\"%s\"," "${labels[@]}" | sed 's/,$//'))
-  [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
-  [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
-  [ -z "$GITHUB_HEAD_REF" ]         && GITHUB_HEAD_REF="main"
-  [ -z "$GITHUB_REPOSITORY" ]       && GITHUB_REPOSITORY="tatehanawalt/homebrew-devtools"
-  [ -z "$GITHUB_REPOSITORY_OWNER" ] && GITHUB_REPOSITORY_OWNER="tatehanawalt"
-  [ -z "$GITHUB_WORKSPACE" ]        && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
-  OWNER="$GITHUB_REPOSITORY_OWNER"
-  REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
-  REQUEST_URL="https://api.github.com/repos/$OWNER/$REPO/issues/$ID/labels"
-  printf "ID=%s\n" "$ID"
-  printf "LABELS=%s\n" "$LABELS"
-  printf "data: %s\n" "$data"
-  printf "REQUEST_URL=%s\n" "$REQUEST_URL"
-
-
-  return 0
-  response=$(curl \
-    -X POST \
-    -s \
-    -w "HTTPSTATUS:%{http_code}" \
-    -H "Authorization: token $GITHUB_AUTH_TOKEN" \
-    -H "Accept: application/vnd.github.v3+json" \
-    "$REQUEST_URL" \
-    -d "$data" )
-  before_exit
-  exit 0
+  printf "%s$IFS" ${results[@]}
 }
 
+
+# response=$(curl \
+#   -X POST \
+#   -s \
+#   -w "HTTPSTATUS:%{http_code}" \
+#   -H "Authorization: token $GITHUB_AUTH_TOKEN" \
+#   -H "Accept: application/vnd.github.v3+json" \
+#   "$REQUEST_URL" \
+#   -d "$data" )
+# response=$(curl \
+#   -X POST \
+#   -s \
+#   -w "HTTPSTATUS:%{http_code}" \
+#   -H "Authorization: token $GITHUB_AUTH_TOKEN" \
+#   -H "Accept: application/vnd.github.v3+json" \
+#   "$REQUEST_URL" \
+#   -d "$data" )
+# exit 0
 
 # log $key
 # printf "$key=$result\n"
@@ -536,3 +538,31 @@ label_pr() {
   # printf "UNHANDLED EXT: %s\n" $ext
   # printf "This is a debug statement\n"
   # echo "::debug::Set the Octocat variable"
+
+
+# echo "$result" | jq
+ # printf "request_status: %d\n" $request_status
+ # labels=($(echo -e "$labels_csv" | tr ',' '\n'))
+ # data=$(printf '%s\n' "${labels[@]}" | jq -R . | jq -s .)
+ # post_args+=("$(printf '%s\n' "${labels[@]}" | jq -R . | jq -s .)")
+ # data=$(printf "[%s]" $(printf "\"%s\"," "${labels[@]}" | sed 's/,$//'))
+ # IFS=$'\n'
+ # printf "%s\n" ${@}
+ # printf '%s\n' "${@}" | jq -R . | jq -s .
+ # labels_csv=${LABELS[@]}
+ # labels=($(echo -e "${LABELS[@]}" | tr ',' '\n'))
+ # write_result_set "$labels_csv" LABEL_PR_LABELS
+ # data=$(printf "[%s]" $(printf "\"%s\"," "${labels[@]}" | sed 's/,$//'))
+ # [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
+ # [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
+ # [ -z "$GITHUB_HEAD_REF" ]         && GITHUB_HEAD_REF="main"
+ # [ -z "$GITHUB_REPOSITORY" ]       && GITHUB_REPOSITORY="tatehanawalt/homebrew-devtools"
+ # [ -z "$GITHUB_REPOSITORY_OWNER" ] && GITHUB_REPOSITORY_OWNER="tatehanawalt"
+ # [ -z "$GITHUB_WORKSPACE" ]        && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
+ # OWNER="$GITHUB_REPOSITORY_OWNER"
+ # REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
+ # REQUEST_URL="https://api.github.com/repos/$OWNER/$REPO/issues/$ID/labels"
+ # printf "ID=%s\n" "$ID"
+ # printf "LABELS=%s\n" "$LABELS"
+ # printf "data: %s\n" "$data"
+ # printf "REQUEST_URL=%s\n" "$REQUEST_URL"
