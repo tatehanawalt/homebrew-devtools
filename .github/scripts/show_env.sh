@@ -35,7 +35,7 @@ if [ ! -z "$INSPECT_GROUPS" ]; then
   groups=()
   for entry in "${INSPECT_GROUPS[@]}"; do groups+=($(echo $entry | sed 's/=.*//')); done
 
-  write_result_set "$(join_by , ${groups[@]})" inspect_groups
+  # write_result_set "$(join_by , ${groups[@]})" inspect_groups
 
   log_result_set "$(join_by , ${groups[@]})" $(echo "inspect_groups" | tr [[:lower:]] [[:upser:]])
 
