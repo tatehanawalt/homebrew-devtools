@@ -55,7 +55,7 @@ log() {
 }
 
 for_csv() {
-  printf "\nfor_csv: $*\n"
+  # printf "\nfor_csv: $*\n"
   IFS=$'\n'
   for field in $(echo $1 | tr ',' '\n'); do
     $2 $field

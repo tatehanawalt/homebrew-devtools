@@ -11,29 +11,23 @@ src_path=$(dirname $0)
 #   . "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
 # fi
 
+env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
+max_field_len=$(csv_max_length $env_csv)
 
 print_field() {
   field_val="$(eval "echo \"\$$1\"")"
   printf "%s=%s\n" $1 $field_val
 }
-
-max_field_len=0
 print_field_table() {
-  # printf "%s=%s\n" $1 "$(eval "echo \"\$$1\"")"
-
-  printf "%-${max_field_len}s >\n" "$1:"
-
+  printf "\t%-${max_field_len}s " "$1:"
+  field_val=("$(eval "echo \"\$$1\"")")
+  [ ${#field_val[@]} -ne 1 ] && printf "\n"
+  [ ${#field_val[@]} -gt 1 ] && local_prefix="$(get_prefix)   - "
+  for entry in ${field_val[@]}; do printf "$local_prefix%s\n" $entry; done
 }
-
-
-env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
-max_field_len=$(csv_max_length $env_csv)
 
 for_csv $env_csv print_field
 for_csv $env_csv print_field_table
-
-IFS=$'\n'
-printf "max: %d\n" $(csv_max_length $env_csv)
 
 exit
 # Pass this function the set of comma-separated keys to inspect the environment
