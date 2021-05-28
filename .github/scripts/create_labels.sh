@@ -24,14 +24,14 @@ for row in $(echo "${DEFAULT_LABELS}" | jq -r '.[] | @base64'); do
   _jq() { echo ${row} | base64 --decode | jq -r ${1}; }
   echo "$(_jq '.name') $(_jq '.color') $(_jq '.description')"
 
-  continue
-
   data=$(jq -n \
     --arg name "$(_jq '.name')" \
     --arg color "$(_jq '.color')" \
     --arg description "$(_jq '.description')" \
     '{"name": $name, "color": $color, "description": $description}')
+
   data=$(echo "$data" |  jq '. as $a| [keys[]| select($a[.]!="")| {(.): $a[.]}]| add')
+
   IFS=$'\n'
   args=(--url)
   args+=('repos/$OWNER/$REPO/labels')
