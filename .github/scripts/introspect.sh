@@ -50,12 +50,10 @@ formula_method_signatures() {
     sed "s/.*'.*//" | \
     sed '/^$/d')
 
-  printf "${slim_file}\n"
-  prefix=$(printf "${slim_file}\n" | head -n 2 | tail -n 1)
-
-  echo "$prefix"
-  prefix=$(echo "$prefix" | sed 's/[[:alnum:]].*//')
-  printf "|%s|\n" "$prefix"
+  # printf "${slim_file}\n"
+  prefix=$(printf "${slim_file}\n" | head -n 2 | tail -n 1 | sed 's/[[:alnum:]].*//')
+  # prefix=$(echo "$prefix" | sed 's/[[:alnum:]].*//')
+  # printf "|%s|\n" "$prefix"
 
   printf "$slim_file" | grep "^$prefix[^ ].*"
 
