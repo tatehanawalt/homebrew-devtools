@@ -3,8 +3,8 @@
 . "$(dirname $0)/helpers.sh"
 
 #  Compare against the main branch
-[ -z "$GITHUB_BASE_REF" ] && GITHUB_BASE_REF=main
-[ -z "$GITHUB_HEAD_REF" ] && GITHUB_HEAD_REF=main
+[ -z "$GITHUB_BASE_REF" ] && GITHUB_BASE_REF=main # original ref
+[ -z "$GITHUB_HEAD_REF" ] && GITHUB_HEAD_REF=main # current ref
 
 # Using the BASE branch
 if [ -z "$GITHUB_BASE_REF" ]; then
@@ -17,6 +17,7 @@ if [ -z "$GITHUB_WORKSPACE" ]; then
   echo "GITHUB_WORKSPACE length is 0"
   exit 2
 fi
+
 if [ ! -d "$GITHUB_WORKSPACE" ]; then
   echo "GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
   exit 2
