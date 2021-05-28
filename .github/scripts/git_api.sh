@@ -299,10 +299,10 @@ run_input() {
   if [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ]; then
     # SEARCH_STRING='map(.[$field_name]) | join(",")'
     # SEARCH_STRING='map(.[$field_name])'
-    SEARCH_STRING='.[] | .[$field_name]'
+    SEARCH_STRING='. | .[$field_name]'
   fi
 
-  printf "\n\nQUERY_URL=%s\n\n" "$QUERY_URL"
+  printf "QUERY_URL=%s\n" "$QUERY_URL"
 
   response=""
   if [ $WITH_DELETE -eq 0 ]; then
@@ -342,10 +342,7 @@ run_input() {
 
   log "${1}_response"
   printf "%s" "$output" | jq
-
-  printf "\n"
   printf "REQUEST_STATUS=%d\n" $request_status
-  
   if [ ! -z "$SEARCH_STRING" ]; then
     IFS=$'\n'
     result=($(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING"))
