@@ -25,7 +25,6 @@ formula_path() {
   [ ! -d $FORMULA_DIR ] && return 1
   [ ! -f "$FORMULA_DIR/$1.rb" ] && return 1
   printf "$FORMULA_DIR/$1.rb"
-  return 0
 }
 formula_file() {
   IFS=$'\n'
@@ -70,14 +69,13 @@ formula_url() {
     cut -d '"' -f 2
 }
 formula_names() {
-  IFS=$'\n'
-  formulas=($(find $FORMULA_DIR -maxdepth 1 -type f -name "*.rb" | sort))
-  IFS=$'\n'
-  names=()
-  for item in ${formulas[@]}; do
-    names+=("$(basename ${item%%.*})")
-  done
-  printf "%s\n" ${names[@]} | sort
+  find "$FORMULA_DIR" \
+    -maxdepth 1 \
+    -type f \
+    -name '*.rb' \
+    -exec basename {} \; | \
+    sed 's/\..*//' | \
+    sort -u
 }
 formula_paths() {
   IFS=$'\n'
@@ -194,3 +192,11 @@ esac
 before_exit
 
 exit 0
+
+# formulas=($(find $FORMULA_DIR -maxdepth 1 -type f -name '*.rb' | sort))
+# names=()
+# printf "\n\n${#formulas[@]}\n"
+# for item in ${formulas[@]}; do
+  # names+=("$(basename ${item%%.*})")
+# done
+# printf "%s\n" ${names[@]} | sort
