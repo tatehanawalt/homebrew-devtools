@@ -3,7 +3,7 @@
 . "$(dirname $0)/helpers.sh" ${@}
 
 
-label_pr $(echo -e "${LABELS[@]}" | tr ',' '\n')
+label_pr $(echo -e "${LABELS[@]}" | tr ',' '\n') "this is a multi line label"
 
 
 # labels_csv=${LABELS[@]}
