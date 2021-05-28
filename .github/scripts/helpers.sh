@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# IFS=$"\n"
+
 Black='\033[0;30m'
 DarkGray='\033[1;30m'
 Red='\033[0;31m'
@@ -28,10 +30,6 @@ get_prefix() {
   printf "\t"
 }
 
-test_method() {
-  return 20
-}
-
 command_log_which() {
   printf "%s\t%s\n" $1 "$(which $1)"
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
@@ -49,7 +47,6 @@ log() {
     [ $IN_CI -eq 0 ] && echo "::endgroup::"
   fi
   IN_LOG=0
-
   if [ ! -z "$1" ]; then
     group=$(echo $1 | tr [[:lower:]] [[:upper:]])
     [ $IN_CI -eq 0 ] && echo "::group::$group" || printf "${Purple}$group:${NC}\n"
@@ -75,9 +72,7 @@ contains() {
 }
 
 log_result_set() {
-  # printf "$2:\n"
   printf "$(get_prefix)%s\n" $(echo -e $1 | tr ',' '\n')
-  echo
 }
 
 write_result_set() {
@@ -86,15 +81,12 @@ write_result_set() {
   key=$2
   [ -z "$key" ] && key="result"
   key=$(echo $key | tr [[:lower:]] [[:upper:]])
-
   log $key
   log_result_set "$result" "$key"
-
   result="${result//'%'/'%25'}"
   result="${result//$'\n'/'%0A'}"
   result="${result//$'\r'/'%0D'}"
-  printf "$key=$result\n"
-
+  printf "$key='$result'\n"
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }

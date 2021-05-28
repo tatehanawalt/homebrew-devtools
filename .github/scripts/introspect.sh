@@ -29,10 +29,6 @@ IN_CI=1
 # log PARAMS
 FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
 log_result_set "template=$template,GITHUB_WORKSPACE=$GITHUB_WORKSPACE,FORMULA_DIR=$FORMULA_DIR" PARAMS
-# echo "template=$template,GITHUB_WORKSPACE=$GITHUB_WORKSPACE,FORMULA_DIR=$FORMULA_DIR"
-# echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
-# echo "FORMULA_DIR=$FORMULA_DIR"
-# log
 
 [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
 
