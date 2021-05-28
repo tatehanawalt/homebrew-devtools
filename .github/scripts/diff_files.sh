@@ -2,6 +2,8 @@
 
 . "$(dirname $0)/helpers.sh"
 
+echo "::debug::Set the Octocat variable"
+
 #  Compare against the main branch
 [ -z "$GITHUB_BASE_REF" ] && GITHUB_BASE_REF=main # original ref
 [ -z "$GITHUB_HEAD_REF" ] && GITHUB_HEAD_REF=main # current ref
@@ -31,6 +33,8 @@ if [ -z $(git branch --list "$GITHUB_BASE_REF") ]; then
   echo "FETCH_HEAD for branch $GITHUB_BASE_REF"
   exit 2
 fi
+
+echo "::debug::Another the Octocat variable"
 
 IFS=$'\n'
 diff_files=($(git diff --name-only $GITHUB_BASE_REF | sed 's/[[:space:]]$//g' | sed 's/^[[:space:]]//g'))
@@ -81,7 +85,7 @@ for ext in ${diff_ext[@]}; do
   esac
 done
 
-
+echo "::debug::Another the Octocat variable"
 
 # echo "::warning file=app.js,line=1,col=5::Missing semicolon"
 
