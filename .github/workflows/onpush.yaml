@@ -40,7 +40,7 @@ jobs:
 
           DIFF_FILES: ${{ steps.diff.outputs.DIFF_FILES }}
           DIFF_DIRS: ${{ steps.diff.outputs.DIFF_DIRS }}
-          DIFF_DIRS: ${{ steps.diff.outputs.DIFF_EXT }}
+          DIFF_EXT: ${{ steps.diff.outputs.DIFF_EXT }}
 
           FORMULA_NAMES: ${{ steps.formula_data.outputs.FORMULA_NAMES }}
           FORMULA_PATHS: ${{ steps.formula_data.outputs.FORMULA_PATHS }}
