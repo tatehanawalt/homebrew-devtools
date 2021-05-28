@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IFS=$"\n"
+# IFS=$"\n"
 # printf "\nhelpers:\n${@}\nhelpers\n"
 
 Black='\033[0;30m'
