@@ -9,7 +9,7 @@
 # usage   :See the repo README file for usage
 #==============================================================================
 class Demogolang < Formula
-  depends_on "go" => :build # dependencies
+  depends_on 'go' => :build # dependencies
   desc "Brew install demogolang"          # formula description
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
