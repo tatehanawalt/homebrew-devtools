@@ -2,7 +2,6 @@
 
 . "$(dirname $0)/helpers.sh"
 
-TOPIC=repos
 [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
 [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
 [ -z "$GITHUB_HEAD_REF" ]         && GITHUB_HEAD_REF="main"
@@ -14,52 +13,23 @@ TOPIC=repos
 
 # This function starts a git actions log group. Call with 0 args to end a log
 # group without starting a new one
+IFS=$'\n'
+current_labels=($(printf "%s\n" "${CURRENT_LABELS[@]}" | tr , '\n' | tr [[:upper:]] [[:lower:]] | sort -u))
+write_result_set $(join_by , ${current_labels[@]}) current_labels
+add_labels=($(printf "%s\n" "${ADD_LABELS[@]}" | tr , '\n' | tr [[:upper:]] [[:lower:]] | sort -u))
+add_labels+=(bork)
+write_result_set $(join_by , "${add_labels[@]}") add_labels
 create_labels=()
-existing_labels=($(echo -e "${EXISTING_LABELS[@]}" | tr ',' '\n'))
-check_create_labels=($(echo -e "${CHECK_CREATE_LABELS[@]}" | tr ',' '\n'))
-
-log EXISTING_LABELS
-printf "\t%s\n" ${existing_labels[@]} | sort -u
-
-log CHECK_LABELS
-for label in ${check_create_labels[@]}; do
-  printf "\t%s\n" "$label"
-  contains "$label" "${existing_labels[@]}"
-  [ $? -ne 0 ] && create_labels+=("$label")
+for label in "${add_labels[@]}"; do
+  add=$(contains "$label" "${current_labels[@]}")
+  exit_code=$?
+  [ $exit_code -eq 0 ] && continue
+  create_labels+=( "$label" )
 done
-
-log CREATE_LABELS
-printf "\t%s\n" ${create_labels[@]} | sort -u
-printf "OWNER: %s\n" "$OWNER"
-printf "REPO: %s\n"  "$REPO"
-
-create_label() {
-  REQUEST_URL="https://api.github.com/repos/$OWNER/$REPO/labels"
-  printf "REQUEST_URL: %s\n"  "$REQUEST_URL"
-  data="{\"name\":\"$1\"}"
-  response=$(curl \
-    -X POST \
-    -s \
-    -w "HTTPSTATUS:%{http_code}" \
-    -H "Authorization: token $GITHUB_AUTH_TOKEN" \
-    -H "Accept: application/vnd.github.v3+json" \
-    $REQUEST_URL \
-    -d ${data})
-  output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
-  request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-  request_status=$((${request_status} + 0))
-  [ $request_status -eq 200 ] && request_status=0
-  echo $output | jq --arg response_code "$request_status" '. += {"response_code":$response_code}'
-  [ $request_status -eq 200 ] && return 0
-  [ $request_status -eq 201 ] && return 0
-  return 1
-}
-
-
-log CREATE_LABELS
+write_result_set $(join_by , "${create_labels[@]}") create_labels
 for label in ${create_labels[@]}; do
-  printf "+ $label\n"
-  create_label "$label"
-  [ $? -ne 0 ] && log && exit 1
+  result=$(create_label "$label" "" "")
+  exit_status=$?
+  # echo "response code: $?"
+  echo $result | jq -r | jq
 done
-log

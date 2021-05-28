@@ -73,12 +73,14 @@ join_by () {
 }
 
 contains() {
+  IFS=$'\n'
   check=$1
   shift
-  printf "$(get_prefix)%s\n" "$check"
-  if [[ $@ =~ "(^|[[:space:]])$check($|[[:space:]])" ]]; then
-    return 0
-  fi
+  for key in $@; do
+    if [[ "$check" == "$key" ]]; then
+      return 0
+    fi
+  done
   return 1
 }
 
@@ -180,6 +182,36 @@ before_exit() {
   log
 }
 
+
+
+create_label() {
+  label="$1"
+  color="$2"
+  description="$3"
+  [ -z "$label" ] && printf "label name must not be empty...\n" && return 1
+  [ -z "$color" ] && color=5319E7
+  [ -z "$description" ] && description="git action generated label"
+  REQUEST_URL="https://api.github.com/repos/$OWNER/$REPO/labels"
+  data=$(jq -n --arg name "$1" --arg color "$color" --arg description "$description" '{"name": $name, "color": $color, "description": $description}')
+  data=$(echo "$data" |  jq '. as $a| [keys[]| select($a[.]!="")| {(.): $a[.]}]| add')
+  response=$(curl \
+    -X POST \
+    -s \
+    -w "HTTPSTATUS:%{http_code}" \
+    -H "Authorization: token $GITHUB_AUTH_TOKEN" \
+    -H "Accept: application/vnd.github.v3+json" \
+    $REQUEST_URL \
+    -d "$data" )
+  output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
+  request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+  request_status=$((${request_status} + 0))
+  [ $request_status -eq 201 ] && request_status=0
+  echo $output | jq \
+    --arg response_code "$request_status" \
+    --arg request_url "$REQUEST_URL" \
+    '. += {"response_code":$response_code} | . += {"request_url":$request_url} | tostring'
+  return $request_status
+}
 
 
 # log $key

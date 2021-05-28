@@ -59,8 +59,8 @@ jobs:
         run: ./.github/scripts/create_labels.sh
         shell: bash
         env:
-          CHECK_CREATE_LABELS: "${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }}"
-          EXISTING_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
+          ADD_LABELS: "${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }}"
+          CURRENT_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #  inspect-env:
 #    runs-on: ubuntu-latest
