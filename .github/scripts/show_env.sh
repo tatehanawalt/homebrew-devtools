@@ -11,19 +11,12 @@ print_field_table() {
   field_val=($(echo "$field_val"))
   local_prefix=""
   printf "\t%-${max_field_len}s" "$1:"
-  [ ${#field_val[@]} -ne 1 ] && printf "\n"
-  [ ${#field_val[@]} -gt 1 ] && local_prefix="$(get_prefix)   - "
-  printf "$local_prefix%s\n" ${entry[@]};
-
-
-  # for entry in ${field_val[@]}; do
-  #   printf "$local_prefix%s\n" $entry;
-  # done
+  [ ${#field_val[@]} -gt 1 ] && echo && local_prefix="$(get_prefix)   - "
+  printf "$local_prefix%s\n" ${field_val[@]};
 }
 
 env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
 groups=($(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
-
 group_keys=()
 for entry in "${groups[@]}"; do
   kv=($(echo "$entry" | tr -d '[[:space:]]' | tr '=' '\n'))
@@ -32,9 +25,7 @@ for entry in "${groups[@]}"; do
   log ${kv[0]} && for_csv ${kv[1]} print_field
   log ${kv[0]}_table && for_csv ${kv[1]} print_field_table
 done
-
 write_result_set "$(join_by , ${group_keys[@]})" inspect_groups
-
 exit 0
 
 
