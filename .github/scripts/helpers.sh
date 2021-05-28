@@ -210,8 +210,8 @@ label_pr() {
       req_url=$(echo "$req_url" | sed s/\$ID/$1/)
       ;;
     --labels_csv)
-      labels=($(echo -e $1 | tr , '\n'))
-      json_data=$(printf %s ${labels[@]} | jq -R . | jq -s .)
+      labels=("$(echo -e $1 | tr , '\n')")
+      json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
       post_args+=(-d)
       post_args+=("$json_data")
       ;;
@@ -238,21 +238,21 @@ label_pr() {
   post_args+=(-H)
   post_args+=("Accept: application/vnd.github.v3+json")
   post_args+=("$(git_url)/$req_url")
-
-  # printf "\nARGS:\n"
-  # printf "\t%s\n" ${@}
-  # printf "• %s\n" "${post_args[@]}"
-  # return
-
   response=$(curl "${post_args[@]}")
   result=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   results=($request_status)
   results+=($result)
-
   printf "%s$IFS" ${results[@]}
 }
 
+
+# printf "\n\n"
+# printf "%s\n" "${post_args[@]}"
+# printf "\nARGS:\n"
+# printf "\t%s\n" ${@}
+# printf "• %s\n" "${post_args[@]}"
+# return
 
 # response=$(curl \
 #   -X POST \
