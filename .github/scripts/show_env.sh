@@ -17,14 +17,16 @@ print_field_table() {
 env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
 groups=($(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
 
+group_keys=()
 for entry in "${groups[@]}"; do
   kv=($(echo "$entry" | tr -d '[[:space:]]' | tr '=' '\n'))
+  group_keys+=(${kv[0]})
   max_field_len=$(csv_max_length $kv[1])
   log ${kv[0]} && for_csv ${kv[1]} print_field
   log ${kv[0]}_table && for_csv ${kv[1]} print_field_table
 done
 
-
+write_result_set "$(join_by , ${group_keys[@]})" inspect_groups
 
 exit 0
 

@@ -73,7 +73,7 @@ csv_max_length() {
 join_by () {
   local d=${1-} f=${2-};
   if shift 2; then
-    printf %s "$f" "${@/#/$d}"
+    printf %s "$f" "${@/#/$d}" | sed "s/ $d/$d/g"
     #| sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
     #printf %s "$f" "${@/#/$d}" | sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
   fi
