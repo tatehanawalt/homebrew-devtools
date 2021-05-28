@@ -16,7 +16,7 @@ printf "%s\n" "${ADD_LABELS[@]}"
 # ADD_LABELS
 add_labels=($(printf "%s\n" "${ADD_LABELS[@]}" | tr , '\n' | tr [[:upper:]] [[:lower:]] | sort -u))
 for label in ${add_labels[@]}; do
-  DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq --arg name "$label" '. | . + [{"name": $name}]')
+  DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq --arg name "$label" --arg color "F28E1C" --arg description "placeholder" '. | . + [{"name": $name, "color": $color, "description": $description}]')
 done
 
 for row in $(echo "${DEFAULT_LABELS}" | jq -r '.[] | @base64'); do
@@ -30,6 +30,7 @@ for row in $(echo "${DEFAULT_LABELS}" | jq -r '.[] | @base64'); do
     '{"name": $name, "color": $color, "description": $description}')
 
   data=$(echo "$data" |  jq '. as $a| [keys[]| select($a[.]!="")| {(.): $a[.]}]| add')
+
 
   IFS=$'\n'
   args=(--url)
