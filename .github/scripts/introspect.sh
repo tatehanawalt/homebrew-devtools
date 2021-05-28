@@ -124,7 +124,6 @@ formula_signatures() {
     formula_method_signatures $item
   done
 }
-
 testfn() {
   IFS=$'\n'
   printf "${Red}%s${Cyan}\n" $(echo "$1" | tr [[:lower:]] [[:upper:]])
@@ -136,7 +135,6 @@ testfn() {
   printf "${NC}"
   [ ! -z "$data_lcsv" ] && echo
 }
-
 test_all() {
   testfn formula_names
   testfn formula_paths
@@ -151,7 +149,6 @@ test_all() {
   # test_all
   # log_result_set "$(join_by , ${call_fns[@]})" call_fns "FORMULA_FUNCTIONS"
 }
-
 all() {
   IFS=$'\n'
   call_fns=(
