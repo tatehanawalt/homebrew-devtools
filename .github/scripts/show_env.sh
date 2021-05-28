@@ -13,7 +13,8 @@ src_path=$(dirname $0)
 
 
 print_field() {
-  printf "%s=%s\n" $1 "$(eval "echo \"\$$1\"")"
+  field_val="$(eval "echo \"\$$1\"")"
+  printf "%s=%s\n" $1 $field_val
 }
 
 max_field_len=0
