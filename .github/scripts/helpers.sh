@@ -196,6 +196,8 @@ label_pr() {
 
   printf "%s\n" ${@}
 
+  printf '%s\n' "${X[@]}" | jq -R . | jq -s .
+
   return 0
 
   labels_csv=${LABELS[@]}
