@@ -43,12 +43,22 @@ formula_file() {
 formula_method_signatures() {
   # IFS=$'\n'
 
-  formula_file $1 | \
+  slim_file=$(formula_file $1 | \
     sed 's/#.*//' | \
     grep -o '.*[[:alnum:]].*' | \
     sed 's/.*".*//' | \
     sed "s/.*'.*//" | \
-    sed '/^$/d'
+    sed '/^$/d')
+
+  printf "${slim_file}\n"
+  prefix=$(printf "${slim_file}\n" | head -n 2 | tail -n 1)
+
+  echo "$prefix"
+  prefix=$(echo "$prefix" | sed 's/[[:alnum:]].*//')
+  printf "|%s|\n" "$prefix"
+
+  printf "$slim_file" | grep "^$prefix[^ ].*"
+
 
     # grep "^[[:space:]]*[[:alpha:]].*" | \
     # sed 's/#.*//'
