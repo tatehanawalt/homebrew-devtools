@@ -41,6 +41,7 @@ else
   HAS_TEMPLATE=0
 fi
 
+
 for_csv() {
   IFS=$'\n'
   for field in $(echo $1 | tr ',' '\n'); do
