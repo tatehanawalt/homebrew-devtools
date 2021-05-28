@@ -49,7 +49,8 @@ log() {
   IN_LOG=0
   if [ ! -z "$1" ]; then
     group=$(echo $1 | tr [[:lower:]] [[:upper:]])
-    [ $IN_CI -eq 0 ] && echo "::group::$group" || printf "$group:\n"
+    [ $IN_CI -eq 0 ] && echo "::group::$group" 
+    printf "$group:\n"
     IN_LOG=1
   fi
 }
