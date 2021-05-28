@@ -3,13 +3,14 @@
 . "$(dirname $0)/helpers.sh" $@
 
 if [ ! -f "$GITHUB_EVENT_PATH" ]; then
-  printf "GITHUB_EVENT_PATH FILE NOT FOUND\n"
-  printf "GITHUB_EVENT_PATH=%s\n" "$GITHUB_EVENT_PATH"
+  write_error "$(basename $0) GITHUB_EVENT_PATH file not found at $GITHUB_EVENT_PATH - line $LINENO"
   exit 1
 fi
 
 log EVENT_FILE
-cat $GITHUB_EVENT_PATH | jq
+cat $GITHUB_EVENT_PATH | jq 'keys'
+
+exit
 
 log EVENT_$(echo $GITHUB_EVENT_NAME | tr [:lower:] [:upper:])
 REPOSITORY_JSON=$(cat $GITHUB_EVENT_PATH | jq '.repository')
