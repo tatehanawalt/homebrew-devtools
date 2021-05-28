@@ -24,7 +24,7 @@ White='\033[1;37m'
 # No Color
 NC='\033[0m'
 
-
+# "\033[38;2;R;G;Bm"
 clr=$(printf %b $Red)
 nclr=$(printf %b $NC)
 
