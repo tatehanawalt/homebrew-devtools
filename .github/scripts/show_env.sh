@@ -6,6 +6,7 @@ print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
 }
 print_field_table() {
+  IFS=$'\n'
   printf "\t%-${max_field_len}s " "$1:"
   field_val=$(eval "echo \"\$$1\"" | tr ',' '\n')
   field_val=($(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g'))
