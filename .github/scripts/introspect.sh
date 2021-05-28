@@ -20,17 +20,13 @@ if [ -z "$template" ]; then
   fi
 fi
 
-# This function starts a git actions log group. Call with 0 args to end a log
-# group without starting a new one
-in_log=0
-IN_CI=1
-[ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-
 # log PARAMS
 FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
 log_result_set "template=$template,GITHUB_WORKSPACE=$GITHUB_WORKSPACE,FORMULA_DIR=$FORMULA_DIR" PARAMS
-
 [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
+
+
+
 
 formula_path() {
   [ ! -d $FORMULA_DIR ] && return 1
@@ -142,7 +138,6 @@ test_all() {
   printf "completed testing\n\n"
 
   for item in $(formula_names); do
-
     echo "$item"
     sigs=($(formula_method_signatures "$item"))
     # printf "\tsig: %s\n" ${sigs[@]}
