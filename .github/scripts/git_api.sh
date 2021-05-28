@@ -341,13 +341,11 @@ run_input() {
     return 2
   fi
 
-  printf "\n"
+
   printf "%s" "$output" | jq
   printf "REQUEST_STATUS=%d\n" $request_status
-  printf "\n"
 
   if [ ! -z "$SEARCH_STRING" ]; then
-    # IFS=$'\n'
     result=($(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING"))
     if [ ! -z "$field_label" ]; then
       write_result_map "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1 $field_label
@@ -356,9 +354,6 @@ run_input() {
     fi
   fi
 
-  # log RESPONSE
-  # printf "%s" "$output" | jq
-  # echo $output | jq
   # result_label="$field_label"
   # [ -z "$result_label" ] && result_label="$template"
   # printf "request_status: %s\n" $request_status
