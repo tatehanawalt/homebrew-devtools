@@ -73,22 +73,32 @@ for ext in ${diff_ext[@]}; do
       ;;
     json)
       printf "json\n"
+      add_label_set+=( "json" )
+
       ;;
     rb)
       printf "ruby\n"
+      add_label_set+=( "ruby" )
+
       ;;
     py)
       printf "python\n"
+      add_label_set+=( "python" )
+
       ;;
     yaml)
       printf "yaml\n"
+      add_label_set+=( "yaml" )
       ;;
     yml)
       printf "yml\n"
+      add_label_set+=( "yaml" )
+      echo "::warning file=$(basename $0),line=$LINENO::Encountered a yml file... $(basename $0):$LINENO"
+
       ;;
     *)
       printf "UNHANDLED EXT: %s\n" $ext
-      echo "::warning file=$(basename $0),line=$LINENO::Unhandled Extension: $ext in $(basename $0):$LINENO"
+      echo "::warning file=$(basename $0),line=$LINENO::Unhandled Extension $ext in $(basename $0):$LINENO"
       ;;
   esac
 done
