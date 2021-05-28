@@ -23,15 +23,8 @@ if [ ! -d "$GITHUB_WORKSPACE" ]; then
   exit 2
 fi
 
-cd $GITHUB_WORKSPACE
-
-has_diff_branch=$(git branch --list "$GITHUB_BASE_REF")
-if [ -z "$has_diff_branch" ]; then
-  git fetch origin "$GITHUB_BASE_REF"
-  git branch "$GITHUB_BASE_REF" FETCH_HEAD
-  fetch_exit_code=$?
-  echo "FETCH_EXIT_CODE=$fetch_exit_code"
-fi
+git fetch origin "$GITHUB_BASE_REF"
+git branch "$GITHUB_BASE_REF" FETCH_HEAD
 
 has_diff_branch=$(git branch --list "$GITHUB_BASE_REF")
 if [ -z "$has_diff_branch" ]; then
@@ -39,18 +32,32 @@ if [ -z "$has_diff_branch" ]; then
   exit 2
 fi
 
+IFS=$'\n'
 diff_files=($(git diff --name-only $GITHUB_BASE_REF | sed 's/[[:space:]]$//g' | sed 's/^[[:space:]]//g'))
-write_result_set $(join_by , ${diff_files[@]}) "DIFF_FILES"
+diff_files_csv=$(join_by , ${diff_files[@]})
 
-diff_dirs=()
+echo "$diff_files_csv"
 
-for file_path in ${diff_files[@]}; do
-  dir=$(dirname $file_path)
-  diff_dirs+=($(dirname $file_path))
-done
+# write_result_set $(join_by , ${diff_files[@]}) "DIFF_FILES"
 
-diff_dirs=($(printf "%s\n" ${diff_dirs[@]} | sed 's/[[:space:]]$//g' | sed 's/^[[:space:]]//g' | sort -u))
-write_result_set $(join_by , ${diff_dirs[@]}) "DIFF_DIRS"
 
-log
-exit 0
+
+# diff_dirs=()
+# for file_path in ${diff_files[@]}; do
+#   dir=$(dirname $file_path)
+#   diff_dirs+=($(dirname $file_path))
+# done
+# diff_dirs=($(printf "%s\n" ${diff_dirs[@]} | sed 's/[[:space:]]$//g' | sed 's/^[[:space:]]//g' | sort -u))
+# write_result_set $(join_by , ${diff_dirs[@]}) "DIFF_DIRS"
+# log
+# exit 0
+
+# cd $GITHUB_WORKSPACE
+
+# has_diff_branch=$(git branch --list "$GITHUB_BASE_REF")
+# if [ -z "$has_diff_branch" ]; then
+#   git fetch origin "$GITHUB_BASE_REF"
+#   git branch "$GITHUB_BASE_REF" FETCH_HEAD
+#   fetch_exit_code=$?
+#   echo "FETCH_EXIT_CODE=$fetch_exit_code"
+# fi
