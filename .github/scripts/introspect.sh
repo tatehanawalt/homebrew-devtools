@@ -41,25 +41,14 @@ formula_file() {
 }
 
 formula_method_signatures() {
-  # IFS=$'\n'
-
   slim_file=$(formula_file $1 | \
     sed 's/#.*//' | \
     grep -o '.*[[:alnum:]].*' | \
     sed 's/.*".*//' | \
     sed "s/.*'.*//" | \
     sed '/^$/d')
-
-  # printf "${slim_file}\n"
   prefix=$(printf "${slim_file}\n" | head -n 2 | tail -n 1 | sed 's/[[:alnum:]].*//')
-  # prefix=$(echo "$prefix" | sed 's/[[:alnum:]].*//')
-  # printf "|%s|\n" "$prefix"
-
   file_body=$(printf "$slim_file" | grep "^$prefix[^ ].*")
-
-
-  # file_body=$(printf "$(formula_file $1)" | sed 's/#.*$//' | grep "^  [[:alpha:]].*")
-  # file_body=$(echo "$file_body" | sed 's/.*\".*//' | sed "s/.*\'.*//" | sed '/^[[:space:]]*$/d')
   prev=""
   for row in $file_body; do
     [[ "$row" =~ ^[[:space:]]+end ]] && printf "%s\n" "$prev"
@@ -140,9 +129,13 @@ formula_signatures() {
 
 testfn() {
   printf "${Red}%s${Cyan}\n" $(echo "$1" | tr [[:lower:]] [[:upper:]])
-  printf "$prefix%s\n" $($1)
-  printf "${Red}%s${Cyan}\n" $(echo "$1_CSV" | tr [[:lower:]] [[:upper:]])
-  printf "$prefix%s\n" $(join_by , $($1))
+
+  vals=$($1)
+
+
+  printf "${Cyan}$prefix%s\n"
+  printf "${Red}%s\n" $(echo "$1_CSV" | tr [[:lower:]] [[:upper:]])
+  printf "${Cyan}$prefix%s\n" $(join_by , $($1))
   printf "${NC}\n"
 }
 
@@ -153,14 +146,10 @@ test_all() {
   testfn formula_head_shas
   testfn formula_stable_urls
   testfn formula_head_urls
-
   printf "completed testing\n\n"
-
   for item in $(formula_names); do
     echo "$item"
-
     # formula_file "$item"
-
     formula_method_signatures "$item"
 
     # sigs=($(formula_method_signatures "$item"))
@@ -170,6 +159,7 @@ test_all() {
     #   printf "$sig\n"
     #   formula_method_body "$item" "$sig"
     # done
+    echo
   done
 }
 
