@@ -8,7 +8,6 @@ print_field() {
 print_field_table() {
   IFS=$'\n'
   printf "\t%-${max_field_len}s " "$1:"
-  field_val=$(eval "echo \"\$$1\"" | tr ',' '\n')
   field_val=($(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g'))
   [ ${#field_val[@]} -ne 1 ] && printf "\n"
   [ ${#field_val[@]} -gt 1 ] && local_prefix="$(get_prefix)   - "
@@ -31,6 +30,7 @@ write_result_set "$(join_by , ${group_keys[@]})" inspect_groups
 
 exit 0
 
+# field_val=$(eval "echo \"\$$1\"" | tr ',' '\n')
 # INSPECT_GROUPS=$(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d')
 # groups=($(echo "$INSPECT_GROUPS" | sed 's/=.*$//' | sort))
 # groups=()
