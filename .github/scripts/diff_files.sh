@@ -53,9 +53,11 @@ for ext in ${diff_ext[@]}; do
   case $ext in
     c)
       printf "c\n"
+      add_label_set+=( "c" )
       ;;
     cpp)
       printf "c++\n"
+      add_label_set+=( "cpp" )
       ;;
     md)
       printf "markdown\n"
@@ -73,6 +75,10 @@ for ext in ${diff_ext[@]}; do
     py)
       printf "python\n"
       add_label_set+=( "python" )
+      ;;
+    sh)
+      printf "shell\n"
+      add_label_set+=( "shell" )
       ;;
     yaml)
       printf "yaml\n"
