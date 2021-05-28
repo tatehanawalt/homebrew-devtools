@@ -47,15 +47,14 @@ diff_ext=($(printf "%s\n" ${diff_files[@]} | sed 's/.*\.//' | sort -u))
 diff_ext_csv=$(join_by , ${diff_ext[@]})
 write_result_set "$diff_ext_csv" DIFF_EXT
 
-
-
 for dir_path in ${diff_dirs[@]}; do
   case $dir_path in
     Formula)
       add_label_set+=( "brew" )
+      printf "delta brew\n"
       ;;
     .github/workflows | .github/scripts)
-      printf "Action CHANGE!\n\n"
+      printf "delta action\n"
       add_label_set+=( "action" )
       ;;
   esac
@@ -64,7 +63,7 @@ done
 for fname in ${diff_files[@]}; do
   case $fname in
     Formula/*.rb)
-      printf "BREW TAG CHANGE!\n\n"
+      printf "delta formula\n"
       add_label_set+=( "formula" )
       add_label_set+=( $(basename $fname | sed 's/\..*//') )
       ;;

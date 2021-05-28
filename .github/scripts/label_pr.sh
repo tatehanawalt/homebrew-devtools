@@ -4,16 +4,18 @@ printf "LABEL PR\n"
 printf "ID=%s\n" "$ID"
 printf "LABELS=%s\n" "$LABELS"
 
+labels_csv=${LABELS[@]}
 labels=($(echo -e "${LABELS[@]}" | tr ',' '\n'))
+write_result_set "$labels_csv" LABEL_PR_LABELS
 
-printf "labels:\n"
-for label in ${labels[@]}; do
-  printf "\t%s\n" "$label"
-done
-printf "\n"
+
 
 post_body=$(printf "\"%s\"," "${labels[@]}" | sed 's/,$//')
+
 printf "post_body: %s\n" "$post_body"
+
+
+exit 0
 
 post_body=$(printf "[%s]" "$post_body")
 printf "post_body: %s\n" "$post_body"

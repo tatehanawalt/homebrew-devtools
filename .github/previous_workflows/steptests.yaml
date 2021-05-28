@@ -5,29 +5,81 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: test_script
         id: test_script
-        run: ./.github/scripts/testing.sh
+        run: ./.github/scripts/test.sh
         shell: bash
 
-      - name: action_data
-        id: action_data_1
-        run: ./.github/scripts/action_data.sh
-        shell: bash
 
-      - name: show_env
-        id: show_env
-        run: ./.github/scripts/introspect.sh
-        shell: bash
-        env:
-          template: show_env
-          INSPECT_GROUPS: '
-              git=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
-              reference=EXISTING_LABELS,CHECK_CREATE_LABELS,KEYS_NOT_IN_SET
-            '
 
-      #- name: action_data
-        #id: action_data_2
-        #run: ./.github/scripts/action_data.sh
-        #shell: bash
+#       # Get the labels attached to this pr
+#       - id: pull_request_label_names
+#         name: pull_request_label_names
+#         run: ./.github/scripts/git_api.sh
+#         shell: bash
+#         env:
+#           ID: "${{ steps.action_data.outputs.ID }}"
+#           template: pull_request_label_names
+#       # Lists the files, directories modified in HEAD vs BASE
+#       - id: diff
+#         name: diff
+#         run: ./.github/scripts/diff_files.sh
+#         shell: bash
+#       # Get the names of formulae modified in this pr
+
+
+#       - id: diff_formula !! REMOved
+#         name: diff_formula
+#         run: ./.github/scripts/diff_formula.sh
+#         shell: bash
+#         env:
+#           DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+
+#       # Set of formulae names which are not existing lables attached to this pr
+#       - name: keys_not_in_set
+#         id: keys_not_in_set
+#         run: ./.github/scripts/utility.sh
+#         shell: bash
+#         env:
+#           template: keys_not_in_set
+#           SET: ${{ steps.pull_request_label_names.outputs.RESULT }}
+#           KEYS: ${{ steps.diff_formula.outputs.DIFF_FORMULA }}
+#       #  Set of all existing label names
+#       - name: label_names
+#         id: label_names
+#         run: ./.github/scripts/git_api.sh
+#         shell: bash
+#         env:
+#           template: label_names
+#       # Create any labels that don't exist already
+#       - name: create_label
+#         run: ./.github/scripts/create_labels.sh
+#         shell: bash
+#         env:
+#           CHECK_CREATE_LABELS: "${{ steps.keys_not_in_set.outputs.RESULT }}"
+#           EXISTING_LABELS: "${{ steps.label_names.outputs.RESULT }}"
+#           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       # Adds specified labels (CSV) to a pull request
+#       - name: label_pr
+#         run: ./.github/scripts/label_pr.sh
+#         shell: bash
+#         env:
+#           LABELS: "${{ steps.keys_not_in_set.outputs.RESULT }}"
+#           ID: ${{ steps.action_data.outputs.ID }}
+#           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       # Print the values from introspection
+#       - name: show_env
+#         run: ./.github/scripts/show_env.sh
+#         shell: bash
+#         env:
+#           DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
+#           DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+#           DIFF_FORMULA: "${{ steps.diff_formula.outputs.DIFF_FORMULA }}"
+#           LABELS: ${{ steps.label_names.outputs.RESULT }}
+#           PR_LABELS: "${{ steps.action_data.outputs.LABELS }}"
+#           PR_ADD_LABELS: ${{ steps.keys_not_in_set.outputs.RESULT }}
+#           PR_ID: ${{ steps.action_data.outputs.ID }}
+#           INSPECT_GROUPS: '
+#             git_env=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
+#             specific=DIFF_FORMULA,LABELS,DIFF_FILES,DIFF_DIRS,PR_LABELS,PR_ID,PR_ADD_LABELS
+#             '

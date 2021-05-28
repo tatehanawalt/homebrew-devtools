@@ -40,7 +40,14 @@ jobs:
               action=${{ steps.action_data.outputs.OUTPUTS }}
               diff=${{ steps.diff.outputs.OUTPUTS }}
               '
-
+      - id: label_pr
+        name: label_pr
+        run: ./.github/scripts/label_pr.sh
+        shell: bash
+        env:
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABELS: ${{ steps.diff.outputs.DIFF_ADD_LABEL_SET }}
+          ID: ${{ steps.action_data.outputs.ID }}
 
 
 #      # Get the labels attached to this pr
@@ -57,12 +64,16 @@ jobs:
 #        run: ./.github/scripts/diff_files.sh
 #        shell: bash
 #      # Get the names of formulae modified in this pr
-#      - id: diff_formula
+
+
+#      - id: diff_formula !! REMOVOED
 #        name: diff_formula
 #        run: ./.github/scripts/diff_formula.sh
 #        shell: bash
 #        env:
 #          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+
+
 #      # Set of formulae names which are not existing lables attached to this pr
 #      - name: keys_not_in_set
 #        id: keys_not_in_set
