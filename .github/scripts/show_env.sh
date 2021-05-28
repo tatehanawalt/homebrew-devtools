@@ -1,16 +1,6 @@
 #!/bin/bash
 
-src_path=$(dirname $0)
-. "$src_path/helpers.sh"
-
-# env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
-# INSPECT_GROUPS=$(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d')
-printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d'
-
-
-exit
-# groups=($(echo "$INSPECT_GROUPS" | sed 's/=.*$//' | sort))
-
+. "$(dirname $0)/helpers.sh"
 
 print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
@@ -24,18 +14,22 @@ print_field_table() {
   for entry in ${field_val[@]}; do printf "$local_prefix%s\n" $entry; done
 }
 
+env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
+groups=($(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
+
 for entry in "${groups[@]}"; do
-  group_fields=$(echo "${INSPECT_GROUPS[@]}" | grep -o "$entry[^ ]*" | sed 's/.*=//')
-  max_field_len=$(csv_max_length $group_fields)
-  log "$entry" && for_csv $group_fields print_field
-  log "${entry}_table" && for_csv $group_fields print_field_table
+  kv=($(echo "$entry" | tr -d '[[:space:]]' | tr '=' '\n'))
+  max_field_len=$(csv_max_length $kv[1])
+  log ${kv[0]} && for_csv ${kv[1]} print_field
+  log ${kv[0]}_table && for_csv ${kv[1]} print_field_table
 done
 
 
 
-exit
+exit 0
 
-
+# INSPECT_GROUPS=$(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d')
+# groups=($(echo "$INSPECT_GROUPS" | sed 's/=.*$//' | sort))
 # groups=()
 # for entry in "${INSPECT_GROUPS[@]}"; do groups+=($(echo $entry | sed 's/=.*$//')); done
 # printf "\n$INSPECT_GROUPS\n\n"
