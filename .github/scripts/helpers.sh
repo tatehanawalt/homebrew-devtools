@@ -224,7 +224,7 @@ label_pr() {
       # *)    # unknown option
       # POSITIONAL+=("$1") # save it in an array for later
       # shift # past argument
-      ;;
+      # ;;
   esac
   done
 
