@@ -1,10 +1,23 @@
 #!/bin/bash
 
-. "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
+src_path=$(dirname $0)
+. "$src_path/helpers.sh"
+
+
+
+# if [ -f ./helpers.sh ]; then
+#   printf "\n./helpers.sh\n"
+# else
+#   . "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
+# fi
+
 
 print_field() {
-  echo "print_field: $1\n"
-  
+  echo -e "print_field: $1"
+  field_value="$(eval "echo \"\$$key\"")"
+
+  echo -e "val: $field_value"
+
 }
 
 
