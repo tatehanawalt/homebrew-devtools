@@ -2,8 +2,6 @@
 
 . "$(dirname $0)/helpers.sh" ${@}
 
-[ ! -z "$INSPECT_GROUPS" ] && INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | tr ' ' '\n')
-
 # Introspection generates / parses data related to the contents of the
 # specific repository by parsing the local filesystem resources
 #
@@ -185,6 +183,11 @@ case $template in
   show_env)
     IFS=$'\n'
     env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
+
+    INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | tr ' ' '\n' | sed 's/^[[:space:]]*//' | sed '/^$/d')
+
+
+
     groups=($(printf "${INSPECT_GROUPS[@]}\nenv=$env_csv" | tr ' ' '\n' | sort))
     #groups=($(printf "$INSPECT_GROUPS\n env=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
     write_result_set "$(join_by , $(printf "%s\n" ${groups[@]} | sed 's/=.*//'))" inspect_groups
