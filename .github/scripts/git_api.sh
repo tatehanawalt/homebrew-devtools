@@ -387,7 +387,7 @@ IDS=($(printf "%s" $ID | tr ',' '\n'))
 
 # templates=($(printf "%s" $template | tr ',' '\n'))
 
-write_result_set $template template
+write_result_set $template ${name}_template
 
 
 
