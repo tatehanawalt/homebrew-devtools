@@ -2,6 +2,7 @@
 
 # IFS=$"\n"
 # printf "\nhelpers:\n${@}\nhelpers\n"
+max_field_len=0
 
 Black='\033[0;30m'
 DarkGray='\033[1;30m'
@@ -71,11 +72,9 @@ contains() {
   fi
   return 1
 }
-
 get_prefix() {
   printf "\t"
 }
-
 command_log_which() {
   printf "%s\t%s\n" $1 "$(which $1)"
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
@@ -112,6 +111,20 @@ write_result_set() {
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }
+
+print_field() {
+  printf "%s=$(eval "echo \"\$$1\"")\n" $1
+}
+print_field_table() {
+  IFS=$'\n'
+  field_val=$(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g' | sed '/^$/d')
+  field_val=($(echo "$field_val"))
+  local_prefix=""
+  printf "\t%-${max_field_len}s" "$1:"
+  [ ${#field_val[@]} -gt 1 ] && echo && local_prefix="$(get_prefix)   - "
+  printf "$local_prefix%s\n" ${field_val[@]};
+}
+
 
 before_exit() {
   [ -z "$HELPERS_LOG_TOPICS" ] && return

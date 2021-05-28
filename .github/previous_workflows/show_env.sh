@@ -2,40 +2,20 @@
 
 . "$(dirname $0)/helpers.sh"
 
-max_field_len=0
 env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
 groups=($(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
-group_keys=()
-
-print_field() {
-  printf "%s=$(eval "echo \"\$$1\"")\n" $1
-}
-print_field_table() {
-  IFS=$'\n'
-  field_val=$(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g' | sed '/^$/d')
-  field_val=($(echo "$field_val"))
-  local_prefix=""
-  printf "\t%-${max_field_len}s" "$1:"
-  [ ${#field_val[@]} -gt 1 ] && echo && local_prefix="$(get_prefix)   - "
-  printf "$local_prefix%s\n" ${field_val[@]};
-}
-
+write_result_set "$(join_by , $(printf "%s\n" ${groups[@]} | sed 's/=.*//'))" inspect_groups
 for entry in ${groups[@]}; do
   kv=($(echo "$entry" | tr -d '[[:space:]]' | tr '=' '\n'))
-  group_keys+=(${kv[0]})
-  max_field_len=$(csv_max_length ${kv[1]})
   log ${kv[0]}
   for_csv ${kv[1]} print_field
 done
-
 for entry in ${groups[@]}; do
   kv=($(echo "$entry" | tr -d '[[:space:]]' | tr '=' '\n'))
   max_field_len=$(csv_max_length ${kv[1]})
   log ${kv[0]}_table
   for_csv ${kv[1]} print_field_table
 done
-
-write_result_set "$(join_by , ${group_keys[@]})" inspect_groups
 before_exit
 
 # exit 0

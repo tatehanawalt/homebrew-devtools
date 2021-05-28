@@ -12,10 +12,12 @@ jobs:
         shell: bash
         env:
           template: all
+
       - name: show_env
-        run: ./.github/scripts/show_env.sh
+        run: ./.github/scripts/introspect.sh
         shell: bash
         env:
+          template: show_env
           FORMULA_NAMES: "${{ steps.formula_data.outputs.FORMULA_NAMES }}"
           FORMULA_PATHS: "${{ steps.formula_data.outputs.FORMULA_PATHS }}"
           FORMULA_STABLE_SHAS: "${{ steps.formula_data.outputs.FORMULA_STABLE_SHAS }}"
