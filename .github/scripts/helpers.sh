@@ -190,6 +190,7 @@ create_label() {
 }
 
 label_pr() {
+  IFS=$'\n'
 
   printf "LABEL_PR Helper!\n"
 
