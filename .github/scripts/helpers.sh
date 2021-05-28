@@ -34,7 +34,10 @@ command_log_which() {
   printf "%s\t%s\n" $1 "$(which $1)"
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
 }
+
+
 before_exit() {
+  log $(basename $0 | sed "s/\..*//")_${FUNCNAME[1]}
   write_result_set $(join_by , ${HELPERS_LOG_TOPICS[@]}) outputs
   log
 }
@@ -80,7 +83,6 @@ write_result_set() {
 }
 
 # [ $IN_CI -eq 0 ] && prefix=""
-
 # core.addPath	Accessible using environment file GITHUB_PATH
 # core.debug	debug
 # core.error	error
@@ -100,7 +102,6 @@ write_result_set() {
 # [ ! -z "$GITHUB_BASE_REF" ] && BASE=$GITHUB_BASE_REF
 # [ ! -z "$GITHUB_REPOSITORY_OWNER" ] && OWNER=$GITHUB_REPOSITORY_OWNER
 # [ ! -z "$GITHUB_WORKSPACE" ] && REPO=$GITHUB_WORKSPACE
-
 
 # for item in ${result[@]}; do printf "%s\n" "$item"; done
 # result=$(formula_urls | sed 's/ /,/g')

@@ -31,18 +31,17 @@ inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$
 [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS
 
 INSPECT_GROUPS=($(echo "$INSPECT_GROUPS" | tr [[:space:]] '\n' | sed 's/^[^[:alpha:]]*//g' | sort))
-[ -z "$INSPECT_GROUPS" ] && exit 0
-
-groups=()
-for entry in "${INSPECT_GROUPS[@]}"; do groups+=($(echo $entry | sed 's/=.*//')); done
-write_result_set $(join_by , ${groups[@]}) inspect_groups
-
-for entry in "${INSPECT_GROUPS[@]}"; do
-  group=$(echo $entry | sed 's/=.*//')
-  fields=$(echo $entry | sed 's/.*=//')
-  write_result_set $fields ${group}
-  inspect_fields $group $fields
-done
+if [ ! -z "$INSPECT_GROUPS" ]; then
+  groups=()
+  for entry in "${INSPECT_GROUPS[@]}"; do groups+=($(echo $entry | sed 's/=.*//')); done
+  write_result_set $(join_by , ${groups[@]}) inspect_groups
+  for entry in "${INSPECT_GROUPS[@]}"; do
+    group=$(echo $entry | sed 's/=.*//')
+    fields=$(echo $entry | sed 's/.*=//')
+    write_result_set $fields ${group}
+    inspect_fields $group $fields
+  done
+fi
 
 before_exit
 
