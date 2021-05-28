@@ -2,7 +2,6 @@
 
 . "$(dirname $0)/helpers.sh" ${@}
 
-
 # Introspection generates / parses data related to the contents of the
 # specific repository by parsing the local filesystem resources
 #
@@ -13,28 +12,29 @@
 # Returns values about a repo specific to our repo implementation
 # TEST VALUES:
 
-[ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
-
+# [ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
+FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
 [ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
 
-# log PARAMS
-FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
-
 log_result_set "template=$template,GITHUB_WORKSPACE=$GITHUB_WORKSPACE,FORMULA_DIR=$FORMULA_DIR" PARAMS
+
 [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
 
 formula_path() {
+  IFS=$'\n'
   [ ! -d $FORMULA_DIR ] && return 1
   [ ! -f "$FORMULA_DIR/$1.rb" ] && return 1
   printf "$FORMULA_DIR/$1.rb"
   return 0
 }
 formula_file() {
+  IFS=$'\n'
   formula_path=$(formula_path $1)
   [ $? -ne 0 ] && printf "$1 formula path not found\n" && return 1
   cat $formula_path
 }
 formula_method_signatures() {
+  IFS=$'\n'
   slim_file=$(formula_file $1 | \
     sed 's/#.*//' | \
     grep -o '.*[[:alnum:]].*' | \
@@ -50,23 +50,27 @@ formula_method_signatures() {
   done
 }
 formula_method_body() {
+  IFS=$'\n'
   file_body=$(formula_file $1)
   [ $? -ne 0 ] && printf "$file_body" && return 1
   printf "%s\n" $file_body | awk "/$2/,/^[[:space:]][[:space:]]end/"
 }
 formula_sha() {
+  IFS=$'\n'
   formula_method_body "$1" "$2" | \
     grep "sha256.*" | \
     tr \' \" | \
     cut -d '"' -f 2
 }
 formula_url() {
+  IFS=$'\n'
   formula_method_body "$1" "$2" | \
     grep 'url.*' | \
     tr \' \" | \
     cut -d '"' -f 2
 }
 formula_names() {
+  IFS=$'\n'
   formulas=($(find $FORMULA_DIR -maxdepth 1 -type f -name "*.rb" | sort))
   IFS=$'\n'
   names=()
@@ -76,6 +80,7 @@ formula_names() {
   printf "%s\n" ${names[@]} | sort
 }
 formula_paths() {
+  IFS=$'\n'
   for item in $(formula_names); do
     val=$(formula_path $item)
     [ -z "$val" ] && continue
@@ -83,6 +88,7 @@ formula_paths() {
   done
 }
 formula_stable_shas() {
+  IFS=$'\n'
   for item in $(formula_names); do
     val=$(formula_sha $item stable)
     [ -z "$val" ] && continue
@@ -90,6 +96,7 @@ formula_stable_shas() {
   done
 }
 formula_head_shas() {
+  IFS=$'\n'
   for item in $(formula_names); do
     val=$(formula_sha $item head)
     [ -z "$val" ] && continue
@@ -97,6 +104,7 @@ formula_head_shas() {
   done
 }
 formula_head_urls() {
+  IFS=$'\n'
   for item in $(formula_names); do
     val=$(formula_url "$item" "head")
     [ -z "$val" ] && continue
@@ -104,6 +112,7 @@ formula_head_urls() {
   done
 }
 formula_stable_urls() {
+  IFS=$'\n'
   for item in $(formula_names); do
     val=$(formula_url "$item" "stable")
     [ -z "$val" ] && continue
@@ -111,6 +120,7 @@ formula_stable_urls() {
   done
 }
 formula_signatures() {
+  IFS=$'\n'
   for item in $(formula_names); do
     printf "%s\n" $item
     formula_method_signatures $item
@@ -128,6 +138,7 @@ testfn() {
 }
 
 test_all() {
+  IFS=$'\n'
   testfn formula_names
   testfn formula_paths
   testfn formula_stable_shas

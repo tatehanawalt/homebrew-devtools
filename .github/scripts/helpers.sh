@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# IFS=$"\n"
-
+IFS=$"\n"
 # printf "\nhelpers:\n${@}\nhelpers\n"
 
 Black='\033[0;30m'
@@ -41,42 +40,12 @@ else
   HAS_TEMPLATE=0
 fi
 
-get_prefix() {
-  printf "\t"
-}
-
-command_log_which() {
-  printf "%s\t%s\n" $1 "$(which $1)"
-  printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
-}
-
-before_exit() {
-  [ -z "$HELPERS_LOG_TOPICS" ] && return
-  write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
-  log
-}
-
-log() {
-  [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-  if [ $IN_LOG -ne 0 ]; then
-    [ $IN_CI -eq 0 ] && echo "::endgroup::"
-  fi
-  IN_LOG=0
-  if [ ! -z "$1" ]; then
-    group=$(echo $1 | tr [[:lower:]] [[:upper:]])
-    [ $IN_CI -eq 0 ] && echo "::group::$group" || printf "${Purple}$group:${NC}\n"
-    IN_LOG=1
-  fi
-}
-
 for_csv() {
-  # printf "\nfor_csv: $*\n"
   IFS=$'\n'
   for field in $(echo $1 | tr ',' '\n'); do
     $2 $field
   done
 }
-
 csv_max_length() {
   IFS=$'\n'
   max_field_len=0
@@ -93,7 +62,6 @@ join_by () {
     #printf %s "$f" "${@/#/$d}" | sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
   fi
 }
-
 contains() {
   check=$1
   shift
@@ -104,13 +72,38 @@ contains() {
   return 1
 }
 
+
+
+get_prefix() {
+  printf "\t"
+}
+
+command_log_which() {
+  printf "%s\t%s\n" $1 "$(which $1)"
+  printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
+}
+before_exit() {
+  [ -z "$HELPERS_LOG_TOPICS" ] && return
+  write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
+  log
+}
+log() {
+  [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+  if [ $IN_LOG -ne 0 ]; then
+    [ $IN_CI -eq 0 ] && echo "::endgroup::"
+  fi
+  IN_LOG=0
+  if [ ! -z "$1" ]; then
+    group=$(echo $1 | tr [[:lower:]] [[:upper:]])
+    [ $IN_CI -eq 0 ] && echo "::group::$group" || printf "${Purple}$group:${NC}\n"
+    IN_LOG=1
+  fi
+}
 log_result_set() {
   printf "$(get_prefix)%s\n" $(echo -e $1 | tr ',' '\n')
 }
-
 write_result_set() {
   IFS=$'\n'
-
   result=$(echo -e "$1" | sed 's/"//g')
   [ -z "$result" ] && return 1
   key=$2
