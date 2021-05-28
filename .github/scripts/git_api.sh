@@ -383,25 +383,27 @@ write_result_set "$REPO" repo
 IDS=($(printf "%s" $ID | tr ',' '\n'))
 
 
-templates=($(printf "%s" $template | tr ',' '\n'))
+# templates=($(printf "%s" $template | tr ',' '\n'))
 
-for cmd in ${template[@]}; do
-  printf "cmd: $cmd\n"
-  request_status=0
-  run_input $cmd
-
-  echo -e "\nrequest_status: $request_status\n"
-  [ $request_status -ne 0 ] && break
-done
+write_result_set "$template" $template
 
 
-for entry in "$IDS"; do
-  # printf "entry: %d\n" $entry
-  ID=$entry
-  request_status=0
-  run_input $template
-  [ $request_status -ne 0 ] && break
-done
+
+# for cmd in ${template[@]}; do
+#   printf "cmd: $cmd\n"
+#   request_status=0
+#   run_input $cmd
+#   echo -e "\nrequest_status: $request_status\n"
+#   [ $request_status -ne 0 ] && break
+# done
+
+# for entry in "$IDS"; do
+#   # printf "entry: %d\n" $entry
+#   ID=$entry
+#   request_status=0
+#   run_input $template
+#   [ $request_status -ne 0 ] && break
+# done
 
 
 before_exit

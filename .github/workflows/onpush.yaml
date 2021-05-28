@@ -12,7 +12,7 @@ jobs:
         run: ./.github/scripts/git_api.sh
         shell: bash
         env:
-          template: label_names,collaborator_names
+          template: label_names,collaborator_names,repo_language_names
 
       # show the environment
       - name: show_env
