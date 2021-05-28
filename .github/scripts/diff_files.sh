@@ -120,7 +120,7 @@ for fname in ${diff_files[@]}; do
       printf "\n\n\nFOUND A BREW TAG CHANGE!\n\n"
 
       add_label_set+=( "formula" )
-
+      add_label_set+=( $(basename $fname | sed 's/\..*//') )
 
       ;;
 
@@ -128,6 +128,14 @@ for fname in ${diff_files[@]}; do
   esac
 
 done
+
+
+
+
+diff_add_label_set=($(printf "%s\n" ${add_label_set[@]} | sed 's/.*\.//' | sort -u))
+diff_add_label_set_csv=$(join_by , ${diff_add_label_set[@]})
+write_result_set "$diff_add_label_set_csv" "DIFF_ADD_LABEL_SET"
+
 
 
 
