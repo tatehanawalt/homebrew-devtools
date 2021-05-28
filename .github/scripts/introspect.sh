@@ -26,12 +26,15 @@ in_log=0
 IN_CI=1
 [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 
-log PARAMS
+# log PARAMS
 FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
-echo "template=$template"
-echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
-echo "FORMULA_DIR=$FORMULA_DIR"
-log
+
+log_result_set "template=$template,GITHUB_WORKSPACE=$GITHUB_WORKSPACE,FORMULA_DIR=$FORMULA_DIR" PARAMS
+# echo "template=$template,GITHUB_WORKSPACE=$GITHUB_WORKSPACE,FORMULA_DIR=$FORMULA_DIR"
+# echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+# echo "FORMULA_DIR=$FORMULA_DIR"
+# log
+
 [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
 
 formula_path() {
@@ -126,7 +129,6 @@ test_all() {
 }
 
 all() {
-  log all
   call_fns=(
     formula_names
     formula_paths
@@ -135,7 +137,9 @@ all() {
     formula_stable_urls
     formula_head_urls
   )
-  write_result_set $(join_by , ${call_fns[@]}) functions
+
+  # write_result_set $(join_by , ${call_fns[@]}) functions
+  log_result_set "$(join_by , ${call_fns[@]})" functions "FORMULA_FUNCTIONS"
   for method in ${call_fns[@]}; do
     write_result_set $(join_by , $($method)) $method
   done

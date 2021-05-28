@@ -26,10 +26,10 @@ export IN_LOG=0
 export IN_CI=1
 [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 
-# helpers_log_topics=() # Store log headers for pre-exit introspect
 test_method() {
   return 20
 }
+
 command_log_which() {
   printf "%s\t%s\n" $1 "$(which $1)"
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
@@ -41,6 +41,7 @@ before_exit() {
   write_result_set $(join_by , ${HELPERS_LOG_TOPICS[@]}) outputs
   log
 }
+
 log() {
   if [ $IN_LOG -ne 0 ]; then
     [ $IN_CI -eq 0 ] && echo "::endgroup::"
@@ -52,12 +53,14 @@ log() {
     IN_LOG=1
   fi
 }
+
 join_by () {
   local d=${1-} f=${2-};
   if shift 2; then
     printf %s "$f" "${@/#/$d}" | sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
   fi
 }
+
 contains() {
   check=$1
   shift
@@ -67,6 +70,19 @@ contains() {
   fi
   return 1
 }
+
+log_result_set() {
+  # key=$1
+  # [ -z "$key" ] && key="result"
+  # result=$(echo -e "$2" | sed 's/"//g')
+  # result="${result//'%'/'%25'}"
+  # result="${result//$'\n'/'%0A'}"
+  # result="${result//$'\r'/'%0D'}"
+  log $2
+  printf "$prefix%s\n" $(echo -e $1 | tr ',' '\n')
+  echo
+}
+
 write_result_set() {
   result=$(echo -e "$1" | sed 's/"//g')
   key=$2
@@ -76,11 +92,17 @@ write_result_set() {
   [ -z "$key" ] && key="result"
   key=$(echo $key | tr [[:lower:]] [[:upper:]])
   HELPERS_LOG_TOPICS+=($key)
-  log $key
-  printf "$prefix%s\n" $(echo -e $result | tr ',' '\n')
-  printf "$key=$result\n"
+  log_result_set $result $key
+  printf "$key=$1\n"
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
+  echo
 }
+
+# log $key
+# printf "$prefix%s\n" $(echo -e $result | tr ',' '\n')
+# printf "$key=$result\n"
+
+# helpers_log_topics=() # Store log headers for pre-exit introspect
 
 # [ $IN_CI -eq 0 ] && prefix=""
 # core.addPath	Accessible using environment file GITHUB_PATH
