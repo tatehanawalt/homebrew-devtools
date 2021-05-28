@@ -23,8 +23,8 @@ HELPERS_LOG_TOPICS=()
 
 export prefix='\t'
 export IN_LOG=0
-export IN_CI=1
-[ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+export IN_CI=0
+# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 
 test_method() {
   return 20
@@ -38,7 +38,8 @@ command_log_which() {
 
 before_exit() {
   log $(basename $0 | sed "s/\..*//")_${FUNCNAME[1]}
-  write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
+
+  [ ! -z "${HELPERS_LOG_TOPICS[@]}" ] && write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
   log
 }
 
@@ -49,7 +50,7 @@ log() {
   IN_LOG=0
   if [ ! -z "$1" ]; then
     group=$(echo $1 | tr [[:lower:]] [[:upper:]])
-    [ $IN_CI -eq 0 ] && echo "::group::$group" 
+    [ $IN_CI -eq 0 ] && echo "::group::$group"
     printf "$group:\n"
     IN_LOG=1
   fi
