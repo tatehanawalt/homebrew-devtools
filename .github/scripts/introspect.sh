@@ -38,11 +38,11 @@ formula_file() {
   formula_path=$(formula_path $1)
   [ $? -ne 0 ] && printf "$1 formula path not found\n" && return 1
   cat $formula_path
-  return 0
 }
+
 formula_method_signatures() {
-  file_body=$(formula_file $1)
-  file_body=$(printf "%s\n" $file_body | sed 's/#.*//' | grep "^  [[:alpha:]].*")
+  IFS=$'\n'
+  file_body=$(printf "$(formula_file $1)" | sed 's/#.*$//' | grep "^  [[:alpha:]].*")
   file_body=$(echo "$file_body" | sed 's/.*\".*//' | sed "s/.*\'.*//" | sed '/^[[:space:]]*$/d')
   prev=""
   for row in $file_body; do
@@ -62,15 +62,12 @@ formula_sha() {
     grep "sha256.*" | \
     tr \' \" | \
     cut -d '"' -f 2
-    #sed 's/.*"\(.*\)".*/\1/'
 }
 formula_url() {
   formula_method_body "$1" "$2" | \
     grep 'url.*' | \
     tr \' \" | \
     cut -d '"' -f 2
-    # sed 's/.*"\(.*\)".*/\1/'
-    # cut -d '"' -f 2
 }
 
 formula_names() {
@@ -145,16 +142,18 @@ test_all() {
 
   for item in $(formula_names); do
     echo "$item"
-    sigs=($(formula_method_signatures "$item"))
-    printf "signatures:\n$sigs\n"
-    # printf "\tsig: %s\n" ${sigs[@]}
-    for sig in ${sigs[@]}; do
-      printf "$sig\n"
-      formula_method_body "$item" "$sig"
-    done
-  done
 
-  printf "\n"
+    formula_file "$item"
+
+
+    # sigs=($(formula_method_signatures "$item"))
+    # printf "signatures:\n$sigs\n"
+    # printf "\tsig: %s\n" ${sigs[@]}
+    # for sig in ${sigs[@]}; do
+    #   printf "$sig\n"
+    #   formula_method_body "$item" "$sig"
+    # done
+  done
 }
 
 all() {
@@ -165,6 +164,7 @@ all() {
     formula_head_shas
     formula_stable_urls
     formula_head_urls
+    formula_method_signatures
   )
 
   test_all
