@@ -190,19 +190,56 @@ create_label() {
 }
 
 label_pr() {
-  IFS=$'\n'
 
   printf "LABEL_PR Helper!\n"
+  POSITIONAL=()
+  labels=()
 
-  printf "%s\n" ${@}
+  while [[ $# -gt 0 ]]
+  do
+  key="$1"
 
-  printf '%s\n' "${@}" | jq -R . | jq -s .
+  case $key in
+      --id)
+      ID="$2"
+      shift # past argument
+      shift # past value
+      write_result_set "$ID" LABEL_PR_ID
+      ;;
+      --labels)
+      labels=($(echo -e "$2" | tr ',' '\n'))
+      shift # past argument
+      shift # past value
+      write_result_set $(join_by , $($labels[@])) LABEL_PR_LABELS
+      ;;
+      # -l|--lib)
+      # LIBPATH="$2"
+      # shift # past argument
+      # shift # past value
+      # ;;
+      # --default)
+      # DEFAULT=YES
+      # shift # past argument
+      # ;;
+      # *)    # unknown option
+      # POSITIONAL+=("$1") # save it in an array for later
+      # shift # past argument
+      ;;
+  esac
+  done
 
-  return 0
 
-  labels_csv=${LABELS[@]}
-  labels=($(echo -e "${LABELS[@]}" | tr ',' '\n'))
-  write_result_set "$labels_csv" LABEL_PR_LABELS
+
+
+  # IFS=$'\n'
+  return
+
+  # printf "%s\n" ${@}
+  # printf '%s\n' "${@}" | jq -R . | jq -s .
+
+  # labels_csv=${LABELS[@]}
+  # labels=($(echo -e "${LABELS[@]}" | tr ',' '\n'))
+  # write_result_set "$labels_csv" LABEL_PR_LABELS
   data=$(printf "[%s]" $(printf "\"%s\"," "${labels[@]}" | sed 's/,$//'))
   [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
   [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
@@ -217,6 +254,9 @@ label_pr() {
   printf "LABELS=%s\n" "$LABELS"
   printf "data: %s\n" "$data"
   printf "REQUEST_URL=%s\n" "$REQUEST_URL"
+
+
+  return 0
   response=$(curl \
     -X POST \
     -s \

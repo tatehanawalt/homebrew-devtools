@@ -5,6 +5,7 @@
 
 label_pr $(echo -e "${LABELS[@]}" | tr ',' '\n') "this is a multi line label"
 
+label_pr --labels "$LABELS" --id "$ID"
 
 # labels_csv=${LABELS[@]}
 # labels=($(echo -e "${LABELS[@]}" | tr ',' '\n'))
