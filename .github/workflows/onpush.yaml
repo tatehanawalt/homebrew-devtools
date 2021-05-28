@@ -13,8 +13,8 @@ jobs:
         shell: bash
         env:
           name: vcs_info
-          template: label_names,repo_branche_names
-          # template: label_names,collaborator_names,repo_language_names,repo_branche_names
+          template: label_names,repo_branche_names,repo_language_names,collaborator_names
+          # template: collaborator_names
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # show the environment

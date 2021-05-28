@@ -190,7 +190,7 @@ run_input() {
       ;;
     repo_language_names)
       QUERY_BASE=languages
-      SEARCH_STRING='keys | join(",")'
+      SEARCH_STRING='keys | join("\n")'
       ;;
 
     repo_tags)
@@ -349,14 +349,11 @@ run_input() {
   if [ ! -z "$SEARCH_STRING" ]; then
     # IFS=$'\n'
     result=($(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING"))
-
-    printf "entry: %s\n" ${result[@]}
-
-    # if [ ! -z "$field_label" ]; then
-    #   write_result_map "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1 $field_label
-    # else
-    #   write_result_set "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1
-    # fi
+    if [ ! -z "$field_label" ]; then
+      write_result_map "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1 $field_label
+    else
+      write_result_set "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1
+    fi
   fi
 
   # log RESPONSE
