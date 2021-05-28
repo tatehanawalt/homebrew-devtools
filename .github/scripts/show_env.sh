@@ -38,7 +38,7 @@ if [ ! -z "$INSPECT_GROUPS" ]; then
   for entry in "${INSPECT_GROUPS[@]}"; do
     group=$(echo $entry | sed 's/=.*//')
     fields=$(echo $entry | sed 's/.*=//')
-    write_result_set $fields ${group}
+    log_result_set "$fields" $(echo $group | tr [[:lower:]] [[:upser:]]}
     inspect_fields $group $fields
   done
 fi
