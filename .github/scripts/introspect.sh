@@ -4,19 +4,9 @@
 
 # Introspection generates / parses data related to the contents of the
 # specific repository by parsing the local filesystem resources
-#
-#
-# IF any results require curl or any other network requests they should not
-# be part of this file
 
-# Returns values about a repo specific to our repo implementation
-# TEST VALUES:
-
-# [ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
 FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
 [ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
-
-log_result_set "template=$template,GITHUB_WORKSPACE=$GITHUB_WORKSPACE,FORMULA_DIR=$FORMULA_DIR" PARAMS
 
 [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
 
@@ -171,23 +161,14 @@ case $template in
   all)
     all
     ;;
-  formula_signatures)
-    formula_signatures
-    ;;
-  # formula_sha)
-    # $template $1 $2
-    #;;
   formula*)
     write_result_set "$(join_by , $($1))" $1
     ;;
   show_env)
     IFS=$'\n'
     env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
-
     INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | tr ' ' '\n' | sed 's/^[[:space:]]*//' | sed '/^$/d')
-
     groups=($(printf "${INSPECT_GROUPS[@]}\nenv=$env_csv" | tr ' ' '\n' | sort))
-    #groups=($(printf "$INSPECT_GROUPS\n env=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
     write_result_set "$(join_by , $(printf "%s\n" ${groups[@]} | sed 's/=.*//'))" inspect_groups
     for entry in ${groups[@]}; do
       kv=($(echo "$entry" | tr -d '[[:space:]]' | tr '=' '\n'))
@@ -214,6 +195,7 @@ before_exit
 
 exit 0
 
+#groups=($(printf "$INSPECT_GROUPS\n env=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
 # formulas=($(find $FORMULA_DIR -maxdepth 1 -type f -name '*.rb' | sort))
 # names=()
 # printf "\n\n${#formulas[@]}\n"
@@ -221,3 +203,17 @@ exit 0
   # names+=("$(basename ${item%%.*})")
 # done
 # printf "%s\n" ${names[@]} | sort
+# [ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
+#
+#
+# IF any results require curl or any other network requests they should not
+# be part of this file
+
+# Returns values about a repo specific to our repo implementation
+# TEST VALUES:
+# formula_signatures)
+#   formula_signatures
+#   ;;
+# formula_sha)
+  # $template $1 $2
+  #;;
