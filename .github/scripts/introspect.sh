@@ -144,6 +144,8 @@ all() {
     formula_head_urls
   )
 
+  test_all
+
   # write_result_set $(join_by , ${call_fns[@]}) functions
   log_result_set "$(join_by , ${call_fns[@]})" functions "FORMULA_FUNCTIONS"
   for method in ${call_fns[@]}; do
