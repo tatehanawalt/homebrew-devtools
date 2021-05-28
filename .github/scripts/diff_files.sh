@@ -54,10 +54,9 @@ for dir_path in ${diff_dirs[@]}; do
     Formula)
       add_label_set+=( "brew" )
       ;;
-    .github/(workflows|/scripts))
+    .github/(workflows|scripts))
       printf "Action CHANGE!\n\n"
       add_label_set+=( "action" )
-      add_label_set+=( $(basename $fname | sed 's/\..*//') )
       ;;
   esac
 done
