@@ -3,8 +3,12 @@
 . "$(dirname $0)/helpers.sh"
 
 printf "This is a debug statement\n"
-
 echo "::debug::Set the Octocat variable"
+
+
+add_label_set=()
+
+
 
 #  Compare against the main branch
 [ -z "$GITHUB_BASE_REF" ] && GITHUB_BASE_REF=main # original ref
@@ -52,6 +56,8 @@ diff_ext=($(printf "%s\n" ${diff_files[@]} | sed 's/.*\.//' | sort -u))
 diff_ext_csv=$(join_by , ${diff_ext[@]})
 write_result_set "$diff_ext_csv" "DIFF_EXT"
 
+
+
 for ext in ${diff_ext[@]}; do
   case $ext in
     c)
@@ -62,6 +68,7 @@ for ext in ${diff_ext[@]}; do
       ;;
     md)
       printf "markdown\n"
+      add_label_set+=( "documentation" )
       ;;
     json)
       printf "json\n"
@@ -82,11 +89,47 @@ for ext in ${diff_ext[@]}; do
     *)
       printf "UNHANDLED EXT: %s\n" $ext
       echo "::warning file=$(basename $0),line=$LINENO::Unhandled Extension: $ext in $(basename $0):$LINENO"
-
       echo "::error file=app.js,line=10,col=15::ERROR Unhandled Extension: $ext in $(basename $0):$LINENO"
       ;;
   esac
 done
+
+for ext in ${diff_ext[@]}; do
+  case $ext in
+    Formula)
+
+      printf "\n\n\nFOUND A Formula BREW TAG CHANGE!\n\n"
+      add_label_set+=( "brew" )
+
+
+      ;;
+
+
+
+  esac
+done
+
+
+for fname in ${diff_files[@]}; do
+
+
+  case $fname in
+    Formula/*.rb)
+
+
+      printf "\n\n\nFOUND A BREW TAG CHANGE!\n\n"
+
+      add_label_set+=( "formula" )
+
+
+      ;;
+
+
+  esac
+
+done
+
+
 
 printf "This is a debug statement\n"
 echo "::debug::Another the Octocat variable"
