@@ -72,12 +72,6 @@ contains() {
 }
 
 log_result_set() {
-  # key=$1
-  # [ -z "$key" ] && key="result"
-  # result=$(echo -e "$2" | sed 's/"//g')
-  # result="${result//'%'/'%25'}"
-  # result="${result//$'\n'/'%0A'}"
-  # result="${result//$'\r'/'%0D'}"
   log $2
   printf "$prefix%s\n" $(echo -e $1 | tr ',' '\n')
   echo
@@ -86,14 +80,16 @@ log_result_set() {
 write_result_set() {
   result=$(echo -e "$1" | sed 's/"//g')
   key=$2
-  result="${result//'%'/'%25'}"
-  result="${result//$'\n'/'%0A'}"
-  result="${result//$'\r'/'%0D'}"
   [ -z "$key" ] && key="result"
   key=$(echo $key | tr [[:lower:]] [[:upper:]])
   HELPERS_LOG_TOPICS+=($key)
   log_result_set $result $key
-  printf "$key=$1\n"
+
+  result="${result//'%'/'%25'}"
+  result="${result//$'\n'/'%0A'}"
+  result="${result//$'\r'/'%0D'}"
+
+  printf "$key=$result\n"
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   echo
 }
@@ -201,3 +197,10 @@ write_result_set() {
 #     echo "$formula_file" | awk "/$block\$/,/^  end/" | sed 1d | sed '$d'
 #   done
 # }
+
+# key=$1
+# [ -z "$key" ] && key="result"
+# result=$(echo -e "$2" | sed 's/"//g')
+# result="${result//'%'/'%25'}"
+# result="${result//$'\n'/'%0A'}"
+# result="${result//$'\r'/'%0D'}"
