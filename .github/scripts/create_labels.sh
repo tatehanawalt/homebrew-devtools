@@ -3,15 +3,21 @@
 . "$(dirname $0)/helpers.sh"
 
 DEFAULT_LABELS='[{"name":":beer:","description":"Somehow related to homebrew","color":"F28E1C"},{"name":":bug:","description":"Literally a bug","color":"ffd438"},{"name":":alien:","description":"Something is unknown","color":"ffd438"},{"name":":robot:","description":"Robots are working on it!","color":"814fff"},{"name":":zap:","description":"A robot fixed something","color":"24a0ff"}]'
-DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq '. | . + [{"name": "demo1", "description": "demo description", "color": "F28E1C"}]')
+
+
+# DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq '. | . + [{"name": "demo1", "description": "demo description", "color": "F28E1C"}]')
+# DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq --arg name "$name" '. | . + [{"name": "demo1", "description": "demo description", "color": "F28E1C"}]')
 
 
 printf  "\n\n Called CREATE LABELS \n\n"
 printf "%s\n" "${ADD_LABELS[@]}"
 
 # ADD_LABELS
+add_labels=($(printf "%s\n" "${ADD_LABELS[@]}" | tr , '\n' | tr [[:upper:]] [[:lower:]] | sort -u))
+for label in ${add_labels[@]}; do
+  printf "add label: %s\n" $label
 
-
+done
 
 exit
 for row in $(echo "${DEFAULT_LABELS}" | jq -r '.[] | @base64'); do
@@ -45,16 +51,12 @@ done
 # QQSTRING_START
 # export GITHUB_REPOSITORY=tatehanawalt/homebrew-devtools
 # export GITHUB_REPOSITORY_OWNER=tatehanawalt
-# create_label ":robot:" "Robots are working on it!" "814fff"
-# echo "\n\nCREATE LABEL: ${@}\n"
-# echo $GITHUB_REPOSITORY_OWNER
-# echo $GITHUB_REPOSITORY
-# data=$(echo $data | jq '. as $a| [keys[]| select($a[.]!="")| {(.): $a[.]}]| add')
-# results=($(git_post ${args[@]}))
-# printf "exit_code: %d\n" ${results[0]}
-# echo "${results[@]:1}" | jq
-# before_exit
-# exit 0
+
+
+
+
+
+
 # echo  "$DEFAULT_LABELS" | jq
 # exit
 # [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
