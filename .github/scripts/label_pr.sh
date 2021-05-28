@@ -1,9 +1,12 @@
 #!/bin/bash
 
 . "$(dirname $0)/helpers.sh" ${@}
+
 IFS=$'\n'
 args=(--url)
 args+=('repos/$OWNER/$REPO/issues/$ID/labels')
+args+=(--method)
+args+=(POST)
 args+=(--labels_csv)
 args+=("$LABELS")
 args+=(--id)

@@ -16,6 +16,10 @@ kv_map=()
 IFS=$'\n'
 
 run_input() {
+
+  request_url=''
+
+
   printf "run_input: $@\n"
   QUERY_URL=""
   field_label=""
@@ -41,7 +45,6 @@ run_input() {
       QUERY_BASE=collaborators/$USER
       WITH_AUTH=0
       ;;
-
     help)
       echo "
       artifacts
@@ -97,9 +100,11 @@ run_input() {
       user_repo_names" | sort
       exit 1
       ;;
+
     labels)
       QUERY_BASE=labels
       ;;
+
     label_names)
       SEARCH_FIELD=name
       QUERY_BASE=labels
@@ -108,6 +113,7 @@ run_input() {
       SEARCH_FIELD=id
       QUERY_BASE=labels
       ;;
+
     pull_request)
       QUERY_BASE=pulls/$ID
       ;;
@@ -131,6 +137,7 @@ run_input() {
     pull_requests)
       QUERY_BASE=pulls
       ;;
+
     release)
       QUERY_BASE=releases/$ID
       ;;
@@ -166,6 +173,41 @@ run_input() {
       WITH_AUTH=0
       ;;
     repo_contributors)
+      request_url='repos/$OWNER/$REPO/contributors'
+
+
+      echo "$request_url"
+      depts=($(echo "$request_url" | grep -o '$[[:alpha:]]*'))
+      printf "depts: %d\n" ${#depts[@]}
+      printf "\t%s\n" ${depts[@]}
+      printf "request_url: %s\n" $request_url
+      for dep in ${depts[@]}; do
+        subval=$(eval "echo \"$dep\"")
+        request_url=$(echo $request_url | sed s/$dep/$subval/)
+      done
+      printf "request_url: %s\n" $request_url
+      args=(--url)
+      args+=($request_url)
+      args+=(--id)
+      args+=($ID)
+      args+=(--repo)
+      args+=($(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'))
+      args+=(--owner)
+      args+=($GITHUB_REPOSITORY_OWNER)
+
+
+      exit
+      results=($(git_post ${args[@]}))
+      printf "exit_code: %d\n" ${results[0]}
+      echo "${results[@]:1}" | jq
+      before_exit
+      exit 0
+
+
+
+
+
+
       QUERY_BASE=contributors
       ;;
     repo_contributor_names)
@@ -230,6 +272,8 @@ run_input() {
       QUERY_BASE=actions/workflows/$ID/timing
       ;;
     workflow_runs)
+
+
       QUERY_BASE=actions/workflows/$ID/runs
       ;;
     workflow_completed_runs)
@@ -256,15 +300,23 @@ run_input() {
       QUERY_BASE=actions/jobs/$ID
       ;;
     workflow_run_jobs)
+
       QUERY_BASE=actions/runs/$ID/jobs
       ;;
     user_repos)
+
+      request_url='users/$USER/repos'
+
+
+
       TOPIC=users
       QUERY_BASE=repos
       QUERY_URL="$GITHUB_API_URL/$TOPIC/$USER/$QUERY_BASE"
       field_label="${USER}_repos"
       ;;
     user_repo_names)
+      request_url='users/$USER/repos'
+
       TOPIC=users
       QUERY_BASE=repos
       QUERY_URL="$GITHUB_API_URL/$TOPIC/$USER/$QUERY_BASE"
@@ -276,6 +328,25 @@ run_input() {
       exit 1
       ;;
   esac
+
+  exit
+
+
+  # printf -v eval_str "echo \"$dep\"\n"
+  # printf "\t%s\n" $eval_str
+  # dep_val=$(eval $eval_str)
+  # printf "\n\tdep_val: %s\n" $dep_val
+  # eval "echo \$$dep"
+  # val=$(eval "echo \$${dep}")
+  # echo "$request_url" | sed s/$dep/$(eval "echo \"\$$dep\"")/
+  # request_url=$(echo "$request_url" | sed s/$dep/$(eval "echo \"\$$dep\"")/)
+
+
+
+
+
+
+
   [ -z "$QUERY_URL" ] && QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
   [ ! -z "$SEARCH_FIELD" ] && WITH_SEARCH=0
   if [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ]; then
@@ -283,6 +354,7 @@ run_input() {
     # SEARCH_STRING='map(.[$field_name])'
     SEARCH_STRING='.[] | .[$field_name]'
   fi
+
   printf "QUERY_URL=%s\n" "$QUERY_URL"
   response=""
   if [ $WITH_DELETE -eq 0 ]; then
@@ -309,15 +381,18 @@ run_input() {
         $QUERY_URL)
     fi
   fi
+
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   request_status=$((${request_status} + 0))
   [ $request_status -eq 200 ] && request_status=0
   [ $request_status -eq 204 ] && request_status=0
+
   if [[ "$request_status" =~ ^4[[:digit:]]* ]]; then
     printf "%s" "$response" | jq -r '.message'
     return 2
   fi
+
   printf "%s" "$output" | jq
   printf "REQUEST_STATUS=%d\n" $request_status
   if [ ! -z "$SEARCH_STRING" ]; then

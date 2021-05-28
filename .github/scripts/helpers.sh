@@ -178,10 +178,11 @@ default_labels() {
   # CURRENT_LABELS
 }
 
-git_post() {
+#  git_post() {
+git_req() {
   POSITIONAL=()
+  post_args=()
   req_url=""
-  post_args=(-X POST)
   while [[ $# -gt 0 ]];
   do
   key="$1"
@@ -202,6 +203,10 @@ git_post() {
       json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
       post_args+=(-d)
       post_args+=("$json_data")
+      ;;
+    --method)
+      post_args+=(-X)
+      post_args+=($1)
       ;;
     --owner)
       req_url=$(echo "$req_url" | sed s/\$OWNER/$1/)
