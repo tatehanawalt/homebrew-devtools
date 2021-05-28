@@ -42,7 +42,7 @@ case $GITHUB_EVENT_NAME in
     printf "WORKFLOW_DISPATCH:\n"
     ;;
   *)
-    write_error "$(basename $0) Unhandled Extension $ext - line $LINENO"
+    write_error "$(basename $0) Unhandled GITHUB_EVENT_NAME $GITHUB_EVENT_NAME - line $LINENO"
     exit 1
     ;;
 esac
