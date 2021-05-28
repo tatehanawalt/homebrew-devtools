@@ -15,9 +15,13 @@ inspect_fields() {
     [ $key_len -gt $max_field_len ] && max_field_len=$(($key_len + 1))
     printf "%s=%s\n" $key "$(eval "echo \"\$$key\"")"
   done
+
   log $1_table
+
   for key in ${fields[@]}; do
+
     keyval=($(eval "echo -e \"\$$key\"" | tr ',' '\n'))
+
     if [ ${#keyval[@]} -lt 2 ]; then
       printf "$prefix%-${max_field_len}s %s\n" "$key:" "$keyval"
       continue
@@ -49,6 +53,16 @@ fi
 
 before_exit
 exit 0
+
+# export INSPECT_GROUPS='
+# 
+#    git=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
+# 
+#    formula=FORMULA_NAMES,FORMULA_PATHS,FORMULA_STABLE_SHAS,FORMULA_HEAD_SHAS,FORMULA_STABLE_URLS,FORMULA_HEAD_URLS
+# 
+# '
+
+# formula=FORMULA_NAMES,FORMULA_PATHS,FORMULA_STABLE_SHAS,FORMULA_HEAD_SHAS,FORMULA_STABLE_URLS,FORMULA_HEAD_URLS
 
 # DO NOT DELETE - USEFUL FOR DEBUGGING!
 # log VERSIONS

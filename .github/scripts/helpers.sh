@@ -37,9 +37,8 @@ command_log_which() {
 
 
 before_exit() {
-  log $(basename $0 | sed "s/\..*//")_${FUNCNAME[1]}
-
-  [ ! -z "${HELPERS_LOG_TOPICS[@]}" ] && write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
+  # log $(basename $0 | sed "s/\..*//")_${FUNCNAME[1]}
+  [ ! -z "$HELPERS_LOG_TOPICS" ] && write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
   log
 }
 
@@ -81,19 +80,19 @@ log_result_set() {
 
 write_result_set() {
   result=$(echo -e "$1" | sed 's/"//g')
-  key=$2
-
-  [ -z "$key" ] && key="result"
-  key=$(echo $key | tr [[:lower:]] [[:upper:]])
-  log_result_set $result $key
-
-  result="${result//'%'/'%25'}"
-  result="${result//$'\n'/'%0A'}"
-  result="${result//$'\r'/'%0D'}"
 
   [ -z "$result" ] && return 1
 
+  key=$2
+  [ -z "$key" ] && key="result"
+  key=$(echo $key | tr [[:lower:]] [[:upper:]])
+  log_result_set $result $key
+  result="${result//'%'/'%25'}"
+  result="${result//$'\n'/'%0A'}"
+  result="${result//$'\r'/'%0D'}"
   printf "$key=$result\n"
+
+
 
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
