@@ -148,13 +148,8 @@ test_all() {
     # printf "\tsig: %s\n" ${sigs[@]}
     for sig in ${sigs[@]}; do
       printf "$sig\n"
-
       formula_method_body "$item" "$sig"
-
     done
-
-
-
   done
 
   printf "\n"
