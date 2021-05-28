@@ -46,15 +46,13 @@ formula_file() {
 }
 formula_method_signatures() {
   file_body=$(formula_file $1)
-  [ $? -ne 0 ] && printf $file_body && return 1
-  blocks=($(echo $file_body | grep "^  [[:alpha:]].*"))
-  header_blocks=()
-  for ((i=0; i<${#blocks[@]}; i++)); do
-    if  [[ "${blocks[$i]}" =~ ^[[:space:]]+end ]]; then
-      header_blocks+=(${blocks[$(($i - 1))]})
-    fi
+  file_body=$(printf "%s\n" $file_body | sed 's/#.*//' | grep "^  [[:alpha:]].*")
+  file_body=$(echo "$file_body" | sed 's/.*\".*//' | sed "s/.*\'.*//" | sed '/^[[:space:]]*$/d')
+  prev=""
+  for row in $file_body; do
+    [[ "$row" =~ ^[[:space:]]+end ]] && printf "%s\n" "$prev"
+    prev=$row
   done
-  printf "%s\n" ${header_blocks[@]}
 }
 formula_method_body() {
   file_body=$(formula_file $1)
@@ -87,12 +85,16 @@ formula_paths() {
 }
 formula_stable_shas() {
   for item in $(formula_names); do
-    printf "%s %s$IFS" $item $(formula_sha $item stable)
+    val=$(formula_sha $item stable)
+    [ -z "$val" ] && continue
+    printf "%s %s$IFS" $item $val
   done
 }
 formula_head_shas() {
   for item in $(formula_names); do
-    printf "%s %s$IFS" $item $(formula_sha $item head)
+    val=$(formula_sha $item head)
+    [ -z "$val" ] && continue
+    printf "%s %s$IFS" $item $val
   done
 }
 formula_head_urls() {
@@ -102,18 +104,16 @@ formula_head_urls() {
 }
 formula_stable_urls() {
   for item in $(formula_names); do
-    printf "%s %s$IFS" $item $(formula_url $item stable)
+    val=$(formula_url $item stable)
+    [ -z "$val" ] && continue
+    printf "%s %s$IFS" $item $val
   done
 }
 
 formula_signatures() {
-
-  printf "\n\n"
-
   for item in $(formula_names); do
-    printf "%s\n"
-
-    # printf "%s %s$IFS" $item $(formula_method_signatures $item)
+    printf "%s\n" $item
+    formula_method_signatures $item
   done
 }
 
@@ -156,6 +156,9 @@ case $template in
   all)
     all
     ;;
+  formula_signatures)
+    formula_signatures
+    ;;
   formula*)
     write_result_set "$(join_by , $($1))" $1
     ;;
@@ -171,3 +174,17 @@ esac
 before_exit
 
 exit 0
+
+# IFS=$'\n'
+# file_body=($(echo "$file_body"))
+# for row in ${file_body[@]}; do
+#header_blocks+=("$last_line")
+
+
+# echo "row:$row"
+# for ((i=0; i<${#blocks[@]}; i++)); do
+#   if  [[ "${blocks[$i]}" =~ ^[[:space:]]+end ]]; then
+#     header_blocks+=(${blocks[$(($i - 1))]})
+#   fi
+# done
+# printf "%s\n" ${header_blocks[@]}
