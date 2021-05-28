@@ -3,49 +3,47 @@
 src_path=$(dirname $0)
 . "$src_path/helpers.sh"
 
-# env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
-# max_field_len=$(csv_max_length $env_csv)
+env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
+INSPECT_GROUPS=$(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d')
+groups=($(echo "$INSPECT_GROUPS" | sed 's/=.*$//' | sort))
 
 print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
 }
 print_field_table() {
   printf "\t%-${max_field_len}s " "$1:"
+  field_val=$(eval "echo \"\$$1\"" | tr ',' '\n')
   field_val=($(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g'))
   [ ${#field_val[@]} -ne 1 ] && printf "\n"
   [ ${#field_val[@]} -gt 1 ] && local_prefix="$(get_prefix)   - "
   for entry in ${field_val[@]}; do printf "$local_prefix%s\n" $entry; done
 }
 
-INSPECT_GROUPS=($(echo $INSPECT_GROUPS | sed 's/^[^[:alpha:]]*//g' | sed '/^$/d' | tr ' ' '\n'))
-INSPECT_GROUPS="env=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))\n$INSPECT_GROUPS"
-
-groups=()
-for entry in "${INSPECT_GROUPS[@]}"; do groups+=($(echo $entry | sed 's/=.*$//')); done
 for entry in "${groups[@]}"; do
   group_fields=$(echo "${INSPECT_GROUPS[@]}" | grep -o "$entry[^ ]*" | sed 's/.*=//')
   max_field_len=$(csv_max_length $group_fields)
-  log "$entry"
-  for_csv $group_fields print_field
-  log "${entry}_table"
-  for_csv $group_fields print_field_table
+  log "$entry" && for_csv $group_fields print_field
+  log "${entry}_table" && for_csv $group_fields print_field_table
 done
 
-# write_result_set "$(join_by , ${groups[@]})" inspect_groups
 
+
+exit
+
+
+# groups=()
+# for entry in "${INSPECT_GROUPS[@]}"; do groups+=($(echo $entry | sed 's/=.*$//')); done
+# printf "\n$INSPECT_GROUPS\n\n"
+# write_result_set "$(join_by , ${groups[@]})" inspect_groups
 # log ENV
 # for_csv $env_csv print_field
 # log ENV_TABLE
 # for_csv $env_csv print_field_table
-
 #   for entry in "${INSPECT_GROUPS[@]}"; do
 #     group=$(echo $entry | sed 's/=.*//')
 #     fields=$(echo $entry | sed 's/.*=//')
 #     inspect_fields "$group" "$fields"
 #   done
-
-
-exit
 # Pass this function the set of comma-separated keys to inspect the environment
 # variable value of each key
 # inspect_fields() {
