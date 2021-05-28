@@ -13,11 +13,7 @@ src_path=$(dirname $0)
 
 
 print_field() {
-  echo -e "print_field: $1"
-  field_value="$(eval "echo \"\$$key\"")"
-
-  echo -e "val: $field_value"
-
+  printf "%s=%s\n" $1 "$(eval "echo \"\$$1\"")"
 }
 
 
