@@ -21,11 +21,11 @@ inspect_fields() {
   for key in ${fields[@]}; do
     keyval=($(eval "echo -e \"\$$key\"" | tr ',' '\n'))
     if [ ${#keyval[@]} -lt 2 ]; then
-      printf "$prefix%-${max_field_len}s %s\n" "$key:" "$keyval"
+      printf "$(get_prefix)%-${max_field_len}s %s\n" "$key:" "$keyval"
       continue
     fi
-    printf "$prefix%-${max_field_len}s\n" "$key:"
-    for entry in ${keyval[@]}; do printf "$prefix   - %s\n" $entry; done
+    printf "$(get_prefix)%-${max_field_len}s\n" "$key:"
+    for entry in ${keyval[@]}; do printf "$(get_prefix)   - %s\n" $entry; done
   done
 }
 

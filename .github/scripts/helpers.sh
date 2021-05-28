@@ -21,10 +21,12 @@ White='\033[1;37m'
 NC='\033[0m'
 HELPERS_LOG_TOPICS=()
 
-export prefix='\t'
-export IN_LOG=0
-export IN_CI=0
-# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+IN_LOG=0
+IN_CI=1
+[ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+get_prefix() {
+  printf "\t"
+}
 
 test_method() {
   return 20
@@ -42,14 +44,15 @@ before_exit() {
 }
 
 log() {
+  [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
   if [ $IN_LOG -ne 0 ]; then
     [ $IN_CI -eq 0 ] && echo "::endgroup::"
   fi
   IN_LOG=0
+
   if [ ! -z "$1" ]; then
     group=$(echo $1 | tr [[:lower:]] [[:upper:]])
-    [ $IN_CI -eq 0 ] && echo "::group::$group"
-    printf "$group:\n"
+    [ $IN_CI -eq 0 ] && echo "::group::$group" || printf "${Purple}$group:${NC}\n"
     IN_LOG=1
   fi
 }
@@ -64,7 +67,7 @@ join_by () {
 contains() {
   check=$1
   shift
-  printf "$prefix%s\n" "$check"
+  printf "$(get_prefix)%s\n" "$check"
   if [[ $@ =~ "(^|[[:space:]])$check($|[[:space:]])" ]]; then
     return 0
   fi
@@ -72,15 +75,14 @@ contains() {
 }
 
 log_result_set() {
-  printf "$prefix%s\n" $(echo -e $1 | tr ',' '\n')
+  # printf "$2:\n"
+  printf "$(get_prefix)%s\n" $(echo -e $1 | tr ',' '\n')
   echo
 }
 
 write_result_set() {
   result=$(echo -e "$1" | sed 's/"//g')
-
   [ -z "$result" ] && return 1
-
   key=$2
   [ -z "$key" ] && key="result"
   key=$(echo $key | tr [[:lower:]] [[:upper:]])
@@ -98,7 +100,6 @@ write_result_set() {
 }
 
 # log $key
-# printf "$prefix%s\n" $(echo -e $result | tr ',' '\n')
 # printf "$key=$result\n"
 
 # helpers_log_topics=() # Store log headers for pre-exit introspect
