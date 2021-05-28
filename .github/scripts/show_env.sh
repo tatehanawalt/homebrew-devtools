@@ -16,12 +16,20 @@ print_field() {
   printf "%s=%s\n" $1 "$(eval "echo \"\$$1\"")"
 }
 
+max_field_len=0
+print_field_table() {
+  # printf "%s=%s\n" $1 "$(eval "echo \"\$$1\"")"
+
+  printf "%-${max_field_len}s >\n" "$1:"
+
+}
+
 
 env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
-
-printf "max: %d\n" $(csv_max_length $env_csv)
+max_field_len=$(csv_max_length $env_csv)
 
 for_csv $env_csv print_field
+for_csv $env_csv print_field_table
 
 IFS=$'\n'
 printf "max: %d\n" $(csv_max_length $env_csv)
