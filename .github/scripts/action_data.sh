@@ -9,7 +9,7 @@ fi
 
 event_file_attributes=($(cat $GITHUB_EVENT_PATH | jq -r 'keys | join("\n")'))
 event_file_attributes_csv=$(join_by , ${event_file_attributes[@]})
-event_file=$(cat $GITHUB_EVENT_PATH | jq -r 'keys | join("\n")')
+event_file=$(cat $GITHUB_EVENT_PATH | jq)
 REPOSITORY_JSON=$(cat $GITHUB_EVENT_PATH | jq '.repository')
 REPOSITORY_ID=$(echo "$REPOSITORY_JSON" | jq -r '.id')
 REPO=$(echo "$REPOSITORY_JSON" | jq -r '.name')
