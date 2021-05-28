@@ -7,7 +7,7 @@ jobs:
       # Github provided action to check out the source code
       - uses: actions/checkout@v2
 
-      # Get id of this pr
+      # Get id and other info about this pr
       - name: action_data
         id: action_data
         run: ./.github/scripts/action_data.sh
@@ -78,6 +78,24 @@ jobs:
         shell: bash
         env:
           ADD_LABELS: "${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }}"
+          CURRENT_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # For debugging and troubleshooting - introspective environment audit
+      - name: create_label
+        run: ./.github/scripts/create_labels.sh
+        shell: bash
+        env:
+          ADD_LABELS: "${{ steps.formula_data.outputs.FORMULA_NAMES }}"
+          CURRENT_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # For debugging and troubleshooting - introspective environment audit
+      - name: create_label
+        run: ./.github/scripts/create_labels.sh
+        shell: bash
+        env:
+          ADD_LABELS: ${{ steps.diff.outputs.DIFF_ADD_LABEL_SET }}"
           CURRENT_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
