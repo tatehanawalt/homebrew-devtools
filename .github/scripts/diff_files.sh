@@ -44,3 +44,8 @@ write_result_set "$diff_dirs_csv" "DIFF_DIRS"
 diff_ext=($(printf "%s\n" ${diff_files[@]} | sed 's/.*\.//' | sort -u))
 diff_ext_csv=$(join_by , ${diff_ext[@]})
 write_result_set "$diff_ext_csv" "DIFF_EXT"
+
+
+
+before_exit
+exit 0
