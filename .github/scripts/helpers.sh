@@ -37,6 +37,8 @@ if [ -z "$template" ]; then
   if [ ! -z "$template" ]; then
     HAS_TEMPLATE=0
   fi
+else
+  HAS_TEMPLATE=0
 fi
 
 get_prefix() {
