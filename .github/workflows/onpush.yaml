@@ -30,6 +30,14 @@ jobs:
         shell: bash
         env:
           template: show_env
+
+          FORMULA_NAMES: "${{ steps.formula_data.outputs.FORMULA_NAMES }}"
+          FORMULA_PATHS: "${{ steps.formula_data.outputs.FORMULA_PATHS }}"
+          FORMULA_STABLE_SHAS: "${{ steps.formula_data.outputs.FORMULA_STABLE_SHAS }}"
+          FORMULA_HEAD_SHAS: "${{ steps.formula_data.outputs.FORMULA_HEAD_SHAS }}"
+          FORMULA_STABLE_URLS: "${{ steps.formula_data.outputs.FORMULA_STABLE_URLS }}"
+          FORMULA_HEAD_URLS: "${{ steps.formula_data.outputs.FORMULA_HEAD_URLS }}"
+
           USER: ${{ steps.vcs_info.outputs.USER }}
           OWNER: ${{ steps.vcs_info.outputs.OWNER }}
           REPO: ${{ steps.vcs_info.outputs.REPO }}

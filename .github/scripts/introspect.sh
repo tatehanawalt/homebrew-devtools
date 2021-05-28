@@ -129,7 +129,6 @@ testfn() {
   data_lcsv=$(join_by , $data)
   printf "${Cyan}$(get_prefix)%s\n" $data_lcsv
   printf "${NC}"
-
   [ ! -z "$data_lcsv" ] && echo
 }
 
@@ -140,11 +139,12 @@ test_all() {
   testfn formula_head_shas
   testfn formula_stable_urls
   testfn formula_head_urls
-
   for item in $(formula_names); do
     echo "$item"
     formula_method_signatures "$item"
   done
+  # test_all
+  # log_result_set "$(join_by , ${call_fns[@]})" call_fns "FORMULA_FUNCTIONS"
 }
 
 all() {
@@ -158,8 +158,6 @@ all() {
     formula_head_urls
     formula_method_signatures
   )
-  test_all
-  log_result_set "$(join_by , ${call_fns[@]})" functions "FORMULA_FUNCTIONS"
   for method in ${call_fns[@]}; do
     write_result_set "$(join_by , $($method))" $method
   done
