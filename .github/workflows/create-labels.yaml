@@ -36,9 +36,10 @@ jobs:
       # For debugging and troubleshooting - introspective environment audit
       - name: show_env
         id: show_env
-        run: ./.github/scripts/show_env.sh
+        run: ./.github/scripts/introspect.sh
         shell: bash
         env:
+          template: show_env
           CHECK_CREATE_LABELS: "${{ steps.formula_names.outputs.RESULT }}"
           EXISTING_LABELS: "${{ steps.label_names.outputs.RESULT }}"
           KEYS_NOT_IN_SET: "${{ steps.keys_not_in_set.outputs.RESULT }}"

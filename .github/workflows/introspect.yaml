@@ -57,9 +57,11 @@ jobs:
 
       # For debugging and troubleshooting - introspective environment audit
       - name: show_env
-        run: ./.github/scripts/show_env.sh
+        id: show_env
+        run: ./.github/scripts/introspect.sh
         shell: bash
         env:
+          template: show_env
           FORMULA_NAMES: "${{ steps.formula_names.outputs.RESULT }}"
           FORMULA_PATHS: "${{ steps.formula_paths.outputs.RESULT }}"
           FORMULA_SHAS: "${{ steps.formula_shas.outputs.RESULT }}"

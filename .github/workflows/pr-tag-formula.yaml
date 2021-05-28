@@ -73,9 +73,11 @@ jobs:
 
       # Print the values from introspection
       - name: show_env
-        run: ./.github/scripts/show_env.sh
+        id: show_env
+        run: ./.github/scripts/introspect.sh
         shell: bash
         env:
+          template: show_env
           DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
           DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
           DIFF_FORMULA: "${{ steps.diff_formula.outputs.DIFF_FORMULA }}"
