@@ -165,34 +165,6 @@ before_exit() {
   write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
   log
 }
-create_label() {
-  label="$1"
-  color="$2"
-  description="$3"
-  [ -z "$label" ] && printf "label name must not be empty...\n" && return 1
-  [ -z "$color" ] && color=5319E7
-  [ -z "$description" ] && description="git action generated label"
-  REQUEST_URL="https://api.github.com/repos/$OWNER/$REPO/labels"
-  data=$(jq -n --arg name "$1" --arg color "$color" --arg description "$description" '{"name": $name, "color": $color, "description": $description}')
-  data=$(echo "$data" |  jq '. as $a| [keys[]| select($a[.]!="")| {(.): $a[.]}]| add')
-  response=$(curl \
-    -X POST \
-    -s \
-    -w "HTTPSTATUS:%{http_code}" \
-    -H "Authorization: token $GITHUB_AUTH_TOKEN" \
-    -H "Accept: application/vnd.github.v3+json" \
-    $REQUEST_URL \
-    -d "$data" )
-  output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
-  request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-  request_status=$((${request_status} + 0))
-  [ $request_status -eq 201 ] && request_status=0
-  echo $output | jq \
-    --arg response_code "$request_status" \
-    --arg request_url "$REQUEST_URL" \
-    '. += {"response_code":$response_code} | . += {"request_url":$request_url} | tostring'
-  return $request_status
-}
 
 git_post() {
   POSITIONAL=()
@@ -203,11 +175,15 @@ git_post() {
   key="$1"
   shift
   case $key in
-    --url)
-      req_url="$1"
+    --debug)
+      debugging=0
       ;;
     --id)
       req_url=$(echo "$req_url" | sed s/\$ID/$1/)
+      ;;
+    --json-body)
+      post_args+=(-d)
+      post_args+=("$1")
       ;;
     --labels_csv)
       labels=("$(echo -e $1 | tr , '\n')")
@@ -215,11 +191,14 @@ git_post() {
       post_args+=(-d)
       post_args+=("$json_data")
       ;;
+    --owner)
+      req_url=$(echo "$req_url" | sed s/\$OWNER/$1/)
+      ;;
     --repo)
       req_url=$(echo "$req_url" | sed s/\$REPO/$1/)
       ;;
-    --owner)
-      req_url=$(echo "$req_url" | sed s/\$OWNER/$1/)
+    --url)
+      req_url="$1"
       ;;
     *)
       POSITIONAL+=("$key")
@@ -484,8 +463,7 @@ git_post() {
  # [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
  # [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
  # [ -z "$GITHUB_HEAD_REF" ]         && GITHUB_HEAD_REF="main"
- # [ -z "$GITHUB_REPOSITORY" ]       && GITHUB_REPOSITORY="tatehanawalt/homebrew-devtools"
- # [ -z "$GITHUB_REPOSITORY_OWNER" ] && GITHUB_REPOSITORY_OWNER="tatehanawalt"
+
  # [ -z "$GITHUB_WORKSPACE" ]        && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
  # OWNER="$GITHUB_REPOSITORY_OWNER"
  # REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
@@ -572,3 +550,41 @@ git_post() {
  #            git_env=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
  #            specific=DIFF_FORMULA,LABELS,DIFF_FILES,DIFF_DIRS,PR_LABELS,PR_ID,PR_ADD_LABELS
  #            '
+
+ # results=($(git_post ${args[@]}))
+ # printf "exit_code: %d\n" ${results[0]}
+ # echo "${results[@]:1}" | jq
+ # before_exit
+ # exit 0
+
+ # REQUEST_URL="https://api.github.com/repos/$OWNER/$REPO/labels"
+ # data=$(jq -n --arg name "$1" --arg color "$color" --arg description "$description" '{"name": $name, "color": $color, "description": $description}')
+ # data=$(echo "$data" |  jq '. as $a| [keys[]| select($a[.]!="")| {(.): $a[.]}]| add')
+ # response=$(curl \
+ #   -X POST \
+ #   -s \
+ #   -w "HTTPSTATUS:%{http_code}" \
+ #   -H "Authorization: token $GITHUB_AUTH_TOKEN" \
+ #   -H "Accept: application/vnd.github.v3+json" \
+ #   $REQUEST_URL \
+ #   -d "$data" )
+ # output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
+ # request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+ # request_status=$((${request_status} + 0))
+ # [ $request_status -eq 201 ] && request_status=0
+ # echo $output | jq \
+ #   --arg response_code "$request_status" \
+ #   --arg request_url "$REQUEST_URL" \
+ #   '. += {"response_code":$response_code} | . += {"request_url":$request_url} | tostring'
+ # return $request_status
+ #label="$1"
+ #color="$2"
+ #description="$3"
+ # [ -z "$1" ] && printf "label (arg 1) name must not be empty...\n" && return 1
+ # [ -z "$2" ] && color=5319E7
+ # [ -z "$3" ] && description="git action generated label"
+
+# create_label() {
+#   echo -e "\n\nHERE\n\n"
+#   return
+# }
