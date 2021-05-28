@@ -27,6 +27,7 @@ IN_LOG=0
 IN_CI=1
 HAS_TEMPLATE=1
 [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+
 # env var template specified
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
@@ -42,7 +43,6 @@ git_url() {
   echo "$GITHUB_API_URL"
   return
 }
-
 for_csv() {
   IFS=$'\n'
   for field in $(echo $1 | tr ',' '\n'); do
@@ -247,35 +247,6 @@ label_pr() {
 }
 
 
-# printf "\n\n"
-# printf "%s\n" "${post_args[@]}"
-# printf "\nARGS:\n"
-# printf "\t%s\n" ${@}
-# printf "• %s\n" "${post_args[@]}"
-# return
-
-# response=$(curl \
-#   -X POST \
-#   -s \
-#   -w "HTTPSTATUS:%{http_code}" \
-#   -H "Authorization: token $GITHUB_AUTH_TOKEN" \
-#   -H "Accept: application/vnd.github.v3+json" \
-#   "$REQUEST_URL" \
-#   -d "$data" )
-# response=$(curl \
-#   -X POST \
-#   -s \
-#   -w "HTTPSTATUS:%{http_code}" \
-#   -H "Authorization: token $GITHUB_AUTH_TOKEN" \
-#   -H "Accept: application/vnd.github.v3+json" \
-#   "$REQUEST_URL" \
-#   -d "$data" )
-# exit 0
-
-# log $key
-# printf "$key=$result\n"
-# helpers_log_topics=() # Store log headers for pre-exit introspect
-# [ $IN_CI -eq 0 ] && prefix=""
 # core.addPath	Accessible using environment file GITHUB_PATH
 # core.debug	debug
 # core.error	error
@@ -298,16 +269,6 @@ label_pr() {
 
 # for item in ${result[@]}; do printf "%s\n" "$item"; done
 # result=$(formula_urls | sed 's/ /,/g')
-#formulas=($(formula_names))
-#for name in ${formulas[@]}; do
-#  printf "%s\n" $name
-#  signatures=$(formula_method_signatures $name)
-#  for sig in ${signatures[@]}; do
-#    formula_method_body $name $sig
-#    printf "\n"
-#  done
-#  printf "\n\n\n"
-#done
 
 #dev_parse_formula() {
 #  formula_file=$(cat $GITHUB_WORKSPACE/Formula/demozsh.rb)
@@ -345,17 +306,6 @@ label_pr() {
 #}
 #exit 0
 
-# echo "$(formula_paths)"
-# echo "$(formula_names)"
-# echo "$(formula_shas)"
-# f_paths=($(formula_paths))
-# f_shas=($(formula_shas))
-# printf "\tname: %s\n" $name
-# for f_path in ${file_paths[@]}; do
-#   formula_block_headers "$GITHUB_WORKSPACE/$f_path"
-#   echo -e "\n"
-# done
-# formula_block_headers "$GITHUB_WORKSPACE/Formula/demozsh.rb"
 
 # formula_block_headers() {
 #   formula_file=$(cat $1)
@@ -372,14 +322,6 @@ label_pr() {
 #     echo "$formula_file" | awk "/$block\$/,/^  end/" | sed 1d | sed '$d'
 #   done
 # }
-
-# key=$1
-# [ -z "$key" ] && key="result"
-# result=$(echo -e "$2" | sed 's/"//g')
-# result="${result//'%'/'%25'}"
-# result="${result//$'\n'/'%0A'}"
-# result="${result//$'\r'/'%0D'}"
-
 
 # echo "CI=$IN_CI"
 # echo "OWNER=$OWNER"
@@ -402,15 +344,6 @@ label_pr() {
 # echo "SEARCH_STRING=$SEARCH_STRING"
 # echo "ID=$ID"
 
-# if [ -z "$template" ]; then
-#   [ ! -z "$1" ] && template="$1"
-#   if [ -z "$template" ]; then
-#     echo "NO TEMPLATE SPECIFIED"
-#     exit 1
-#   fi
-# fi
-
-
 # log() {
 #   [ $in_log -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
 #   in_log=0
@@ -418,12 +351,14 @@ label_pr() {
 #   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
 #   in_log=1
 # }
+
 # join_by () {
 #   local d=${1-} f=${2-};
 #   if shift 2; then
 #     printf %s "$f" "${@/#/$d}";
 #   fi;
 # }
+
 # write_result_set() {
 #   result="$1"
 #   result=$(echo -e "$result" | sed 's/"//g')
@@ -436,32 +371,25 @@ label_pr() {
 #   echo $result
 #   echo "::set-output name=$KEY::$(echo -e $result)"
 # }
+
 # contains() {
 #   check=$1
 #   shift
 #   printf "\t%s\n" "$check"
 #   [[ $@ =~ (^|[[:space:]])$check($|[[:space:]]) ]] && return 0 || return 1
 # }
-# DIFF_FORMULA=demozsh,devenv
 
 
-
-# printf "UNHANDLED TARGET: $1"
 # echo "::error file=app.js,line=10,col=15::ERROR Unhandled TARGET: $ext in $(basename $0):$LINENO"
 #groups=($(printf "$INSPECT_GROUPS\n env=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d' | sort))
 # formulas=($(find $FORMULA_DIR -maxdepth 1 -type f -name '*.rb' | sort))
-# names=()
+
 # printf "\n\n${#formulas[@]}\n"
 # for item in ${formulas[@]}; do
   # names+=("$(basename ${item%%.*})")
 # done
 # printf "%s\n" ${names[@]} | sort
 # [ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
-#
-#
-# IF any results require curl or any other network requests they should not
-# be part of this file
-
 # Returns values about a repo specific to our repo implementation
 # TEST VALUES:
 # formula_signatures)
@@ -566,3 +494,81 @@ label_pr() {
  # printf "LABELS=%s\n" "$LABELS"
  # printf "data: %s\n" "$data"
  # printf "REQUEST_URL=%s\n" "$REQUEST_URL"
+
+
+
+
+ #      # Get the labels attached to this pr
+ #      - id: pull_request_label_names
+ #        name: pull_request_label_names
+ #        run: ./.github/scripts/git_api.sh
+ #        shell: bash
+ #        env:
+ #          ID: "${{ steps.action_data.outputs.ID }}"
+ #          template: pull_request_label_names
+ #      # Lists the files, directories modified in HEAD vs BASE
+ #      - id: diff
+ #        name: diff
+ #        run: ./.github/scripts/diff_files.sh
+ #        shell: bash
+ #      # Get the names of formulae modified in this pr
+
+
+ #      - id: diff_formula !! REMOVOED
+ #        name: diff_formula
+ #        run: ./.github/scripts/diff_formula.sh
+ #        shell: bash
+ #        env:
+ #          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+
+
+ #      # Set of formulae names which are not existing lables attached to this pr
+ #      - name: keys_not_in_set
+ #        id: keys_not_in_set
+ #        run: ./.github/scripts/utility.sh
+ #        shell: bash
+ #        env:
+ #          template: keys_not_in_set
+ #          SET: ${{ steps.pull_request_label_names.outputs.RESULT }}
+ #          KEYS: ${{ steps.diff_formula.outputs.DIFF_FORMULA }}
+ #      #  Set of all existing label names
+ #      - name: label_names
+ #        id: label_names
+ #        run: ./.github/scripts/git_api.sh
+ #        shell: bash
+ #        env:
+ #          template: label_names
+ #      # Create any labels that don't exist already
+ #      - name: create_label
+ #        run: ./.github/scripts/create_labels.sh
+ #        shell: bash
+ #        env:
+ #          CHECK_CREATE_LABELS: "${{ steps.keys_not_in_set.outputs.RESULT }}"
+ #          EXISTING_LABELS: "${{ steps.label_names.outputs.RESULT }}"
+ #          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ #      # Adds specified labels (CSV) to a pull request
+ #      - name: label_pr
+ #        run: ./.github/scripts/label_pr.sh
+ #        shell: bash
+ #        env:
+ #          LABELS: "${{ steps.keys_not_in_set.outputs.RESULT }}"
+ #          ID: ${{ steps.action_data.outputs.ID }}
+ #          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ #      # Print the values from introspection
+ #      - name: show_env
+ #        id: show_env
+ #        run: ./.github/scripts/introspect.sh
+ #        shell: bash
+ #        env:
+ #          template: show_env
+ #          DIFF_DIRS: "${{ steps.diff.outputs.DIFF_DIRS }}"
+ #          DIFF_FILES: "${{ steps.diff.outputs.DIFF_FILES }}"
+ #          DIFF_FORMULA: "${{ steps.diff_formula.outputs.DIFF_FORMULA }}"
+ #          LABELS: ${{ steps.label_names.outputs.RESULT }}
+ #          PR_LABELS: "${{ steps.action_data.outputs.LABELS }}"
+ #          PR_ADD_LABELS: ${{ steps.keys_not_in_set.outputs.RESULT }}
+ #          PR_ID: ${{ steps.action_data.outputs.ID }}
+ #          INSPECT_GROUPS: '
+ #            git_env=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
+ #            specific=DIFF_FORMULA,LABELS,DIFF_FILES,DIFF_DIRS,PR_LABELS,PR_ID,PR_ADD_LABELS
+ #            '
