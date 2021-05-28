@@ -16,9 +16,10 @@
 IFS=$'\n'
 current_labels=($(printf "%s\n" "${CURRENT_LABELS[@]}" | tr , '\n' | tr [[:upper:]] [[:lower:]] | sort -u))
 write_result_set $(join_by , ${current_labels[@]}) current_labels
+
 add_labels=($(printf "%s\n" "${ADD_LABELS[@]}" | tr , '\n' | tr [[:upper:]] [[:lower:]] | sort -u))
-add_labels+=(bork)
 write_result_set $(join_by , "${add_labels[@]}") add_labels
+
 create_labels=()
 for label in "${add_labels[@]}"; do
   add=$(contains "$label" "${current_labels[@]}")
@@ -27,8 +28,9 @@ for label in "${add_labels[@]}"; do
   create_labels+=( "$label" )
 done
 write_result_set $(join_by , "${create_labels[@]}") create_labels
+
 for label in ${create_labels[@]}; do
-  result=$(create_label "$label" "" "")
+  result=$(create_label "$label")
   exit_status=$?
   # echo "response code: $?"
   echo $result | jq -r | jq

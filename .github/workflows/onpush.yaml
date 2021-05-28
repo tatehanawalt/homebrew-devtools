@@ -53,7 +53,6 @@ jobs:
               formula_data=${{ steps.formula_data.outputs.OUTPUTS }}
 
             '
-
       # For debugging and troubleshooting - introspective environment audit
       - name: create_label
         run: ./.github/scripts/create_labels.sh
