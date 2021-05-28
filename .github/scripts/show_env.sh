@@ -8,16 +8,21 @@ print_field() {
 print_field_table() {
   IFS=$'\n'
 
-  field_val=($(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g'))
+  field_val=$(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g' | sed '/^$/d')
+  field_val=($(echo "$field_val"))
 
-  printf "\t%-${max_field_len}s" "$1: (${#field_val})"
-
+  # printf "$field_val %d\n" ${#field_val[@]}
+  # field_val=("${eval_val[@]}")
+  # printf "%d\n" ${#field_val}
+  # field_val=("$(echo $val_val | tr ',' '\n' | sed 's/^[[:space:]]*//g')")
+  local_prefix=""
+  printf "\t%-${max_field_len}s" "$1:"
   [ ${#field_val[@]} -ne 1 ] && printf "\n"
   [ ${#field_val[@]} -gt 1 ] && local_prefix="$(get_prefix)   - "
-
   for entry in ${field_val[@]}; do
     printf "$local_prefix%s\n" $entry;
   done
+  # [ ${#field_val[@]} -lt 1 ] && echo
 }
 
 env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
@@ -28,8 +33,6 @@ for entry in "${groups[@]}"; do
   kv=($(echo "$entry" | tr -d '[[:space:]]' | tr '=' '\n'))
   group_keys+=(${kv[0]})
   max_field_len=$(csv_max_length $kv[1])
-  max_field_len=$(($max_field_len + 4))
-
   log ${kv[0]} && for_csv ${kv[1]} print_field
   log ${kv[0]}_table && for_csv ${kv[1]} print_field_table
 done
