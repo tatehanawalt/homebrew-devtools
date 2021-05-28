@@ -54,6 +54,10 @@ log() {
   fi
 }
 
+for_csv() {
+  printf "\nfor_csv: $*\n"
+}
+
 csv_max_length() {
   IFS=$'\n'
   max_field_len=0

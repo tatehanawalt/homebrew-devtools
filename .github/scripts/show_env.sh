@@ -5,6 +5,7 @@
 
 env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
 
+for_csv $env_csv
 csv_max_length $env_csv
 
 exit
