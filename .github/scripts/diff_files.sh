@@ -73,8 +73,8 @@ for ext in ${diff_ext[@]}; do
       # echo "::warning file=app.js,line=1,col=5::Missing semicolon"
       ;;
     *)
-      printf "nUNHANDLED EXT: %s\n" $ext
-      echo "::warning file=$(basename $0),line=$LINENO::Unhandled Extension: $ext"
+      printf "UNHANDLED EXT: %s\n" $ext
+      echo "::warning file=$(basename $0),line=$LINENO::Unhandled Extension: $ext in $(basename $0)"
       ;;
   esac
 done
