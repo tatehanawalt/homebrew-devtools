@@ -74,7 +74,7 @@ for ext in ${diff_ext[@]}; do
       ;;
     *)
       printf "nUNHANDLED EXT: %s\n" $ext
-      echo "::warning file=$(basename $0),line=$LINENO::Unhandled Exxtension=$ext"
+      echo "::warning file=$(basename $0),line=$LINENO::Unhandled Extension: $ext"
       ;;
   esac
 done
