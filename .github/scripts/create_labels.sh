@@ -16,7 +16,6 @@ printf "%s\n" "${ADD_LABELS[@]}"
 # ADD_LABELS
 add_labels=($(printf "%s\n" "${ADD_LABELS[@]}" | tr , '\n' | tr [[:upper:]] [[:lower:]] | sort -u))
 for label in ${add_labels[@]}; do
-  printf "adding: %s\n" $label
   DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq --arg name "$label" '. | . + [{"name": $name}]')
 done
 
