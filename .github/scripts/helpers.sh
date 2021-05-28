@@ -88,7 +88,7 @@ log() {
   if [ ! -z "$1" ]; then
     group=$(echo $1 | tr [[:lower:]] [[:upper:]])
     [ $IN_CI -eq 0 ] && echo "::group::$group"
-    printf "${Purple}$group:${NC}\n"
+    [ $IN_CI -eq 1 ] && printf "${Purple}$group:${NC}\n"
     IN_LOG=1
   fi
   return 0

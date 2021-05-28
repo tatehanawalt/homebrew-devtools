@@ -16,6 +16,7 @@ jobs:
           template: label_names,repo_branche_names,repo_language_names,collaborator_names
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Introspection - data about the file system
       - name: formula_data
         id: formula_data
         run: ./.github/scripts/introspect.sh
