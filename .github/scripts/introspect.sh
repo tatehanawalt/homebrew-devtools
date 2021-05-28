@@ -52,7 +52,7 @@ formula_method_body() {
   IFS=$'\n'
   file_body=$(formula_file $1)
   [ $? -ne 0 ] && printf "$file_body" && return 1
-  printf "%s\n" $file_body | awk "/$2/,/^[[:space:]][[:space:]]end/"
+  printf "%s" $file_body | awk "/$2/,/^[[:space:]][[:space:]]end/"
 }
 formula_sha() {
   IFS=$'\n'
@@ -134,13 +134,13 @@ testfn() {
 }
 
 test_all() {
-  IFS=$'\n'
   testfn formula_names
   testfn formula_paths
   testfn formula_stable_shas
   testfn formula_head_shas
   testfn formula_stable_urls
   testfn formula_head_urls
+
   for item in $(formula_names); do
     echo "$item"
     formula_method_signatures "$item"

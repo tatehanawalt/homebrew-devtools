@@ -91,6 +91,7 @@ log() {
     [ $IN_CI -eq 0 ] && echo "::group::$group" || printf "${Purple}$group:${NC}\n"
     IN_LOG=1
   fi
+  return 0
 }
 log_result_set() {
   printf "$(get_prefix)%s\n" $(echo -e $1 | tr ',' '\n')
