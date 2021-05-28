@@ -54,7 +54,7 @@ for dir_path in ${diff_dirs[@]}; do
     Formula)
       add_label_set+=( "brew" )
       ;;
-    .github/(workflows|scripts))
+    .github/workflows | .github/scripts)
       printf "Action CHANGE!\n\n"
       add_label_set+=( "action" )
       ;;
