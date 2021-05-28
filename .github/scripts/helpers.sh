@@ -25,7 +25,20 @@ HELPERS_LOG_TOPICS=()
 
 IN_LOG=0
 IN_CI=1
+HAS_TEMPLATE=1
+
 [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+
+# env var template specified
+if [ -z "$template" ]; then
+  [ ! -z "$1" ] && template="$1"
+  if [ ! -z "$template" ]; then
+    HAS_TEMPLATE=0
+  fi
+fi
+
+
+
 get_prefix() {
   printf "\t"
 }
@@ -220,3 +233,67 @@ write_result_set() {
 # result="${result//'%'/'%25'}"
 # result="${result//$'\n'/'%0A'}"
 # result="${result//$'\r'/'%0D'}"
+
+
+# echo "CI=$IN_CI"
+# echo "OWNER=$OWNER"
+# echo "NAME=$NAME"
+# echo "REPO=$REPO"
+# echo "HEAD=$HEAD"
+# echo "BASE=$BASE"
+# echo "USER=$USER"
+# echo "TAG=$TAG"
+# echo "ID=$ID"
+# echo "template=$template"
+
+# echo "QUERY_BASE=$QUERY_BASE"
+# echo "TOPIC=$TOPIC"
+# echo "WITH_SEARCH=$WITH_SEARCH"
+# echo "WITH_AUTH=$WITH_AUTH"
+# echo "WITH_DELETE=$WITH_DELETE"
+# echo "QUERY_URL=$QUERY_URL"
+# echo "SEARCH_FIELD=$SEARCH_FIELD"
+# echo "SEARCH_STRING=$SEARCH_STRING"
+# echo "ID=$ID"
+
+# if [ -z "$template" ]; then
+#   [ ! -z "$1" ] && template="$1"
+#   if [ -z "$template" ]; then
+#     echo "NO TEMPLATE SPECIFIED"
+#     exit 1
+#   fi
+# fi
+
+
+# log() {
+#   [ $in_log -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
+#   in_log=0
+#   [ -z "$1" ] && return # Input specified we do not need to start a new log group
+#   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
+#   in_log=1
+# }
+# join_by () {
+#   local d=${1-} f=${2-};
+#   if shift 2; then
+#     printf %s "$f" "${@/#/$d}";
+#   fi;
+# }
+# write_result_set() {
+#   result="$1"
+#   result=$(echo -e "$result" | sed 's/"//g')
+#   result="${result//'%'/'%25'}"
+#   result="${result//$'\n'/'%0A'}"
+#   result="${result//$'\r'/'%0D'}"
+#   KEY="RESULT"
+#   [ ! -z "$2" ] && KEY="$2"
+#   echo "$KEY:"
+#   echo $result
+#   echo "::set-output name=$KEY::$(echo -e $result)"
+# }
+# contains() {
+#   check=$1
+#   shift
+#   printf "\t%s\n" "$check"
+#   [[ $@ =~ (^|[[:space:]])$check($|[[:space:]]) ]] && return 0 || return 1
+# }
+# DIFF_FORMULA=demozsh,devenv

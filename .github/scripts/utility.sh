@@ -1,18 +1,10 @@
 #!/bin/bash
 
-SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-source "$SCRIPTPATH/helpers.sh"
+. "$(dirname $0)/helpers.sh"
 
 # UTILITY provides multiple utility functions for processing raw data
 # this script probably shouldn't call any apis or anything...
-
-if [ -z "$template" ]; then
-  [ ! -z "$1" ] && template="$1"
-  if [ -z "$template" ]; then
-    echo "NO TEMPLATE SPECIFIED"
-    exit 1
-  fi
-fi
+[ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
 
 case $template in
   # Check which of the $KEYS (csv) are not in the $SET (csv)
@@ -39,43 +31,9 @@ case $template in
     write_result_set $(join_by , "${result_keys[@]}")
     ;;
   *)
-      printf "UNHANDLED TARGET: $1"
-      exit 1
+    printf "UNHANDLED TARGET: $1"
+    exit 1
     ;;
 esac
 
 exit 0
-
-
-# log() {
-#   [ $in_log -ne 0 ] && [ $IN_CI -eq 0 ] && echo "::endgroup::"
-#   in_log=0
-#   [ -z "$1" ] && return # Input specified we do not need to start a new log group
-#   [ $IN_CI -eq 0 ] && echo "::group::$1" || echo "$1"
-#   in_log=1
-# }
-# join_by () {
-#   local d=${1-} f=${2-};
-#   if shift 2; then
-#     printf %s "$f" "${@/#/$d}";
-#   fi;
-# }
-# write_result_set() {
-#   result="$1"
-#   result=$(echo -e "$result" | sed 's/"//g')
-#   result="${result//'%'/'%25'}"
-#   result="${result//$'\n'/'%0A'}"
-#   result="${result//$'\r'/'%0D'}"
-#   KEY="RESULT"
-#   [ ! -z "$2" ] && KEY="$2"
-#   echo "$KEY:"
-#   echo $result
-#   echo "::set-output name=$KEY::$(echo -e $result)"
-# }
-# contains() {
-#   check=$1
-#   shift
-#   printf "\t%s\n" "$check"
-#   [[ $@ =~ (^|[[:space:]])$check($|[[:space:]]) ]] && return 0 || return 1
-# }
-# DIFF_FORMULA=demozsh,devenv

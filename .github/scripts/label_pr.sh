@@ -1,9 +1,8 @@
 #!/bin/bash
 
-printf "\n\nLABEL PR\n\n"
+printf "LABEL PR\n"
 printf "ID=%s\n" "$ID"
 printf "LABELS=%s\n" "$LABELS"
-
 
 labels=($(echo -e "${LABELS[@]}" | tr ',' '\n'))
 

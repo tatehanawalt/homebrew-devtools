@@ -1,7 +1,6 @@
 #!/bin/bash
 
-SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-source "$SCRIPTPATH/helpers.sh"
+. "$(dirname $0)/helpers.sh"
 
 TOPIC=repos
 [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"

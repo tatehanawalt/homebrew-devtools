@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. "$(dirname $0)/helpers.sh"
+
 # DO NOT DELETE - USEFUL FOR DEBUGGING!
 # log VERSIONS
 # command_log_which bash "$(bash --version)"
@@ -14,8 +16,6 @@
 #     formula=FORMULA_NAMES,FORMULA_PATHS,FORMULA_STABLE_SHAS,FORMULA_HEAD_SHAS,FORMULA_STABLE_URLS,FORMULA_HEAD_URLS
 #
 # '
-
-. "$(dirname $0)/helpers.sh"
 
 max_field_len=0
 env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))

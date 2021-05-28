@@ -11,22 +11,15 @@
 
 # Returns values about a repo specific to our repo implementation
 # TEST VALUES:
+
 [ -z "$GITHUB_WORKSPACE" ] && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
-if [ -z "$template" ]; then
-  [ ! -z "$1" ] && template="$1"
-  if [ -z "$template" ]; then
-    echo "NO TEMPLATE SPECIFIED"
-    exit 1
-  fi
-fi
+
+[ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
 
 # log PARAMS
 FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
 log_result_set "template=$template,GITHUB_WORKSPACE=$GITHUB_WORKSPACE,FORMULA_DIR=$FORMULA_DIR" PARAMS
 [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
-
-
-
 
 formula_path() {
   [ ! -d $FORMULA_DIR ] && return 1
@@ -39,7 +32,6 @@ formula_file() {
   [ $? -ne 0 ] && printf "$1 formula path not found\n" && return 1
   cat $formula_path
 }
-
 formula_method_signatures() {
   slim_file=$(formula_file $1 | \
     sed 's/#.*//' | \
@@ -47,21 +39,19 @@ formula_method_signatures() {
     sed 's/.*".*//' | \
     sed "s/.*'.*//" | \
     sed '/^$/d')
-  prefix=$(printf "${slim_file}\n" | head -n 2 | tail -n 1 | sed 's/[[:alnum:]].*//')
-  file_body=$(printf "$slim_file" | grep "^$prefix[^ ].*")
+  signatures_prefix=$(printf "${slim_file}\n" | head -n 2 | tail -n 1 | sed 's/[[:alnum:]].*//')
+  file_body=$(printf "$slim_file" | grep "^$signatures_prefix[^ ].*")
   prev=""
   for row in $file_body; do
     [[ "$row" =~ ^[[:space:]]+end ]] && printf "%s\n" "$prev"
     prev=$row
   done
 }
-
 formula_method_body() {
   file_body=$(formula_file $1)
   [ $? -ne 0 ] && printf "$file_body" && return 1
   printf "%s\n" $file_body | awk "/$2/,/^[[:space:]][[:space:]]end/"
 }
-
 formula_sha() {
   formula_method_body "$1" "$2" | \
     grep "sha256.*" | \
@@ -74,7 +64,6 @@ formula_url() {
     tr \' \" | \
     cut -d '"' -f 2
 }
-
 formula_names() {
   formulas=($(find $FORMULA_DIR -maxdepth 1 -type f -name "*.rb" | sort))
   IFS=$'\n'
@@ -119,7 +108,6 @@ formula_stable_urls() {
     printf "$item $val$IFS"
   done
 }
-
 formula_signatures() {
   for item in $(formula_names); do
     printf "%s\n" $item
@@ -129,14 +117,12 @@ formula_signatures() {
 
 testfn() {
   printf "${Red}%s${Cyan}\n" $(echo "$1" | tr [[:lower:]] [[:upper:]])
-
-  vals=$($1)
-
-
-  printf "${Cyan}$prefix%s\n"
-  printf "${Red}%s\n" $(echo "$1_CSV" | tr [[:lower:]] [[:upper:]])
-  printf "${Cyan}$prefix%s\n" $(join_by , $($1))
-  printf "${NC}\n"
+  data=$($1)
+  printf "${Cyan}$(get_prefix)%s\n" $data
+  printf "${Red}%s\n" $(echo "${1}_CSV" | tr [[:lower:]] [[:upper:]])
+  data_lcsv=$(join_by , $data)
+  printf "${Cyan}$(get_prefix)%s${NC}\n" $data_lcsv
+  [ ! -z "$data_lcsv" ] && echo
 }
 
 test_all() {
@@ -146,20 +132,9 @@ test_all() {
   testfn formula_head_shas
   testfn formula_stable_urls
   testfn formula_head_urls
-  printf "completed testing\n\n"
   for item in $(formula_names); do
     echo "$item"
-    # formula_file "$item"
     formula_method_signatures "$item"
-
-    # sigs=($(formula_method_signatures "$item"))
-    # printf "signatures:\n$sigs\n"
-    # printf "\tsig: %s\n" ${sigs[@]}
-    # for sig in ${sigs[@]}; do
-    #   printf "$sig\n"
-    #   formula_method_body "$item" "$sig"
-    # done
-    echo
   done
 }
 
@@ -173,9 +148,7 @@ all() {
     formula_head_urls
     formula_method_signatures
   )
-
   test_all
-
   log_result_set "$(join_by , ${call_fns[@]})" functions "FORMULA_FUNCTIONS"
   for method in ${call_fns[@]}; do
     write_result_set "$(join_by , $($method))" $method
@@ -206,15 +179,3 @@ esac
 before_exit
 
 exit 0
-
-# IFS=$'\n'
-# file_body=($(echo "$file_body"))
-# for row in ${file_body[@]}; do
-#header_blocks+=("$last_line")
-# echo "row:$row"
-# for ((i=0; i<${#blocks[@]}; i++)); do
-#   if  [[ "${blocks[$i]}" =~ ^[[:space:]]+end ]]; then
-#     header_blocks+=(${blocks[$(($i - 1))]})
-#   fi
-# done
-# printf "%s\n" ${header_blocks[@]}

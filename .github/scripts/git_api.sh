@@ -1,12 +1,9 @@
 #!/bin/bash
 # Setup the default parameters
 
-. "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
+. "$(dirname $0)/helpers.sh"
 
-if [ -z "$template" ]; then
-  [ ! -z "$1" ] && template="$1"
-  [ -z "$template" ] && echo "NO TEMPLATE SPECIFIED" && exit 1
-fi
+[ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
 
 WITH_AUTH=1
 WITH_SEARCH=1
@@ -347,24 +344,3 @@ for entry in $IDS; do
 done
 
 exit $request_status
-
-# echo "CI=$IN_CI"
-# echo "OWNER=$OWNER"
-# echo "NAME=$NAME"
-# echo "REPO=$REPO"
-# echo "HEAD=$HEAD"
-# echo "BASE=$BASE"
-# echo "USER=$USER"
-# echo "TAG=$TAG"
-# echo "ID=$ID"
-# echo "template=$template"
-
-# echo "QUERY_BASE=$QUERY_BASE"
-# echo "TOPIC=$TOPIC"
-# echo "WITH_SEARCH=$WITH_SEARCH"
-# echo "WITH_AUTH=$WITH_AUTH"
-# echo "WITH_DELETE=$WITH_DELETE"
-# echo "QUERY_URL=$QUERY_URL"
-# echo "SEARCH_FIELD=$SEARCH_FIELD"
-# echo "SEARCH_STRING=$SEARCH_STRING"
-# echo "ID=$ID"

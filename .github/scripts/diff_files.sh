@@ -1,7 +1,6 @@
 #!/bin/bash
 
-. $GITHSCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-source "$SCRIPTPATH/helpers.sh"
+. "$(dirname $0)/helpers.sh"
 
 #  Compare against the main branch
 [ -z "$GITHUB_BASE_REF" ] && GITHUB_BASE_REF=main

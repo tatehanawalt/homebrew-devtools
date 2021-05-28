@@ -1,15 +1,12 @@
 #!/bin/bash
 
+. "$(dirname $0)/helpers.sh"
+
 if [ ! -f "$GITHUB_EVENT_PATH" ]; then
   printf "GITHUB_EVENT_PATH FILE NOT FOUND\n"
   printf "GITHUB_EVENT_PATH=%s\n" "$GITHUB_EVENT_PATH"
   exit 1
 fi
-
-[ ! -z "$GITHUB_WORKSPACE" ] && \
-  SCRIPTPATH="$GITHUB_WORKSPACE/.github/scripts" || \
-  SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-source "$SCRIPTPATH/helpers.sh"
 
 log EVENT_FILE
 cat $GITHUB_EVENT_PATH | jq
