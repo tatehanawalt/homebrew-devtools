@@ -27,7 +27,7 @@ formula_path() {
   printf "$FORMULA_DIR/$1.rb"
 }
 formula_file() {
-  IFS=$'\n'
+  # IFS=$'\n'
   formula_path=$(formula_path $1)
   [ $? -ne 0 ] && printf "$1 formula path not found\n" && return 1
   cat $formula_path
@@ -50,13 +50,18 @@ formula_method_signatures() {
 }
 formula_method_body() {
   IFS=$'\n'
-  file_body=$(formula_file $1)
-  [ $? -ne 0 ] && printf "$file_body" && return 1
-  printf "%s" $file_body | awk "/$2/,/^[[:space:]][[:space:]]end/"
+  slim_file=$(formula_file $1 | sed '/#.*/d')
+  sub_slim_file=$(echo "$slim_file" | \
+    sed 's/.*".*//' | \
+    sed "s/.*'.*//" | \
+    sed '/^$/d')
+  # Standard padding for a method signature
+  signatures_prefix=$(echo "$sub_slim_file" | head -n 2 | tail -n 1 | sed 's/[[:alnum:]].*//')
+  # printf "|%s|\n\n" $signatures_prefix
+  echo "$slim_file" | awk "/$2/,/^${signatures_prefix}end/"
 }
 formula_sha() {
-  IFS=$'\n'
-  formula_method_body "$1" "$2" | \
+  formula_method_body $1 $2 | \
     grep "sha256.*" | \
     tr \' \" | \
     cut -d '"' -f 2
@@ -159,10 +164,12 @@ all() {
     formula_method_signatures
   )
   for method in ${call_fns[@]}; do
+    IFS=$'\n'
     write_result_set "$(join_by , $($method))" $method
   done
 }
 
+IFS=$'\n'
 case $template in
   all)
     all
@@ -170,6 +177,9 @@ case $template in
   formula_signatures)
     formula_signatures
     ;;
+  # formula_sha)
+    # $template $1 $2
+    #;;
   formula*)
     write_result_set "$(join_by , $($1))" $1
     ;;
