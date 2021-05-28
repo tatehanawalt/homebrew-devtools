@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+
 # Takes a list if files (relative paths) of a git repo and returns the list of
 # formula names that are found in the set of file paths
 DIFF_FILES=$(echo $DIFF_FILES | tr ',' '\n')
@@ -20,3 +21,6 @@ echo "$formulas"
 DIFF_FORMULA="$(printf "$formulas" | tr '\n' ',')"
 echo "DIFF_FORMULA=$DIFF_FORMULA"
 echo "::set-output name=DIFF_FORMULA::$DIFF_FORMULA"
+
+before_exit
+exit 0

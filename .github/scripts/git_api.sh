@@ -1,20 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 # Setup the default parameters
 
-if [ -z "$template" ]; then
-  [ ! -z "$1" ] && template="$1"
-  if [ -z "$template" ]; then
-    echo "NO TEMPLATE SPECIFIED"
-    exit 1
-  fi
-fi
+. "$(dirname $0)/helpers.sh"
 
-WITH_AUTH=1
-WITH_SEARCH=1
-WITH_DELETE=1
-TOPIC=repos
-request_status=0
-
+[ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
 [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
 [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
 [ -z "$GITHUB_HEAD_REF" ]         && GITHUB_HEAD_REF="main"
@@ -23,61 +12,27 @@ request_status=0
 [ -z "$GITHUB_WORKSPACE" ]        && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
 OWNER="$GITHUB_REPOSITORY_OWNER"
 REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
-
-# This function starts a git actions log group. Call with 0 args to end a log
-# group without starting a new one
-in_log=0
-in_ci=1
-[ "$CI" = "true" ] && in_ci=0 # IF RUN BY CI vs Locally
-log() {
-  [ $in_log -ne 0 ] && [ $in_ci -eq 0 ] && echo "::endgroup::"
-  in_log=0
-  [ -z "$1" ] && return # Input specified we do not need to start a new log group
-  [ $in_ci -eq 0 ] && echo "::group::$1" || echo "$1"
-  in_log=1
-}
-join_by () {
-  local d=${1-} f=${2-};
-  if shift 2; then
-    printf %s "$f" "${@/#/$d}";
-  fi;
-}
-write_result_set() {
-  result="$1"
-  result=$(echo -e "$result" | sed 's/"//g')
-  result="${result//'%'/'%25'}"
-  result="${result//$'\n'/'%0A'}"
-  result="${result//$'\r'/'%0D'}"
-  KEY="RESULT"
-  [ ! -z "$2" ] && KEY="$2"
-  echo "$KEY:"
-  echo $result
-  echo "::set-output name=$KEY::$(echo -e $result)"
-}
-
-log FIELDS
-echo "CI=$in_ci"
-echo "OWNER=$OWNER"
-echo "NAME=$NAME"
-echo "REPO=$REPO"
-echo "HEAD=$HEAD"
-echo "BASE=$BASE"
-echo "USER=$USER"
-echo "TAG=$TAG"
-echo "ID=$ID"
-echo "template=$template"
+kv_map=()
+IFS=$'\n'
 
 run_input() {
+  printf "run_input: $@\n"
+  QUERY_URL=""
+  field_label=""
+  WITH_AUTH=1
+  WITH_SEARCH=1
+  WITH_DELETE=1
+  TOPIC=repos
+  SEARCH_STRING=''
   case $1 in
     artifacts)
       QUERY_BASE=actions/artifacts
       ;;
-
     collaborators)
       QUERY_BASE=collaborators
       WITH_AUTH=0
       ;;
-    collaborator_usernames)
+    collaborator_names)
       SEARCH_FIELD=login
       QUERY_BASE=collaborators
       WITH_AUTH=0
@@ -85,7 +40,6 @@ run_input() {
     is_collaborator)
       QUERY_BASE=collaborators/$USER
       WITH_AUTH=0
-      # /repos/{owner}/{repo}/collaborators/{username}
       ;;
 
     help)
@@ -112,7 +66,7 @@ run_input() {
       release_latest_tag
       tagged
       repo_branches
-      repo_branche_names
+      repo_branch_names
       repo_user_permissions
       repo_contributors
       repo_contributor_names
@@ -140,8 +94,7 @@ run_input() {
       workflow_run_job
       workflow_run_jobs
       user_repos
-      user_repo_names
-      " | sort
+      user_repo_names" | sort
       exit 1
       ;;
     labels)
@@ -155,7 +108,6 @@ run_input() {
       SEARCH_FIELD=id
       QUERY_BASE=labels
       ;;
-
     pull_request)
       QUERY_BASE=pulls/$ID
       ;;
@@ -176,11 +128,9 @@ run_input() {
     pull_request_merged)
       QUERY_BASE=pulls/ID/merge
       ;;
-
     pull_requests)
       QUERY_BASE=pulls
       ;;
-
     release)
       QUERY_BASE=releases/$ID
       ;;
@@ -195,23 +145,19 @@ run_input() {
       ;;
     release_latest_id)
       QUERY_BASE=releases/latest
-      SEARCH_FIELD=id
-      SEARCH_STRING='.[$field_name]'
+      SEARCH_STRING='.id'
       ;;
     release_latest_tag)
       QUERY_BASE=releases/latest
-      SEARCH_FIELD=tag_name
-      SEARCH_STRING='.[$field_name]'
+      SEARCH_STRING='.tag_name'
       ;;
-
     tagged)
       QUERY_BASE=releases/tags/$TAG
       ;;
-
     repo_branches)
       QUERY_BASE=branches
       ;;
-    repo_branche_names)
+    repo_branch_names)
       QUERY_BASE=branches
       SEARCH_FIELD=name
       ;;
@@ -219,24 +165,20 @@ run_input() {
       QUERY_BASE=collaborators/$USER/permission
       WITH_AUTH=0
       ;;
-
     repo_contributors)
       QUERY_BASE=contributors
-      # WITH_AUTH=0
       ;;
     repo_contributor_names)
       QUERY_BASE=contributors
       SEARCH_FIELD=login
       ;;
-
     repo_languages)
       QUERY_BASE=languages
       ;;
     repo_language_names)
       QUERY_BASE=languages
-      SEARCH_STRING='keys | join(",")'
+      SEARCH_STRING='keys | join("\n")'
       ;;
-
     repo_tags)
       QUERY_BASE=tags
       WITH_AUTH=0
@@ -249,7 +191,6 @@ run_input() {
       QUERY_BASE=topics
       WITH_AUTH=0
       ;;
-
     repo_workflow)
       QUERY_BASE=actions/workflows/$ID
       ;;
@@ -288,7 +229,6 @@ run_input() {
     repo_workflow_usage)
       QUERY_BASE=actions/workflows/$ID/timing
       ;;
-
     workflow_runs)
       QUERY_BASE=actions/workflows/$ID/runs
       ;;
@@ -304,15 +244,13 @@ run_input() {
       QUERY_BASE=actions/workflows/$ID/runs
       SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
       ;;
-
     delete_workflow_run)
       WITH_DELETE=0
       QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/actions/runs/$ID"
       ;;
     workflow_run_numbers)
       QUERY_BASE=actions/workflows/$ID/runs
-      SEARCH_FIELD=run_number
-      SEARCH_STRING='.workflow_runs | map(.[$field_name]) | join(",")'
+      SEARCH_STRING='.workflow_runs | map(.run_number) | join(",")'
       ;;
     workflow_run_job)
       QUERY_BASE=actions/jobs/$ID
@@ -320,39 +258,32 @@ run_input() {
     workflow_run_jobs)
       QUERY_BASE=actions/runs/$ID/jobs
       ;;
-
     user_repos)
       TOPIC=users
       QUERY_BASE=repos
       QUERY_URL="$GITHUB_API_URL/$TOPIC/$USER/$QUERY_BASE"
+      field_label="${USER}_repos"
       ;;
     user_repo_names)
       TOPIC=users
       QUERY_BASE=repos
       QUERY_URL="$GITHUB_API_URL/$TOPIC/$USER/$QUERY_BASE"
       SEARCH_FIELD=name
+      field_label="${USER}"
       ;;
-
     *)
-      printf "UNHANDLED TARGET: $1"
-      return 1
+      write_error "$(basename $0) target $1 not recognized - line $LINENO"
+      exit 1
       ;;
   esac
-
   [ -z "$QUERY_URL" ] && QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
   [ ! -z "$SEARCH_FIELD" ] && WITH_SEARCH=0
-  [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ] && SEARCH_STRING='map(.[$field_name]) | join(",")'
-
-  echo "QUERY_BASE=$QUERY_BASE"
-  echo "TOPIC=$TOPIC"
-  echo "WITH_SEARCH=$WITH_SEARCH"
-  echo "WITH_AUTH=$WITH_AUTH"
-  echo "WITH_DELETE=$WITH_DELETE"
-  echo "QUERY_URL=$QUERY_URL"
-  echo "SEARCH_FIELD=$SEARCH_FIELD"
-  echo "SEARCH_STRING=$SEARCH_STRING"
-  echo "ID=$ID"
-
+  if [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ]; then
+    # SEARCH_STRING='map(.[$field_name]) | join(",")'
+    # SEARCH_STRING='map(.[$field_name])'
+    SEARCH_STRING='.[] | .[$field_name]'
+  fi
+  printf "QUERY_URL=%s\n" "$QUERY_URL"
   response=""
   if [ $WITH_DELETE -eq 0 ]; then
     response=$(curl \
@@ -363,7 +294,7 @@ run_input() {
       -H "Accept: application/vnd.github.v3+json" \
       $QUERY_URL)
   else
-    if [ $WITH_AUTH -eq 0 ]; then
+    if [ ! -z "$GITHUB_AUTH_TOKEN" ]; then
       response=$(curl \
         -s \
         -w "HTTPSTATUS:%{http_code}" \
@@ -378,37 +309,43 @@ run_input() {
         $QUERY_URL)
     fi
   fi
-
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   request_status=$((${request_status} + 0))
   [ $request_status -eq 200 ] && request_status=0
   [ $request_status -eq 204 ] && request_status=0
-
-  log RESPONSE
-  echo $output | jq
-  if [ ! -z "$SEARCH_STRING" ]; then
-    log SEARCH
-    result=$(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING")
-    echo "$result\n"
+  if [[ "$request_status" =~ ^4[[:digit:]]* ]]; then
+    printf "%s" "$response" | jq -r '.message'
+    return 2
   fi
-  log
-  echo "::set-output name=RESULT::${result}"
+  printf "%s" "$output" | jq
+  printf "REQUEST_STATUS=%d\n" $request_status
+  if [ ! -z "$SEARCH_STRING" ]; then
+    result=($(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING"))
+    if [ ! -z "$field_label" ]; then
+      write_result_map "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1 $field_label
+    else
+      write_result_set "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1
+    fi
+  fi
 }
-
-IDS=$(printf "%s" $ID | tr ',' '\n')
-lines=$(echo "$IDS" | wc -l)
-if [ $lines -le 1 ]; then
-  run_input $template
-  exit $request_status
-fi
-for entry in $IDS; do
-  ID=$entry
+kv_map+=($(echo "OWNER=$OWNER"))
+kv_map+=($(echo "USER=$USER"))
+kv_map+=($(echo "REPO=$REPO"))
+write_result_set $(join_by , $(printf "%s\n" ${kv_map[@]})) ${name}_kv_store
+write_result_set $template ${name}_template
+request_status=0
+for cmd in $(echo "$template" | tr ',' '\n'); do
+  log $cmd
   request_status=0
-  run_input $template
-  [ $request_status -ne 0 ] && break
+  run_input $cmd
+  # echo -e "\nrequest_status: $request_status\n"
+  # [ $request_status -ne 0 ] && break
 done
+before_exit
 exit $request_status
+
+
 
 # ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
 # ESCAPED="${ESCAPED//'%'/'%25'}"
