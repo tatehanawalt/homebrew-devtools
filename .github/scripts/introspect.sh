@@ -58,13 +58,13 @@ formula_method_body() {
 }
 
 formula_sha() {
-  formula_method_body $1 $2 | \
+  formula_method_body "$1" "$2" | \
     grep "sha256.*" | \
     tr \' \" |
     sed 's/.*"\(.*\)".*/\1/'
 }
 formula_url() {
-  formula_method_body $1 $2 | \
+  formula_method_body "$1" "$2" | \
     grep 'url.*' | \
     sed "s/\'/\"/g" | \
     cut -d '"' -f 2
@@ -72,11 +72,10 @@ formula_url() {
 
 formula_names() {
   formulas=($(find $FORMULA_DIR -maxdepth 1 -type f -name "*.rb" | sort))
+  IFS=$'\n'
   names=()
   for item in ${formulas[@]}; do
     names+=("$(basename ${item%%.*})")
-
-    # printf "$(basename ${item%%.*})$IFS"
   done
   printf "%s\n" ${names[@]} | sort
 }
@@ -144,6 +143,7 @@ test_all() {
   for item in $(formula_names); do
     echo "$item"
     sigs=($(formula_method_signatures "$item"))
+    printf "signatures:\n$sigs\n"
     # printf "\tsig: %s\n" ${sigs[@]}
     for sig in ${sigs[@]}; do
       printf "$sig\n"
