@@ -328,6 +328,8 @@ run_input() {
   [ $request_status -eq 200 ] && request_status=0
   [ $request_status -eq 204 ] && request_status=0
 
+  printf "%s" "$output" | jq
+
   if [ ! -z "$SEARCH_STRING" ]; then
     IFS=$'\n'
     result=($(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING"))
@@ -353,7 +355,6 @@ run_input() {
 write_result_set "$OWNER" owner
 write_result_set "$USER" user
 write_result_set "$REPO" repo
-
 
 IDS=($(printf "%s" $ID | tr ',' '\n'))
 
