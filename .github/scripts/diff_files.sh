@@ -2,6 +2,7 @@
 
 . "$(dirname $0)/helpers.sh"
 
+printf "This is a debug statement"
 echo "::debug::Set the Octocat variable"
 
 #  Compare against the main branch
@@ -34,6 +35,7 @@ if [ -z $(git branch --list "$GITHUB_BASE_REF") ]; then
   exit 2
 fi
 
+printf "This is a debug statement"
 echo "::debug::Another the Octocat variable"
 
 IFS=$'\n'
@@ -85,6 +87,7 @@ for ext in ${diff_ext[@]}; do
   esac
 done
 
+printf "This is a debug statement"
 echo "::debug::Another the Octocat variable"
 
 # echo "::warning file=app.js,line=1,col=5::Missing semicolon"
