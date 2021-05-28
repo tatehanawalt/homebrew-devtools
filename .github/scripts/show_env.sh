@@ -3,9 +3,14 @@
 src_path=$(dirname $0)
 . "$src_path/helpers.sh"
 
-env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
-INSPECT_GROUPS=$(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d')
-groups=($(echo "$INSPECT_GROUPS" | sed 's/=.*$//' | sort))
+# env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
+# INSPECT_GROUPS=$(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d')
+printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d'
+
+
+exit
+# groups=($(echo "$INSPECT_GROUPS" | sed 's/=.*$//' | sort))
+
 
 print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
