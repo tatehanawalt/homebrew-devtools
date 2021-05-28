@@ -35,10 +35,9 @@ command_log_which() {
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
 }
 
-
 before_exit() {
-  # log $(basename $0 | sed "s/\..*//")_${FUNCNAME[1]}
-  [ ! -z "$HELPERS_LOG_TOPICS" ] && write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
+  [ -z "$HELPERS_LOG_TOPICS" ] && return
+  write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
   log
 }
 
@@ -73,7 +72,6 @@ contains() {
 }
 
 log_result_set() {
-  log $2
   printf "$prefix%s\n" $(echo -e $1 | tr ',' '\n')
   echo
 }
@@ -86,18 +84,17 @@ write_result_set() {
   key=$2
   [ -z "$key" ] && key="result"
   key=$(echo $key | tr [[:lower:]] [[:upper:]])
-  log_result_set $result $key
+
+  log $key
+  log_result_set "$result" "$key"
+
   result="${result//'%'/'%25'}"
   result="${result//$'\n'/'%0A'}"
   result="${result//$'\r'/'%0D'}"
   printf "$key=$result\n"
 
-
-
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
-
-  echo
 }
 
 # log $key
