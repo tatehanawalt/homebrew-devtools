@@ -7,22 +7,18 @@ print_field() {
 }
 print_field_table() {
   IFS=$'\n'
-
   field_val=$(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g' | sed '/^$/d')
   field_val=($(echo "$field_val"))
-
-  # printf "$field_val %d\n" ${#field_val[@]}
-  # field_val=("${eval_val[@]}")
-  # printf "%d\n" ${#field_val}
-  # field_val=("$(echo $val_val | tr ',' '\n' | sed 's/^[[:space:]]*//g')")
   local_prefix=""
   printf "\t%-${max_field_len}s" "$1:"
   [ ${#field_val[@]} -ne 1 ] && printf "\n"
   [ ${#field_val[@]} -gt 1 ] && local_prefix="$(get_prefix)   - "
-  for entry in ${field_val[@]}; do
-    printf "$local_prefix%s\n" $entry;
-  done
-  # [ ${#field_val[@]} -lt 1 ] && echo
+  printf "$local_prefix%s\n" ${entry[@]};
+
+
+  # for entry in ${field_val[@]}; do
+  #   printf "$local_prefix%s\n" $entry;
+  # done
 }
 
 env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
@@ -40,6 +36,12 @@ done
 write_result_set "$(join_by , ${group_keys[@]})" inspect_groups
 
 exit 0
+
+
+# printf "$field_val %d\n" ${#field_val[@]}
+# field_val=("${eval_val[@]}")
+# printf "%d\n" ${#field_val}
+# field_val=("$(echo $val_val | tr ',' '\n' | sed 's/^[[:space:]]*//g')")
 
 # field_val=$(eval "echo \"\$$1\"" | tr ',' '\n')
 # INSPECT_GROUPS=$(printf "$INSPECT_GROUPS\nenv=$env_csv\n"| sed 's/^[[:space:]]*//' | sed '/^$/d')
