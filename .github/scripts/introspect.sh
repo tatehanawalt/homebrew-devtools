@@ -54,11 +54,13 @@ formula_method_signatures() {
     prev=$row
   done
 }
+
 formula_method_body() {
   file_body=$(formula_file $1)
   [ $? -ne 0 ] && printf "$file_body" && return 1
   printf "%s\n" $file_body | awk "/$2/,/^[[:space:]][[:space:]]end/"
 }
+
 formula_sha() {
   formula_method_body $1 $2 | \
     grep "sha256.*" | \
@@ -75,41 +77,42 @@ formula_url() {
 formula_names() {
   formulas=($(find $FORMULA_DIR -maxdepth 1 -type f -name "*.rb" | sort))
   for item in ${formulas[@]}; do
-    printf "%s$IFS" $(basename ${item%%.*})
+    printf "$(basename ${item%%.*})$IFS"
   done
 }
 formula_paths() {
   for item in $(formula_names); do
-    printf "%s %s$IFS" $item $(formula_path $item)
+    val=$(formula_path $item)
+    [ -z "$val" ] && continue
+    printf "%s %s$IFS" "$item" "$val"
   done
 }
 formula_stable_shas() {
   for item in $(formula_names); do
     val=$(formula_sha $item stable)
     [ -z "$val" ] && continue
-    printf "%s %s$IFS" $item $val
+    printf "%s %s$IFS" "$item" "$val"
   done
 }
 formula_head_shas() {
   for item in $(formula_names); do
     val=$(formula_sha $item head)
     [ -z "$val" ] && continue
-    printf "%s %s$IFS" $item $val
+    printf "%s %s$IFS" "$item" "$val"
   done
 }
 formula_head_urls() {
   for item in $(formula_names); do
-    echo "$item"
-
-    formula_url $item head
-    # printf "%s %s$IFS" $item $(formula_url $item head)
+    val=$(formula_url "$item" "head")
+    [ -z "$val" ] && continue
+    printf "%s %s$IFS" "$item" "$val"
   done
 }
 formula_stable_urls() {
   for item in $(formula_names); do
-    val=$(formula_url $item stable)
+    val=$(formula_url "$item" "stable")
     [ -z "$val" ] && continue
-    printf "%s %s$IFS" $item $val
+    printf "%s %s$IFS" "$item" "$val"
   done
 }
 
@@ -135,6 +138,26 @@ test_all() {
   testfn formula_head_shas
   testfn formula_stable_urls
   testfn formula_head_urls
+
+  printf "completed testing\n\n"
+
+  for item in $(formula_names); do
+
+    echo "$item"
+    sigs=($(formula_method_signatures "$item"))
+    # printf "\tsig: %s\n" ${sigs[@]}
+    for sig in ${sigs[@]}; do
+      printf "$sig\n"
+
+      formula_method_body "$item" "$sig"
+
+    done
+
+
+
+  done
+
+  printf "\n"
 }
 
 all() {
