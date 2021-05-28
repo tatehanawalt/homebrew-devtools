@@ -2,6 +2,8 @@
 
 # IFS=$"\n"
 
+# printf "\nhelpers:\n${@}\nhelpers\n"
+
 Black='\033[0;30m'
 DarkGray='\033[1;30m'
 Red='\033[0;31m'
@@ -36,8 +38,6 @@ if [ -z "$template" ]; then
     HAS_TEMPLATE=0
   fi
 fi
-
-
 
 get_prefix() {
   printf "\t"

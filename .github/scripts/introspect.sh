@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. "$(dirname $0)/helpers.sh" $@
+. "$(dirname $0)/helpers.sh" ${@}
+
 
 # Introspection generates / parses data related to the contents of the
 # specific repository by parsing the local filesystem resources
@@ -18,6 +19,7 @@
 
 # log PARAMS
 FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
+
 log_result_set "template=$template,GITHUB_WORKSPACE=$GITHUB_WORKSPACE,FORMULA_DIR=$FORMULA_DIR" PARAMS
 [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
 
@@ -155,7 +157,6 @@ all() {
   done
 }
 
-IFS=$'\n'
 case $template in
   all)
     all
@@ -164,7 +165,6 @@ case $template in
     formula_signatures
     ;;
   formula*)
-    IFS=$'\n'
     write_result_set "$(join_by , $($1))" $1
     ;;
   test)
