@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. "$(dirname $0)/helpers.sh"
+. "$(dirname $0)/helpers.sh" $@
 
 if [ ! -f "$GITHUB_EVENT_PATH" ]; then
   printf "GITHUB_EVENT_PATH FILE NOT FOUND\n"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. "$(dirname $0)/helpers.sh"
+. "$(dirname $0)/helpers.sh" $@
 
 # Introspection generates / parses data related to the contents of the
 # specific repository by parsing the local filesystem resources
