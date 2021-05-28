@@ -117,14 +117,12 @@ testfn() {
 }
 
 test_all() {
-  echo
   testfn formula_names
   testfn formula_paths
   testfn formula_stable_shas
   testfn formula_head_shas
   testfn formula_stable_urls
   testfn formula_head_urls
-  echo
 }
 
 all() {

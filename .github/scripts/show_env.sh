@@ -15,7 +15,6 @@ inspect_fields() {
     [ $key_len -gt $max_field_len ] && max_field_len=$(($key_len + 1))
     printf "%s=%s\n" $key "$(eval "echo \"\$$key\"")"
   done
-
   log $1_table
   for key in ${fields[@]}; do
     keyval=($(eval "echo -e \"\$$key\"" | tr ',' '\n'))
@@ -42,9 +41,10 @@ for entry in "${INSPECT_GROUPS[@]}"; do
   group=$(echo $entry | sed 's/=.*//')
   fields=$(echo $entry | sed 's/.*=//')
   write_result_set $fields ${group}
-
   inspect_fields $group $fields
 done
+
+before_exit
 
 exit 0
 
@@ -55,7 +55,6 @@ exit 0
 # command_log_which git "$(git --version)"
 # command_log_which jq "$(jq --version)"
 
-
 # INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | sed 's/^[^[:alpha:]]*//g')
 
 # groups=($(echo "${INSPECT_GROUPS[@]}" | sed 's/^[^[:alpha:]]*//g'))
@@ -65,7 +64,6 @@ exit 0
 # write_result_set $groups group_names
 # group_names=($(echo $INSPECT_GROUPS | sed 's/=[^[:space:]]*//g' | tr -s ' ' | tr ' ' '\n' | sort -u))
 # write_result_set $(join_by , ${group_names[@]}) group_names
-
 
 # $(printf "%s" "$group" | sed 's/=.*//' | tr '[:lower:]' '[:upper:]') $(printf "%s" "$group" | sed 's/.*=//')
 # for group in ${groups[@]}; do
