@@ -84,14 +84,14 @@ formula_paths() {
   for item in $(formula_names); do
     val=$(formula_path $item)
     [ -z "$val" ] && continue
-    printf "%s %s$IFS" "$item" "$val"
+    printf "$item $val$IFS"
   done
 }
 formula_stable_shas() {
   for item in $(formula_names); do
     val=$(formula_sha $item stable)
     [ -z "$val" ] && continue
-    printf "%s %s$IFS" "$item" "$val"
+    printf "$item $val$IFS"
   done
 }
 formula_head_shas() {
@@ -105,14 +105,14 @@ formula_head_urls() {
   for item in $(formula_names); do
     val=$(formula_url "$item" "head")
     [ -z "$val" ] && continue
-    printf "%s %s$IFS" "$item" "$val"
+    printf "$item $val$IFS"
   done
 }
 formula_stable_urls() {
   for item in $(formula_names); do
     val=$(formula_url "$item" "stable")
     [ -z "$val" ] && continue
-    printf "%s %s$IFS" "$item" "$val"
+    printf "$item $val$IFS"
   done
 }
 
