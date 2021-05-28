@@ -3,15 +3,7 @@
 
 . "$(dirname $0)/helpers.sh"
 
-export DEMO_VAR=testing
-
 [ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
-
-WITH_AUTH=1
-WITH_SEARCH=1
-WITH_DELETE=1
-TOPIC=repos
-request_status=0
 
 [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
 [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
@@ -22,8 +14,20 @@ request_status=0
 OWNER="$GITHUB_REPOSITORY_OWNER"
 REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
 
+kv_map=()
+IFS=$'\n'
+
+
 run_input() {
+  printf "run_input: $@\n"
+
+  QUERY_URL=""
   field_label=""
+  WITH_AUTH=1
+  WITH_SEARCH=1
+  WITH_DELETE=1
+  TOPIC=repos
+
   case $1 in
     artifacts)
       QUERY_BASE=actions/artifacts
@@ -298,6 +302,8 @@ run_input() {
     SEARCH_STRING='.[] | .[$field_name]'
   fi
 
+  printf "\n\nQUERY_URL=%s\n\n" "$QUERY_URL"
+
   response=""
   if [ $WITH_DELETE -eq 0 ]; then
     response=$(curl \
@@ -322,22 +328,6 @@ run_input() {
         -H 'Accept: application/vnd.github.v3+json' \
         $QUERY_URL)
     fi
-
-
-    # if [ $WITH_AUTH -eq 0 ]; then
-    #   response=$(curl \
-    #     -s \
-    #     -w "HTTPSTATUS:%{http_code}" \
-    #     -H "Authorization: token $GITHUB_AUTH_TOKEN" \
-    #     -H "Accept: application/vnd.github.v3+json" \
-    #     $QUERY_URL)
-    # else
-    #   response=$(curl \
-    #     -s \
-    #     -w "HTTPSTATUS:%{http_code}" \
-    #     -H 'Accept: application/vnd.github.v3+json' \
-    #     $QUERY_URL)
-    # fi
   fi
 
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
@@ -352,15 +342,17 @@ run_input() {
 
   log "${1}_response"
   printf "%s" "$output" | jq
-  log
+
+  printf "\n"
+  printf "REQUEST_STATUS=%d\n" $request_status
   
   if [ ! -z "$SEARCH_STRING" ]; then
     IFS=$'\n'
     result=($(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING"))
     if [ ! -z "$field_label" ]; then
-      write_result_map "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $template $field_label
+      write_result_map "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1 $field_label
     else
-      write_result_set "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $template
+      write_result_set "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1
     fi
   fi
 
@@ -375,26 +367,25 @@ run_input() {
   # log
 }
 
-write_result_set "$OWNER" owner
-write_result_set "$USER" user
-write_result_set "$REPO" repo
+kv_map+=($(echo "OWNER=$OWNER"))
+kv_map+=($(echo "USER=$USER"))
+kv_map+=($(echo "REPO=$REPO"))
 
-
-
-IDS=($(printf "%s" $ID | tr ',' '\n'))
-# templates=($(printf "%s" $template | tr ',' '\n'))
-
+write_result_set $(join_by , $(printf "%s\n" ${kv_map[@]})) ${name}_kv_store
 write_result_set $template ${name}_template
 
+
 request_status=0
-for cmd in "$(printf %s $template | tr ',' '\n')"; do
+for cmd in $(echo "$template" | tr ',' '\n'); do
   log $cmd
-  printf "cmd: %s\n" $cmd
   request_status=0
   run_input $cmd
-  echo -e "\nrequest_status: $request_status\n"
-  [ $request_status -ne 0 ] && break
+  # echo -e "\nrequest_status: $request_status\n"
+  # [ $request_status -ne 0 ] && break
 done
+
+
+# IDS=($(printf "%s" $ID | tr ',' '\n'))
 
 # for cmd in ${template[@]}; do
 #   printf "cmd: $cmd\n"
@@ -423,4 +414,19 @@ exit $request_status
 # if [ $lines -le 1 ]; then
 #   run_input $template
 #   exit $request_status
+# fi
+
+# if [ $WITH_AUTH -eq 0 ]; then
+#   response=$(curl \
+#     -s \
+#     -w "HTTPSTATUS:%{http_code}" \
+#     -H "Authorization: token $GITHUB_AUTH_TOKEN" \
+#     -H "Accept: application/vnd.github.v3+json" \
+#     $QUERY_URL)
+# else
+#   response=$(curl \
+#     -s \
+#     -w "HTTPSTATUS:%{http_code}" \
+#     -H 'Accept: application/vnd.github.v3+json' \
+#     $QUERY_URL)
 # fi
