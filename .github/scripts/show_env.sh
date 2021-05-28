@@ -14,6 +14,8 @@ inspect_fields() {
     [ $key_len -gt $max_field_len ] && max_field_len=$(($key_len + 1))
     printf "%s=%s\n" $key "$(eval "echo \"\$$key\"")"
   done
+}
+inspect_fields_table() {
   log "${1}_table"
   IFS=$'\n'
   for key in ${fields[@]}; do
@@ -27,6 +29,7 @@ inspect_fields() {
 }
 
 inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
+inspect_fields_table ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
 
 if [ ! -z "$INSPECT_GROUPS" ]; then
   INSPECT_GROUPS=($(echo $INSPECT_GROUPS | sed 's/^[^[:alpha:]]*//g' | sed '/^$/d' | tr ' ' '\n'))
