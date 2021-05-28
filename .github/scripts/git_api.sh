@@ -389,7 +389,14 @@ IDS=($(printf "%s" $ID | tr ',' '\n'))
 
 write_result_set $template ${name}_template
 
-
+request_status=0
+for cmd in "$(printf %s $template | tr ',' '\n')"; do
+  printf "cmd: %s\n" $cmd
+  request_status=0
+  run_input $cmd
+  echo -e "\nrequest_status: $request_status\n"
+  [ $request_status -ne 0 ] && break
+done
 
 # for cmd in ${template[@]}; do
 #   printf "cmd: $cmd\n"

@@ -129,9 +129,6 @@ write_result_map() {
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$3=$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }
-
-
-
 print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
 }
@@ -144,7 +141,6 @@ print_field_table() {
   [ ${#field_val[@]} -gt 1 ] && echo && local_prefix="$(get_prefix)   - "
   printf "$local_prefix%s\n" ${field_val[@]};
 }
-
 before_exit() {
   [ -z "$HELPERS_LOG_TOPICS" ] && return
   write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
