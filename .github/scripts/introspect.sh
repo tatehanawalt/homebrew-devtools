@@ -55,19 +55,16 @@ formula_method_signatures() {
   # prefix=$(echo "$prefix" | sed 's/[[:alnum:]].*//')
   # printf "|%s|\n" "$prefix"
 
-  printf "$slim_file" | grep "^$prefix[^ ].*"
+  file_body=$(printf "$slim_file" | grep "^$prefix[^ ].*")
 
-
-    # grep "^[[:space:]]*[[:alpha:]].*" | \
-    # sed 's/#.*//'
 
   # file_body=$(printf "$(formula_file $1)" | sed 's/#.*$//' | grep "^  [[:alpha:]].*")
   # file_body=$(echo "$file_body" | sed 's/.*\".*//' | sed "s/.*\'.*//" | sed '/^[[:space:]]*$/d')
-  # prev=""
-  #for row in $file_body; do
-  #  [[ "$row" =~ ^[[:space:]]+end ]] && printf "%s\n" "$prev"
-  #  prev=$row
-  #done
+  prev=""
+  for row in $file_body; do
+    [[ "$row" =~ ^[[:space:]]+end ]] && printf "%s\n" "$prev"
+    prev=$row
+  done
 }
 
 formula_method_body() {
