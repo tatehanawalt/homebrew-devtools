@@ -69,6 +69,7 @@ for ext in ${diff_ext[@]}; do
     md)
       printf "markdown\n"
       add_label_set+=( "documentation" )
+      add_label_set+=( "markdown" )
       ;;
     json)
       printf "json\n"
