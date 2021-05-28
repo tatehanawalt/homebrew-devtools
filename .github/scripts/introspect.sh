@@ -7,7 +7,6 @@
 
 FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
 [ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
-
 [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
 
 formula_path() {

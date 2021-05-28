@@ -37,17 +37,15 @@ fi
 IFS=$'\n'
 diff_files=($(git diff --name-only $GITHUB_BASE_REF | sed 's/[[:space:]]$//g' | sed 's/^[[:space:]]//g'))
 diff_files_csv=$(join_by , ${diff_files[@]})
-write_result_set "$diff_files_csv" "DIFF_FILES"
+write_result_set "$diff_files_csv" DIFF_FILES
 
 diff_dirs=($(for_csv "$diff_files_csv" dirname | sort -u))
 diff_dirs_csv=$(join_by , ${diff_dirs[@]})
-write_result_set "$diff_dirs_csv" "DIFF_DIRS"
+write_result_set "$diff_dirs_csv" DIFF_DIRS
 
 diff_ext=($(printf "%s\n" ${diff_files[@]} | sed 's/.*\.//' | sort -u))
 diff_ext_csv=$(join_by , ${diff_ext[@]})
-write_result_set "$diff_ext_csv" "DIFF_EXT"
-
-
+write_result_set "$diff_ext_csv" DIFF_EXT
 
 for ext in ${diff_ext[@]}; do
   case $ext in
@@ -59,26 +57,29 @@ for ext in ${diff_ext[@]}; do
       printf "c++\n"
       add_label_set+=( "cpp" )
       ;;
+    json)
+      printf "json\n"
+      add_label_set+=( "json" )
+      ;;
     md)
       printf "markdown\n"
       add_label_set+=( "documentation" )
       add_label_set+=( "markdown" )
       ;;
-    json)
-      printf "json\n"
-      add_label_set+=( "json" )
+    py)
+      printf "python\n"
+      add_label_set+=( "python" )
       ;;
     rb)
       printf "ruby\n"
       add_label_set+=( "ruby" )
       ;;
-    py)
-      printf "python\n"
-      add_label_set+=( "python" )
-      ;;
     sh)
       printf "shell\n"
       add_label_set+=( "shell" )
+      ;;
+    svg)
+      printf "svg - leave this for now...\n"
       ;;
     yaml)
       printf "yaml\n"

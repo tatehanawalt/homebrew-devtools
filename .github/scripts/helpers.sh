@@ -20,22 +20,16 @@ Cyan='\033[0;36m'
 LightCyan='\033[1;36m'
 LightGray='\033[0;37m'
 White='\033[1;37m'
-
-# No Color
-NC='\033[0m'
+NC='\033[0m' # No Color
 
 # "\033[38;2;R;G;Bm"
 clr=$(printf %b $Red)
 nclr=$(printf %b $NC)
-
 HELPERS_LOG_TOPICS=()
-
 IN_LOG=0
 IN_CI=1
 HAS_TEMPLATE=1
-
 [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-
 # env var template specified
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
