@@ -2,50 +2,55 @@
 
 . "$GITHUB_WORKSPACE/.github/scripts/helpers.sh"
 
+
+env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
+
+csv_max_length $env_csv
+
+exit
 # Pass this function the set of comma-separated keys to inspect the environment
 # variable value of each key
-
-inspect_fields() {
-  log "$1"
-  fields=($(printf "%s" "$2" | sed 's/^,//' | sed 's/,$//' | tr ',' '\n' | sort -u | sed '/^$/d' | sed 's/^[[:space:]]//g'))
-  max_field_len=0
-  for key in ${fields[@]}; do
-    key_len=${#key}
-    [ $key_len -gt $max_field_len ] && max_field_len=$(($key_len + 1))
-    printf "%s=%s\n" $key "$(eval "echo \"\$$key\"")"
-  done
-}
-inspect_fields_table() {
-  log "${1}_table"
-  IFS=$'\n'
-  for key in ${fields[@]}; do
-    keyval=($( eval "echo -e \"\$$key\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g'))
-    local_prefix=""
-    printf "$(get_prefix)%-${max_field_len}s " "$key:"
-    [ ${#keyval[@]} -ne 1 ] && printf "\n"
-    [ ${#keyval[@]} -gt 1 ] && local_prefix="$(get_prefix)   - "
-    for entry in ${keyval[@]}; do printf "$local_prefix%s\n" $entry; done
-  done
-}
-
-inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
-inspect_fields_table ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
-
-if [ ! -z "$INSPECT_GROUPS" ]; then
-  INSPECT_GROUPS=($(echo $INSPECT_GROUPS | sed 's/^[^[:alpha:]]*//g' | sed '/^$/d' | tr ' ' '\n'))
-  groups=()
-  for entry in "${INSPECT_GROUPS[@]}"; do groups+=($(echo $entry | sed 's/=.*$//')); done
-  write_result_set "$(join_by , ${groups[@]})" inspect_groups
-
-  for entry in "${INSPECT_GROUPS[@]}"; do
-    group=$(echo $entry | sed 's/=.*//')
-    fields=$(echo $entry | sed 's/.*=//')
-    inspect_fields "$group" "$fields"
-  done
-fi
-
-before_exit
-exit 0
+# inspect_fields() {
+#   log "$1"
+#   fields=($(printf "%s" "$2" | sed 's/^,//' | sed 's/,$//' | tr ',' '\n' | sort -u | sed '/^$/d' | sed 's/^[[:space:]]//g'))
+#   max_field_len=0
+#   for key in ${fields[@]}; do
+#     key_len=${#key}
+#     [ $key_len -gt $max_field_len ] && max_field_len=$(($key_len + 1))
+#     printf "%s=%s\n" $key "$(eval "echo \"\$$key\"")"
+#   done
+# }
+# inspect_fields_table() {
+#   log "${1}_table"
+#   IFS=$'\n'
+#   for key in ${fields[@]}; do
+#     keyval=($( eval "echo -e \"\$$key\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g'))
+#     local_prefix=""
+#     printf "$(get_prefix)%-${max_field_len}s " "$key:"
+#     [ ${#keyval[@]} -ne 1 ] && printf "\n"
+#     [ ${#keyval[@]} -gt 1 ] && local_prefix="$(get_prefix)   - "
+#     for entry in ${keyval[@]}; do printf "$local_prefix%s\n" $entry; done
+#   done
+# }
+#
+# inspect_fields ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
+# inspect_fields_table ENV $(printf "%s" "$(env)" | sed 's/^[[:space:]].*//g' | sed '/^$/d' | sed 's/=.*//g' | tr '\n' ',')
+#
+# if [ ! -z "$INSPECT_GROUPS" ]; then
+#   INSPECT_GROUPS=($(echo $INSPECT_GROUPS | sed 's/^[^[:alpha:]]*//g' | sed '/^$/d' | tr ' ' '\n'))
+#   groups=()
+#   for entry in "${INSPECT_GROUPS[@]}"; do groups+=($(echo $entry | sed 's/=.*$//')); done
+#   write_result_set "$(join_by , ${groups[@]})" inspect_groups
+#
+#   for entry in "${INSPECT_GROUPS[@]}"; do
+#     group=$(echo $entry | sed 's/=.*//')
+#     fields=$(echo $entry | sed 's/.*=//')
+#     inspect_fields "$group" "$fields"
+#   done
+# fi
+#
+# before_exit
+# exit 0
 
 
 # [ ! -z "$INSPECT_ENV_FIELDS" ] && inspect_fields INSPECT_ENV_FIELDS $INSPECT_ENV_FIELDS

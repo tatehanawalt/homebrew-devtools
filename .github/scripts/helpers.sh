@@ -54,10 +54,20 @@ log() {
   fi
 }
 
+csv_max_length() {
+  IFS=$'\n'
+  max_field_len=0
+  for field in $(printf $1 | tr ',' '\n'); do
+    [ ${#field} -gt $max_field_len ] && max_field_len=$((${#field} + 1))
+  done
+  echo "$max_field_len"
+}
 join_by () {
   local d=${1-} f=${2-};
   if shift 2; then
-    printf %s "$f" "${@/#/$d}" | sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
+    printf %s "$f" "${@/#/$d}"
+    #| sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
+    #printf %s "$f" "${@/#/$d}" | sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
   fi
 }
 
