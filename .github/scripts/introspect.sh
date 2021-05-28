@@ -41,14 +41,21 @@ formula_file() {
 }
 
 formula_method_signatures() {
-  IFS=$'\n'
-  file_body=$(printf "$(formula_file $1)" | sed 's/#.*$//' | grep "^  [[:alpha:]].*")
-  file_body=$(echo "$file_body" | sed 's/.*\".*//' | sed "s/.*\'.*//" | sed '/^[[:space:]]*$/d')
-  prev=""
-  for row in $file_body; do
-    [[ "$row" =~ ^[[:space:]]+end ]] && printf "%s\n" "$prev"
-    prev=$row
-  done
+  # IFS=$'\n'
+
+  formula_file $1 | \
+    sed 's/#.*//'
+
+    # grep "^[[:space:]]*[[:alpha:]].*" | \
+    # sed 's/#.*//'
+
+  # file_body=$(printf "$(formula_file $1)" | sed 's/#.*$//' | grep "^  [[:alpha:]].*")
+  # file_body=$(echo "$file_body" | sed 's/.*\".*//' | sed "s/.*\'.*//" | sed '/^[[:space:]]*$/d')
+  # prev=""
+  #for row in $file_body; do
+  #  [[ "$row" =~ ^[[:space:]]+end ]] && printf "%s\n" "$prev"
+  #  prev=$row
+  #done
 }
 
 formula_method_body() {
@@ -145,6 +152,7 @@ test_all() {
 
     formula_file "$item"
 
+    formula_method_signatures "$item"
 
     # sigs=($(formula_method_signatures "$item"))
     # printf "signatures:\n$sigs\n"
