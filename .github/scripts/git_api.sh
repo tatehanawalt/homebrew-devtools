@@ -30,7 +30,7 @@ run_input() {
       QUERY_BASE=collaborators
       WITH_AUTH=0
       ;;
-    collaborator_usernames)
+    collaborator_names)
       SEARCH_FIELD=login
       QUERY_BASE=collaborators
       WITH_AUTH=0
@@ -94,6 +94,7 @@ run_input() {
       user_repo_names" | sort
       exit 1
       ;;
+
     labels)
       QUERY_BASE=labels
       ;;
@@ -305,7 +306,7 @@ run_input() {
       -H "Accept: application/vnd.github.v3+json" \
       $QUERY_URL)
   else
-    if [ $WITH_AUTH -eq 0 ]; then
+    if [ ! -z "$GITHUB_AUTH_TOKEN" ]; then
       response=$(curl \
         -s \
         -w "HTTPSTATUS:%{http_code}" \
@@ -319,6 +320,22 @@ run_input() {
         -H 'Accept: application/vnd.github.v3+json' \
         $QUERY_URL)
     fi
+
+
+    # if [ $WITH_AUTH -eq 0 ]; then
+    #   response=$(curl \
+    #     -s \
+    #     -w "HTTPSTATUS:%{http_code}" \
+    #     -H "Authorization: token $GITHUB_AUTH_TOKEN" \
+    #     -H "Accept: application/vnd.github.v3+json" \
+    #     $QUERY_URL)
+    # else
+    #   response=$(curl \
+    #     -s \
+    #     -w "HTTPSTATUS:%{http_code}" \
+    #     -H 'Accept: application/vnd.github.v3+json' \
+    #     $QUERY_URL)
+    # fi
   fi
 
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
@@ -327,6 +344,11 @@ run_input() {
 
   [ $request_status -eq 200 ] && request_status=0
   [ $request_status -eq 204 ] && request_status=0
+
+  if [[ "$request_status" =~ ^4[[:digit:]]* ]]; then
+    printf "%s" "$response" | jq -r '.message'
+    return 2
+  fi
 
   printf "%s" "$output" | jq
 
@@ -356,7 +378,22 @@ write_result_set "$OWNER" owner
 write_result_set "$USER" user
 write_result_set "$REPO" repo
 
+
+
 IDS=($(printf "%s" $ID | tr ',' '\n'))
+
+
+templates=($(printf "%s" $template | tr ',' '\n'))
+
+for cmd in ${template[@]}; do
+  printf "cmd: $cmd\n"
+  request_status=0
+  run_input $cmd
+
+  echo -e "\nrequest_status: $request_status\n"
+  [ $request_status -ne 0 ] && break
+done
+
 
 for entry in "$IDS"; do
   # printf "entry: %d\n" $entry
