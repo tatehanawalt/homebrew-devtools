@@ -166,6 +166,18 @@ before_exit() {
   log
 }
 
+default_labels() {
+  printf "%s" '[{"name":":beer:","description":"Somehow related to homebrew","color":"F28E1C"},{"name":":bug:","description":"Literally a bug","color":"ffd438"},{"name":":alien:","description":"Something is unknown","color":"ffd438"},{"name":":robot:","description":"Robots are working on it!","color":"814fff"},{"name":":zap:","description":"A robot fixed something","color":"24a0ff"}]'
+
+  # _jq() { echo ${row} | base64 --decode | jq -r ${1}; }
+  # for row in $(echo "${DEFAULT_LABELS}" | jq -r '.[] | @base64'); do
+  #DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq --arg name "$label" --arg color "F28E1C" --arg description "placeholder" '. | . + [{"name": $name, "color": $color, "description": $description}]')
+  # DEFAULT_LABELS='[{"name":":beer:","description":"Somehow related to homebrew","color":"F28E1C"},{"name":":bug:","description":"Literally a bug","color":"ffd438"},{"name":":alien:","description":"Something is unknown","color":"ffd438"},{"name":":robot:","description":"Robots are working on it!","color":"814fff"},{"name":":zap:","description":"A robot fixed something","color":"24a0ff"}]'
+  # DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq '. | . + [{"name": "demo1", "description": "demo description", "color": "F28E1C"}]')
+  # DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq --arg name "$name" '. | . + [{"name": "demo1", "description": "demo description", "color": "F28E1C"}]')
+  # CURRENT_LABELS
+}
+
 git_post() {
   POSITIONAL=()
   req_url=""
@@ -588,3 +600,27 @@ git_post() {
 #   echo -e "\n\nHERE\n\n"
 #   return
 # }
+
+
+# echo "$(_jq '.name') $(_jq '.color') $(_jq '.description')"
+# data=$(jq -n \
+#   --arg name "$(_jq '.name')" \
+#   --arg color "$(_jq '.color')" \
+#   --arg description "$(_jq '.description')" \
+#   '{"name": $name, "color": $color, "description": $description}')
+# data=$(echo "$data" | jq '. as $a| [keys[]| select($a[.]!="")| {(.): $a[.]}]| add')
+# data=$(_jq)
+# for label in "${add_labels[@]}"; do
+#   add=$(contains "$label" "${current_labels[@]}")
+#   exit_code=$?
+#   [ $exit_code -eq 0 ] && continue
+#   create_labels+=( "$label" )
+# done
+# write_result_set $(join_by , "${create_labels[@]}") create_labels
+# for label in ${create_labels[@]}; do
+#   result=$(create_label "$label")
+#   exit_status=$?
+#   echo $result | jq -r | jq
+# done
+# before_exit
+# exit 0
