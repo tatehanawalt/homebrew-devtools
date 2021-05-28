@@ -43,4 +43,7 @@ for entry in "${groups[@]}"; do
   log ${kv[0]}_table && for_csv ${kv[1]} print_field_table
 done
 write_result_set "$(join_by , ${group_keys[@]})" inspect_groups
+
+before_exit
+
 exit 0
