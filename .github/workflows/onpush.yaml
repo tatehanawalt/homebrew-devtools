@@ -71,7 +71,7 @@ jobs:
         run: ./.github/scripts/create_labels.sh
         shell: bash
         env:
-          ADD_LABELS: "${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }},${{ steps.formula_data.outputs.FORMULA_NAMES}},${{ steps.formula_data.outputs.DIFF_ADD_LABEL_SET}}"
+          ADD_LABELS: "${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }},${{ steps.formula_data.outputs.FORMULA_NAMES }},${{ steps.diff.outputs.DIFF_ADD_LABEL_SET }}"
           CURRENT_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
