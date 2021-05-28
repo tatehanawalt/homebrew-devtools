@@ -60,14 +60,16 @@ formula_method_body() {
 formula_sha() {
   formula_method_body "$1" "$2" | \
     grep "sha256.*" | \
-    tr \' \" |
+    tr \' \" | \
     sed 's/.*"\(.*\)".*/\1/'
 }
 formula_url() {
   formula_method_body "$1" "$2" | \
     grep 'url.*' | \
-    sed "s/\'/\"/g" | \
-    cut -d '"' -f 2
+    tr \' \" | \
+    sed 's/.*"\(.*\)".*/\1/'
+
+    # cut -d '"' -f 2
 }
 
 formula_names() {
