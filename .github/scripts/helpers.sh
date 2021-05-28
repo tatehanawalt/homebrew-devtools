@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # IFS=$"\n"
-# printf "\nhelpers:\n${@}\nhelpers\n"
 max_field_len=0
-
 Black='\033[0;30m'
 DarkGray='\033[1;30m'
 Red='\033[0;31m'
@@ -21,7 +19,6 @@ LightCyan='\033[1;36m'
 LightGray='\033[0;37m'
 White='\033[1;37m'
 NC='\033[0m' # No Color
-
 # "\033[38;2;R;G;Bm"
 clr=$(printf %b $Red)
 nclr=$(printf %b $NC)
@@ -39,23 +36,16 @@ if [ -z "$template" ]; then
 else
   HAS_TEMPLATE=0
 fi
-
-
 for_csv() {
   IFS=$'\n'
   for field in $(echo $1 | tr ',' '\n'); do
     $2 $field
   done
 }
-
 write_error() {
   echo "::error::$1"
   printf "\n%b$1%b\n\n" "${Red}" "${NC}"
 }
-
-
-
-
 csv_max_length() {
   IFS=$'\n'
   max_field_len=0
@@ -149,23 +139,18 @@ print_field_table() {
   local_prefix=""
   printf "\t%-${max_field_len}s" "$1:"
   [ -z "$field_val" ] && echo && return
-
   [ ${#field_val[@]} -gt 1 ] && echo && local_prefix="$(get_prefix)   - "
-
   # printf "$local_prefix%s\n" ${field_val[@]};
   for field in "${field_val[@]}"; do
     lbl_clr=''
     if [[ "$field" =~ .*\=.* ]]; then
       lbl_clr=$Yellow
       field=$(echo $field | tr [[:lower:]] [[:upper:]] | sed "s/^/$clr/" | sed "s/=/=$nclr/" )
-
       # field=$(echo $field | sed "s/\=/$( printf %b ${NC} )\=/ )")
-
       # field=$(echo $field | sed s/$/$(printf %b $NC)$/)
     fi
     printf "$local_prefix%s\n" $field
   done
-
   # printf "$local_prefix%s\n" ${field_val[@]};
 }
 before_exit() {
@@ -201,7 +186,6 @@ create_label() {
     '. += {"response_code":$response_code} | . += {"request_url":$request_url} | tostring'
   return $request_status
 }
-
 
 # log $key
 # printf "$key=$result\n"

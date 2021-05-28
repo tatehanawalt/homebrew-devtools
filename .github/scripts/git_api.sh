@@ -4,7 +4,6 @@
 . "$(dirname $0)/helpers.sh"
 
 [ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
-
 [ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
 [ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
 [ -z "$GITHUB_HEAD_REF" ]         && GITHUB_HEAD_REF="main"
@@ -13,13 +12,11 @@
 [ -z "$GITHUB_WORKSPACE" ]        && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
 OWNER="$GITHUB_REPOSITORY_OWNER"
 REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
-
 kv_map=()
 IFS=$'\n'
 
 run_input() {
   printf "run_input: $@\n"
-
   QUERY_URL=""
   field_label=""
   WITH_AUTH=1
@@ -27,7 +24,6 @@ run_input() {
   WITH_DELETE=1
   TOPIC=repos
   SEARCH_STRING=''
-
   case $1 in
     artifacts)
       QUERY_BASE=actions/artifacts
@@ -100,7 +96,6 @@ run_input() {
       user_repo_names" | sort
       exit 1
       ;;
-
     labels)
       QUERY_BASE=labels
       ;;
@@ -112,7 +107,6 @@ run_input() {
       SEARCH_FIELD=id
       QUERY_BASE=labels
       ;;
-
     pull_request)
       QUERY_BASE=pulls/$ID
       ;;
@@ -133,11 +127,9 @@ run_input() {
     pull_request_merged)
       QUERY_BASE=pulls/ID/merge
       ;;
-
     pull_requests)
       QUERY_BASE=pulls
       ;;
-
     release)
       QUERY_BASE=releases/$ID
       ;;
@@ -158,11 +150,9 @@ run_input() {
       QUERY_BASE=releases/latest
       SEARCH_STRING='.tag_name'
       ;;
-
     tagged)
       QUERY_BASE=releases/tags/$TAG
       ;;
-
     repo_branches)
       QUERY_BASE=branches
       ;;
@@ -174,16 +164,13 @@ run_input() {
       QUERY_BASE=collaborators/$USER/permission
       WITH_AUTH=0
       ;;
-
     repo_contributors)
       QUERY_BASE=contributors
-      # WITH_AUTH=0
       ;;
     repo_contributor_names)
       QUERY_BASE=contributors
       SEARCH_FIELD=login
       ;;
-
     repo_languages)
       QUERY_BASE=languages
       ;;
@@ -191,7 +178,6 @@ run_input() {
       QUERY_BASE=languages
       SEARCH_STRING='keys | join("\n")'
       ;;
-
     repo_tags)
       QUERY_BASE=tags
       WITH_AUTH=0
@@ -204,7 +190,6 @@ run_input() {
       QUERY_BASE=topics
       WITH_AUTH=0
       ;;
-
     repo_workflow)
       QUERY_BASE=actions/workflows/$ID
       ;;
@@ -243,7 +228,6 @@ run_input() {
     repo_workflow_usage)
       QUERY_BASE=actions/workflows/$ID/timing
       ;;
-
     workflow_runs)
       QUERY_BASE=actions/workflows/$ID/runs
       ;;
@@ -259,7 +243,6 @@ run_input() {
       QUERY_BASE=actions/workflows/$ID/runs
       SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
       ;;
-
     delete_workflow_run)
       WITH_DELETE=0
       QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/actions/runs/$ID"
@@ -274,7 +257,6 @@ run_input() {
     workflow_run_jobs)
       QUERY_BASE=actions/runs/$ID/jobs
       ;;
-
     user_repos)
       TOPIC=users
       QUERY_BASE=repos
@@ -293,7 +275,6 @@ run_input() {
       exit 1
       ;;
   esac
-
   [ -z "$QUERY_URL" ] && QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
   [ ! -z "$SEARCH_FIELD" ] && WITH_SEARCH=0
   if [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ]; then
@@ -301,9 +282,7 @@ run_input() {
     # SEARCH_STRING='map(.[$field_name])'
     SEARCH_STRING='.[] | .[$field_name]'
   fi
-
   printf "QUERY_URL=%s\n" "$QUERY_URL"
-
   response=""
   if [ $WITH_DELETE -eq 0 ]; then
     response=$(curl \
@@ -329,7 +308,6 @@ run_input() {
         $QUERY_URL)
     fi
   fi
-
   output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   request_status=$((${request_status} + 0))
@@ -339,11 +317,8 @@ run_input() {
     printf "%s" "$response" | jq -r '.message'
     return 2
   fi
-
-
   printf "%s" "$output" | jq
   printf "REQUEST_STATUS=%d\n" $request_status
-
   if [ ! -z "$SEARCH_STRING" ]; then
     result=($(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING"))
     if [ ! -z "$field_label" ]; then
@@ -353,14 +328,11 @@ run_input() {
     fi
   fi
 }
-
 kv_map+=($(echo "OWNER=$OWNER"))
 kv_map+=($(echo "USER=$USER"))
 kv_map+=($(echo "REPO=$REPO"))
-
 write_result_set $(join_by , $(printf "%s\n" ${kv_map[@]})) ${name}_kv_store
 write_result_set $template ${name}_template
-
 request_status=0
 for cmd in $(echo "$template" | tr ',' '\n'); do
   log $cmd
@@ -369,6 +341,5 @@ for cmd in $(echo "$template" | tr ',' '\n'); do
   # echo -e "\nrequest_status: $request_status\n"
   # [ $request_status -ne 0 ] && break
 done
-
 before_exit
 exit $request_status
