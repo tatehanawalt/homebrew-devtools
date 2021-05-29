@@ -8,23 +8,32 @@ NC='\033[0m' # No Color
 Red='\033[0;31m'
 clr=$(printf %b $Red)
 nclr=$(printf %b $NC)
-# echo -e "\033[38;5;208mpeach\033[0;00m"
-ferpf_color=$(echo -e "\033[38;5;50m")
+ferpf_color=$(echo -e "\033[38;5;24m")
+# ferpf_color=$(echo -e "\033[38;5;13m")
+# ferpf_color=$(echo -e "\033[38;5;100m")
 alert_color=$(echo -e "\033[38;5;255m")
 pref_space='   ' # Used in doc gen
 lp='   '
-# printf "mypath:  %s\n" "$0"
-# printf "mypath:  %s\n"
-#  SCRIPTPATH="$(cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-# DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-# for ((i=0; i<=256; i++)); do nc=$(clfn $i) ferpf "$i\n"; done
+IN_LOG=0
+IN_CI=1
+[ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+HELPERS_LOG_TOPICS=()
+
+# env var template specified
+HAS_TEMPLATE=1
+if [ -z "$template" ]; then
+  [ ! -z "$1" ] && template="$1"
+  if [ ! -z "$template" ]; then
+    HAS_TEMPLATE=0
+  fi
+else
+  HAS_TEMPLATE=0
+fi
+
 
 clfn() {
   echo -e "\033[38;5;$1m"
 }
-
-# max_method_signature_width=$(($max_method_signature_width + ${#pref_space}))
-
 case_signatures() {
   signatures=$(sed -n '/case \$1 in/I,/esac/I{ s/#.*//; /^[[:space:]]*$/d; /(/d; p;}' $1)
   signatures=$(printf "%s\n" ${signatures[@]} | sed 's/^[[:space:]]*//g' | sed -e '2,$!d' -e '$d')
@@ -33,10 +42,6 @@ case_signatures() {
     grep -o '^.*[:alpha:].*[^)]' | \
     awk '{ gsub(/ /,""); print }' | \
     tr -s '')) # don't neeeed the tr but just for good measure
-
-  # printf "pref_space width: ${#pref_space}\n"
-  # printf "\n"
-  # printf "METHODS(%d):\n\n" ${#methods[@]}
 
   # This is a csv of the method signatures and the character length of the
   # longest method signature.
@@ -47,17 +52,14 @@ case_signatures() {
   # what we use to get values used by the other methods
   # method_bodies=()
 
-  # Does the body of the method flag the request params with --auth?
+  # Does the method body contain the --auth flag
   requires_auth=()
-
   # the paths added to the api url to make the http request
   method_paths=()
   max_request_path_width=0
-
   # fields are essentially parameters embedded in the request path
   path_fields=()
   path_fields_max_width=0
-
   # The method we use to make the web request (POST, PUT, DELETE, etc...)
   request_methods=()
   request_method_max_width=0
@@ -95,80 +97,78 @@ case_signatures() {
     [ ${#method_str} -gt $request_method_max_width ] && request_method_max_width=${#method_str}
   done
 
-
-  (( bar_width = (5 * ${#lp}) + $max_method_signature_width + $max_request_path_width + $path_fields_max_width + $request_method_max_width))
-
-  printf "${val}%s" divbar "%0.s-" {1..$bar_width}
-
   val="-"
-  div_bar=$(printf '=%.0s' {1..150})
+  div_bar=$(printf '=%.0s' {1..148} | sed 's/=/-/g')
+  div_wall=$(echo -e "\033[31m|\033[0m")
+  darker=$(echo -e "\033[31m|\235[0m")
 
-  printf "%s%s\n" $(val) $div_bar
+  div_bar=$(echo $div_bar |  sed "s/^/^/")
 
+  echo -e "\033[38;5;235m"
+
+  printf "%s%s\n" ${lp} $div_bar
   ferpf "%smethods:                    %d\n" "${lp}" ${#methods[@]}
   ferpf "%smethod_paths:               %d\n" "${lp}" ${#method_paths[@]}
   ferpf "%spath_fields:                %d\n" "${lp}" ${#path_fields[@]}
   ferpf "%srequires_auth:              %d\n" "${lp}" ${#requires_auth[@]}
   ferpf "%srequest_methods:            %d\n" "${lp}" ${#request_methods[@]}
-  printf "%s%s\n" "${lp}" $div_bar
+  ferpf "%s%s\n" "${lp}" $div_bar
   ferpf "%smax_method_signature_width: %d\n" "$lp" $max_method_signature_width
   ferpf "%smax_request_path_width:     %d\n" "$lp" $max_request_path_width
   ferpf "%spath_fields_max_width:      %d\n" "$lp" $path_fields_max_width
   ferpf "%srequest_method_max_width:   %d\n" "$lp" $request_method_max_width
-  printf "%s%s\n" "${lp}" $div_bar
+  ferpf "%s%s\n" "${lp}" $div_bar
+
+  brak_color=33
+  l_brak=$(echo -e "\033[38;5;${brak_color}m{${NC}")
+  r_brak=$(echo -e "\033[38;5;${brak_color}m}${NC}")
+
+  l_brak=$(printf "{%b" "\033[38;5;${brak_color}m")
+  printf -v r_brak "%b}" $NC
+
   for ((i=0; i<${#methods[@]}; i++)); do
     method="${methods[$i]}"
     req_path=${method_paths[$i]}
     path_fields=${path_fields[$i]}
+
+    # Method Signature
+    ferpf "${lp}$div_wall${lp}%-${max_method_signature_width}s${lp}" $method
     request_method=${request_methods[$i]}
-    ferpf "${lp}|${lp}%-${max_method_signature_width}s${lp}|" $method
-    ferpf "${lp}|${lp}%-${max_request_path_width}s${lp}|" $req_path
-    ferpf "${lp}|${lp}%-${path_fields_max_width}s${lp}|" $path_fields
-    ferpf "${lp}|${lp}%-${request_method_max_width}s${lp}|" $request_method
+    row_str=$(printf "${lp}$div_wall${lp}%-${max_request_path_width}s${lp}" $req_path)
+    row_str=$(echo $row_str | sed "s/}/$r_brak/g" | sed "s/{/$l_brak/g")
+
+    # Method Path
+    ferpf $row_str
+    #  ferpf "${lp}$div_wall${lp}%-${max_request_path_width}s${lp}" $req_path
+
+    # Fields
+    ferpf "${lp}$div_wall${lp}%-${path_fields_max_width}s${lp}" $path_fields
+
+    # Request Http method
+    ferpf "${lp}$div_wall${lp}%-${request_method_max_width}s${lp}$div_wall" $request_method
     ferpf "\n"
     # [ $(($i % 6)) -eq 5 ] && ferpf "\n"
     [ $(($i % 6)) -eq 5 ] && ferpf "%s%s\n" ${lp} ${div_bar}
   done
-  ferpf "\n"
+  ferpf "${lp}%s\n" $div_bar
+  echo
 }
-
-
-
 search_file() {
   case_signatures $1
 }
-
-
-
-IN_LOG=0
-IN_CI=1
-[ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-HELPERS_LOG_TOPICS=()
-
-# env var template specified
-HAS_TEMPLATE=1
-if [ -z "$template" ]; then
-  [ ! -z "$1" ] && template="$1"
-  if [ ! -z "$template" ]; then
-    HAS_TEMPLATE=0
-  fi
-else
-  HAS_TEMPLATE=0
-fi
-
 show_colors() {
   echo -en "\n   +  "
   for i in {0..35}; do
-  printf "%2b " $i
+  printf "%2b $i" $i
   done
   printf "\n\n %3b  " 0
   for i in {0..15}; do
-  echo -en "\033[48;5;${i}m  \033[m "
+  echo -en "\033[48;5;${i}m $i \033[m "
   done
   #for i in 16 52 88 124 160 196 232; do
   for i in {0..6}; do
   let "i = i*36 +16"
-  printf "\n\n %3b  " $i
+  printf "\n\n %3b $i " $i
   for j in {0..35}; do
   let "val = i+j"
   echo -en "\033[48;5;${val}m  \033[m "
@@ -177,14 +177,13 @@ show_colors() {
   echo -e "\n"
   exit 0
 }
-
-
 ferpf() {
   # [ -z "$nc" ] && printf "%b" $ferpf_color
   [ -z "$nc" ] && printf "%b" $ferpf_color || printf "%b" $nc
   printf $* 1>&2
   printf "%b" $nclr
 }
+
 
 # Call before exitiing mainly for summarizing results and activity
 before_exit() {
@@ -300,7 +299,6 @@ contains() {
   return 1
 }
 
-
 get_prefix() {
   printf "\t"
 }
@@ -326,7 +324,6 @@ log_result_set() {
   printf "$(get_prefix)%s\n" $(echo -e $1 | tr ',' '\n')
 }
 
-
 command_log_which() {
   printf "%s\t%s\n" $1 "$(which $1)"
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
@@ -347,7 +344,6 @@ write_result_set() {
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }
-
 
 print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
@@ -385,31 +381,7 @@ default_labels() {
   # CURRENT_LABELS
 }
 
-# for ((i=0; i<${#methods[@]}; i++)); do
-#     printf "%-${field_width}s|" $(printf "${pref_space}%s" ${methods[$i]})
-#     [ $(($i % 10)) -eq 7 ] && echo
-# done
-# for ((i=0; i<${#methods[@]}; i++)); do
-#   printf "%-${field_width}s|" $(printf "${pref_space}%s" ${methods[$i]})
-#   sed -n "/[[:space:]]$methods[$i])/I,/;;/I{ p;}" $1
-#   url=$(echo "$def" | sed '/#/d' | grep -o "request_url.*" | sed 's/^.*=//' | tr -d '"' | tr -d "'")
-#   method_paths+=$("$url")
-#   [ $(($i % 10)) -eq 7 ] && echo
-# done
-# return
-# printf "METHODS_CSV:\n\n%s\n" $methods_csv
-# for method in ${methods[@]}; do
-#   printf "%s:\n\n" $method
-#   def=$(sed -n "/[[:space:]]$method)/I,/;;/I{ p;}" $1)
-#   url=$(echo "$def" | sed '/#/d' | grep -o "request_url.*" | sed 's/^.*=//' | tr -d '"' | tr -d "'")
-#   printf "${pref_space}PATH=%s\n" "$url"
-#   fields=$(echo "$url" | tr '/' '\n' | grep -o "{.*" | sort)
-#   printf "${pref_space}FIELDS="
-#   printf "%s," $fields | sed 's/,$/\n/'
-#   method_str=$(echo "$def" | grep -o '\-\-method[^)]*' | sed 's/.*method//' | tr -d ' ')
-#   [ ! -z "$method_str" ] && printf "${pref_space}METHOD=%s\n" $method_str
-#   # auth_str=$(echo "$def" | grep -o '\-\-auth')
-#   # [ ! -z "$auth_str" ] && printf "${pref_space}AUTH=true\n"
-#   echo
-# done
-# return
+
+# (( bar_width = (5 * ${#lp}) + $max_method_signature_width + $max_request_path_width + $path_fields_max_width + $request_method_max_width))
+# printf "${val}%s" divbar "%0.s-" {1..$bar_width}
+# echo -e "\033[38;5;208mpeach\033[0;00m"

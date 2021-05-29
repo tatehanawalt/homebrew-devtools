@@ -1,11 +1,22 @@
 #!/bin/bash
 
 my_path=$(readlink $0)
-
 . $(dirname $my_path)/helpers.sh
 
+
+
+
+# echo -e "\033[38;5;81m { ${NC}"
+# for i in {0..256}; do
+#   echo $i
+#   ferpf_color=$(echo -e "\033[38;5;${i}m")
+#   ferpf "This is the color\n"
+# done
+# show_colors
+search_file $my_path
+
 # generate usage: uncomment the next block
-show_colors
+# search_file $1
 
 
 nc=$alert_color ferpf "\nUI text prints to stderr\n\n"
@@ -20,7 +31,7 @@ for arg in $@; do
   esac
 done
 
-[ $debug_mode -eq 0 ] && printf "debug_mode: %d\n" $debug_mode
+[ $debug_mode -eq 0 ] && ferpf "debug_mode: %d\n" $debug_mode
 
 
 usage() {
@@ -273,7 +284,6 @@ run_input() {
     echo "${results[@]:1}" | jq --arg field_name "$field_val" -r $search_string
   fi
 }
-
 ferpf "template:\n"
 ferpf "\t%s\n" ${template[@]}
 
@@ -290,8 +300,5 @@ for cmd in $(echo "$template" | tr ',' '\n'); do
   # echo -e "\nrequest_status: $request_status\n"
   # [ $request_status -ne 0 ] && break
 done
-
 before_exit
-
-
 exit $request_status
