@@ -12,7 +12,6 @@ nclr=$(printf %b $NC)
 ferpf_color=$(echo -e "\033[38;5;50m")
 alert_color=$(echo -e "\033[38;5;255m")
 
-
 # printf "mypath:  %s\n" "$0"
 # printf "mypath:  %s\n"
 #  SCRIPTPATH="$(cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
