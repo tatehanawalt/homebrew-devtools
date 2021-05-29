@@ -219,14 +219,8 @@ git_req() {
       req_url=$(echo "$req_url" | sed s/{repo}/$1/)
       ;;
     --url)
-      if [[ "$1" =~ ^/ ]]; then
-        write_error "git_req url invalid format. url must not start witha /. url=${1}"
-        exit 1
-      fi
-      if [ ! -z "$req_url" ]; then
-        write_error "Attempted to set req_url twice. this can only be done once."
-        exit 1
-      fi
+      [[ "$1" =~ ^/ ]] && write_error "git_req url invalid format. url must not start witha /. url=${1}" exit 1
+      [ ! -z "$req_url" ] && write_error "Attempted to set req_url twice. this can only be done once." && exit 1
       req_url="$1"
       ;;
     --user)
