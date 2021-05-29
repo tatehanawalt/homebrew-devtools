@@ -27,10 +27,10 @@ nclr=$(printf %b $NC)
 HELPERS_LOG_TOPICS=()
 IN_LOG=0
 IN_CI=1
-HAS_TEMPLATE=1
 [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 
 # env var template specified
+HAS_TEMPLATE=1
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
   if [ ! -z "$template" ]; then
@@ -82,6 +82,7 @@ contains() {
   done
   return 1
 }
+
 get_prefix() {
   printf "\t"
 }
@@ -192,9 +193,8 @@ git_req() {
     --auth)
       # TODO::
       # "Authorization: token $GITHUB_AUTH_TOKEN"
-      ;;
-    --debug)
-      debugging=0
+      printf "\n\nauthnot implemented in git_Req\n"
+      exit 1
       ;;
     --id)
       req_url=$(echo "$req_url" | sed s/{id}/$1/)
@@ -224,6 +224,10 @@ git_req() {
         write_error "git_req url invalid format. url must not start witha /. url=${1}"
         exit 1
       fi
+      if [ ! -z "$req_url" ]; then
+        write_error "Attempted to set req_url twice. this can only be done once."
+        exit 1
+      fi
       req_url="$1"
       ;;
     --user)
@@ -236,6 +240,7 @@ git_req() {
   esac
   shift
   done
+
   args+=(-s)
   args+=(-w)
   args+=("HTTPSTATUS:%{http_code}")
@@ -245,11 +250,19 @@ git_req() {
   fi
   args+=(-H)
   args+=("Accept: application/vnd.github.v3+json")
-  args+=("$(git_url)/$req_url")
 
 
-  # printf "\nargs:\n"
-  # printf "\t%s\n" ${args[@]}
+  request_url="https://api.github.com/$req_url"
+
+  [ $debug_mode -eq 0 ] && printf "request_url: 5s\n" ${request_url}
+
+  args+=("$request_url")
+
+
+  if [ $debug_mode -eq 0 ]; then
+    printf "\nargs:\n"
+    printf "\t%s\n" ${args[@]}
+  fi
 
 
   response=$(curl "${args[@]}")

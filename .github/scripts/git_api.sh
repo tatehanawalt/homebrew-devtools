@@ -1,27 +1,29 @@
 #!/bin/bash
 
-script_name=$(basename $0 | sed 's/\..*//')
 . "$(dirname $0)/helpers.sh"
 
 printf "\n%s params:\n" $script_name
 printf "\t%s\n" ${@}
 
-printf "debug_mode: %d\n" $debug_mode
+IFS=$'\n'
+
 # These are global args like enter debug and stuff
 for arg in $@; do
   case $arg in
     -d)
+      debug_mode=0
       ;;
   esac
   printf "arg: %s\n" $arg
 done
 
-exit
-
+[ $debug_mode -eq 0 ] && printf "debug_mode: %d\n" $debug_mode
 
 run_input() {
-  printf "run_input:\n"
-  printf "\t%s\n" ${@}
+  if [ $debug_mode -eq 0 ]; then
+    printf "run_input:\n"
+    printf "\t%s\n" ${@}
+  fi
 
   request_url=''
   depts=()
@@ -37,11 +39,11 @@ run_input() {
       args+=(--auth)
       ;;
     collaborator_names)
-      repo_url='repos/{owner}/{repo}/collaborators/{user}'
+      request_url='repos/{owner}/{repo}/collaborators/{user}'
       search_string='. | map(.login) | join(",")'
       ;;
     is_collaborator)
-      repo_url='repos/{owner}/{repo}/collaborators/{user}'
+      request_url='repos/{owner}/{repo}/collaborators/{user}'
       args+=(--auth)
       ;;
     help)
@@ -100,39 +102,40 @@ run_input() {
       exit 1
       ;;
     labels)
-      repo_url='repos/{owner}/{repo}/labels'
+      printf "\n\nlabels:\n\n"
+      request_url='repos/{owner}/{repo}/labels'
       ;;
     label_names)
-      repo_url='repos/{owner}/{repo}/labels'
+      request_url='repos/{owner}/{repo}/labels'
       search_string='. | map(.name) | join(",")'
       ;;
     label_ids)
-      repo_url='repos/{owner}/{repo}/labels'
+      request_url='repos/{owner}/{repo}/labels'
       search_string='. | map(.id) | join(",")'
       ;;
     pull_request)
-      repo_url='repos/{owner}/{repo}/pulls/{id}'
+      request_url='repos/{owner}/{repo}/pulls/{id}'
       ;;
     pull_request_labels)
-      repo_url='repos/{owner}/{repo}/pulls/{id}'
+      request_url='repos/{owner}/{repo}/pulls/{id}'
       write_error "todo - specify search string for .labels field"
       exit 1
       ;;
     pull_request_label_names)
-      repo_url='repos/{owner}/{repo}/pulls/{id}'
+      request_url='repos/{owner}/{repo}/pulls/{id}'
       search_string='[.labels[]] | map(.name) | join(",")'
       ;;
     pull_request_commits)
-      repo_url='repos/{owner}/{repo}/pulls/{id}/commits'
+      request_url='repos/{owner}/{repo}/pulls/{id}/commits'
       ;;
     pull_request_files)
-      repo_url='repos/{owner}/{repo}/pulls/{id}/files'
+      request_url='repos/{owner}/{repo}/pulls/{id}/files'
       ;;
     pull_request_merged)
-      repo_url='repos/{owner}/{repo}/pulls/{id}/merge'
+      request_url='repos/{owner}/{repo}/pulls/{id}/merge'
       ;;
     pull_requests) # ✔
-      repo_url='repos/{owner}/{repo}/pulls'
+      request_url='repos/{owner}/{repo}/pulls'
       ;;
     release)
       request_url='repos/{owner}/{repo}/releases/{release_id}'
@@ -279,23 +282,18 @@ run_input() {
   esac
 
   args+=(--url)
-  args+=($request_url)
+  args+=("$request_url")
   depts=($(echo "$request_url" | grep -o '{[[:alpha:]]*}' | grep -o '[^{][[:alpha:]]*[^}]'))
 
-  printf "DEPTS:\n\t%s\n" ${depts[@]}
+  [ $debug_mode -eq 0 ] && printf "DEPTS:\n\t%s\n" ${depts[@]}
 
   for dep in ${depts[@]}; do
     case $dep in
-      'owner')
-          args+=(--owner $GITHUB_REPOSITORY_OWNER)
-          ;;
-      'repo')
-          args+=(--repo $(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'))
-          ;;
-      'user')
-          args+=(--user tatehanawalt)
-        ;;
+      'owner') args+=(--owner $GITHUB_REPOSITORY_OWNER);;
+      'repo') args+=(--repo $(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'));;
+      'user') args+=(--user tatehanawalt);;
       *)
+        printf '\n\n'
         write_error "unrecognized dependency $dep\n"
         before_exit
         exit 1
@@ -303,25 +301,36 @@ run_input() {
     esac
   done
 
-  printf "args:\n"
-  printf "\t%s\n" ${args[@]}
-  git_req ${args[@]} && exit
+  if [ $debug_mode -eq 0 ]; then
+    printf "args:\n"
+    printf " • %s\n" ${args[@]}
+    git_req ${args[@]}
+    printf "\n\ngit_req exit_code=$?\n"
+    before_exit
+    exit 1
+  fi
 
   results=($(git_req ${args[@]}))
   exit_code=${results[0]}
+
   printf "exit_code: %d\n" $exit_code
   echo "${results[@]:1}" | jq
+
   if [ ! -z "$search_string" ]; then
     echo "${results[@]:1}" | jq --arg field_name "$field_val" -r $search_string
   fi
+
   before_exit
   exit 0
 }
 
 for cmd in $(echo "$template" | tr ',' '\n'); do
-  log $cmd
-  request_status=0
+  printf "cmd: %s\n" ${cmd}
   run_input $cmd
+
+  # log $cmd
+  # request_status=0
+  # run_input $cmd
   # echo -e "\nrequest_status: $request_status\n"
   # [ $request_status -ne 0 ] && break
 done
