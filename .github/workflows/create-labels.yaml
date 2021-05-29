@@ -47,14 +47,13 @@ jobs:
               git=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
               reference=EXISTING_LABELS,CHECK_CREATE_LABELS,KEYS_NOT_IN_SET
             '
-
       # For debugging and troubleshooting - introspective environment audit
-      - name: create_label
-        run: ./.github/scripts/create_labels.sh
-        shell: bash
-        env:
-          ADD_LABELS: "${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }},${{ steps.formula_data.outputs.FORMULA_NAMES }},${{ steps.diff.outputs.DIFF_ADD_LABEL_SET }}"
-          CURRENT_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
-          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CHECK_CREATE_LABELS: "${{ steps.keys_not_in_set.outputs.RESULT }}"
+      # - name: create_label
+      #   run: ./.github/scripts/create_labels.sh
+      #   shell: bash
+      #   env:
+      #     ADD_LABELS: "${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }},${{ steps.formula_data.outputs.FORMULA_NAMES }},${{ steps.diff.outputs.DIFF_ADD_LABEL_SET }}"
+      #     CURRENT_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
+      #     GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     CHECK_CREATE_LABELS: "${{ steps.keys_not_in_set.outputs.RESULT }}"
           # EXISTING_LABELS: "${{ steps.label_names.outputs.RESULT }}"

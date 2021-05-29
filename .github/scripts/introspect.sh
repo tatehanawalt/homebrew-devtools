@@ -113,12 +113,12 @@ formula_signatures() {
 }
 testfn() {
   IFS=$'\n'
-  printf "${Red}%s${Cyan}\n" $(echo "$1" | tr [[:lower:]] [[:upper:]])
+  printf "${Red}%s\n" $(echo "$1" | tr [[:lower:]] [[:upper:]])
   data=$($1)
-  printf "${Cyan}$(get_prefix)%s\n" $data
+  printf "$(get_prefix)%s\n" $data
   printf "${Red}%s\n" $(echo "${1}_CSV" | tr [[:lower:]] [[:upper:]])
   data_lcsv=$(join_by , $data)
-  printf "${Cyan}$(get_prefix)%s\n" $data_lcsv
+  printf "$(get_prefix)%s\n" $data_lcsv
   printf "${NC}"
   [ ! -z "$data_lcsv" ] && echo
 }

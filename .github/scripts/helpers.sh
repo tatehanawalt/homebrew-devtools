@@ -4,37 +4,35 @@ debug_mode=1
 write_out=1
 IFS=$'\n'
 max_field_len=0
-
-Black='\033[0;30m'
-DarkGray='\033[1;30m'
-Red='\033[0;31m'
-LightRed='\033[1;31m'
-Green='\033[0;32m'
-LightGreen='\033[1;32m'
-BrownOrange='\033[0;33m'
-Yellow='\033[1;33m'
-Blue='\033[0;34m'
-LightBlue='\033[1;34m'
-Purple='\033[0;35m'
-LightPurple='\033[1;35m'
-Cyan='\033[0;36m'
-LightCyan='\033[1;36m'
-LightGray='\033[0;37m'
-White='\033[1;37m'
 NC='\033[0m' # No Color
+Red='\033[0;31m'
 clr=$(printf %b $Red)
 nclr=$(printf %b $NC)
-HELPERS_LOG_TOPICS=()
 IN_LOG=0
 IN_CI=1
 [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+HELPERS_LOG_TOPICS=()
 
+
+# env var template specified
+HAS_TEMPLATE=1
+if [ -z "$template" ]; then
+  [ ! -z "$1" ] && template="$1"
+  if [ ! -z "$template" ]; then
+    HAS_TEMPLATE=0
+  fi
+else
+  HAS_TEMPLATE=0
+fi
+
+# Call before exitiing mainly for summarizing results and activity
 before_exit() {
   [ -z "$HELPERS_LOG_TOPICS" ] && return
   write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
   log
 }
 
+# Shared github api helper method
 git_req() {
   positional=()
   args=()
@@ -106,19 +104,6 @@ git_req() {
   printf "%s$IFS" ${results[@]}
 }
 
-
-
-# env var template specified
-HAS_TEMPLATE=1
-if [ -z "$template" ]; then
-  [ ! -z "$1" ] && template="$1"
-  if [ ! -z "$template" ]; then
-    HAS_TEMPLATE=0
-  fi
-else
-  HAS_TEMPLATE=0
-fi
-
 # CSV set helpers
 for_csv() {
   IFS=$'\n'
@@ -154,19 +139,14 @@ contains() {
   return 1
 }
 
+
 get_prefix() {
   printf "\t"
 }
-command_log_which() {
-  printf "%s\t%s\n" $1 "$(which $1)"
-  printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
-}
-
 write_error() {
   echo "::error::$1"
   printf "\n%b$1%b\n\n" "${Red}" "${NC}"
 }
-
 log() {
   [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
   if [ $IN_LOG -ne 0 ]; then
@@ -184,6 +164,12 @@ log() {
 log_result_set() {
   printf "$(get_prefix)%s\n" $(echo -e $1 | tr ',' '\n')
 }
+
+
+command_log_which() {
+  printf "%s\t%s\n" $1 "$(which $1)"
+  printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
+}
 write_result_set() {
   IFS=$'\n'
   result=$(echo -e "$1" | sed 's/"//g')
@@ -200,22 +186,7 @@ write_result_set() {
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }
-write_result_map() {
-  IFS=$'\n'
-  result=$(echo -e "$1" | sed 's/"//g')
-  [ -z "$result" ] && return 1
-  key=$2
-  [ -z "$key" ] && key="result"
-  key=$(echo $key | tr [[:lower:]] [[:upper:]])
-  log $key
-  log_result_set "$result" "$key"
-  result="${result//'%'/'%25'}"
-  result="${result//$'\n'/'%0A'}"
-  result="${result//$'\r'/'%0D'}"
-  printf "$key='$result'\n"
-  [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$3=$(echo -e $result)"
-  HELPERS_LOG_TOPICS+=($key)
-}
+
 
 print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1

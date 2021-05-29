@@ -1,6 +1,17 @@
 #!/bin/bash
 
+echo -e "\n\nThis is the git_api\n\n"
+
+
+echo -e "locoated: ${0}\n\n"
+
+
+
+exit 0
+
+
 . "$(dirname $0)/helpers.sh"
+
 
 # These are global args like enter debug and stuff
 for arg in $@; do
@@ -313,7 +324,6 @@ run_input() {
 for cmd in $(echo "$template" | tr ',' '\n'); do
   printf "cmd: %s\n" ${cmd}
   run_input $cmd
-
   # log $cmd
   # request_status=0
   # run_input $cmd
