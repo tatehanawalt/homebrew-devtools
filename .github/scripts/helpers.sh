@@ -1,8 +1,8 @@
 #!/bin/bash
 
 debug_mode=1
+write_out=1
 
-# IFS=$"\n"
 max_field_len=0
 Black='\033[0;30m'
 DarkGray='\033[1;30m'
@@ -21,7 +21,6 @@ LightCyan='\033[1;36m'
 LightGray='\033[0;37m'
 White='\033[1;37m'
 NC='\033[0m' # No Color
-# "\033[38;2;R;G;Bm"
 clr=$(printf %b $Red)
 nclr=$(printf %b $NC)
 HELPERS_LOG_TOPICS=()
@@ -182,7 +181,7 @@ default_labels() {
 }
 
 git_req() {
-  POSITIONAL=()
+  positional=()
   args=()
   req_url=""
   while [[ $# -gt 0 ]];
@@ -234,7 +233,7 @@ git_req() {
       req_url=$(echo "$req_url" | sed s/{user}/$1/)
       ;;
     *)
-      POSITIONAL+=("$key")
+      positional+=("$key")
       continue
       ;;
   esac
@@ -251,19 +250,13 @@ git_req() {
   args+=(-H)
   args+=("Accept: application/vnd.github.v3+json")
 
-
-  request_url="https://api.github.com/$req_url"
-
-  [ $debug_mode -eq 0 ] && printf "request_url: 5s\n" ${request_url}
-
-  args+=("$request_url")
-
+  [ $debug_mode -eq 0 ] && printf "request path: %s\n" ${req_url}
+  args+=("https://api.github.com/$req_url")
 
   if [ $debug_mode -eq 0 ]; then
     printf "\nargs:\n"
     printf "\t%s\n" ${args[@]}
   fi
-
 
   response=$(curl "${args[@]}")
   result=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
@@ -660,3 +653,7 @@ git_req() {
 # done
 # before_exit
 # exit 0
+# IFS=$"\n"
+
+# "\033[38;2;R;G;Bm"
+# request_url="https://api.github.com/$req_url"

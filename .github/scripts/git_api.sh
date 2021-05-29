@@ -2,19 +2,17 @@
 
 . "$(dirname $0)/helpers.sh"
 
-printf "\n%s params:\n" $script_name
-printf "\t%s\n" ${@}
+printf "params:\n"
+printf "%s\n" ${@}
 
 IFS=$'\n'
 
 # These are global args like enter debug and stuff
 for arg in $@; do
   case $arg in
-    -d)
-      debug_mode=0
-      ;;
+    -d) debug_mode=0;; # print debug logging
+    -o) write_out=0;;  # write the result to standard output
   esac
-  printf "arg: %s\n" $arg
 done
 
 [ $debug_mode -eq 0 ] && printf "debug_mode: %d\n" $debug_mode
@@ -22,11 +20,10 @@ done
 run_input() {
   if [ $debug_mode -eq 0 ]; then
     printf "run_input:\n"
-    printf "\t%s\n" ${@}
+    printf "%s\n" ${@}
   fi
 
-  request_url=''
-  depts=()
+  request_url='' # url request path
   args=()
   search_string=''
 
@@ -102,12 +99,12 @@ run_input() {
       exit 1
       ;;
     labels)
-      printf "\n\nlabels:\n\n"
       request_url='repos/{owner}/{repo}/labels'
       ;;
     label_names)
       request_url='repos/{owner}/{repo}/labels'
-      search_string='. | map(.name) | join(",")'
+      search_string='. | map(.name) | join (",")'
+      # search_string='. | map(.name) | join(",")'
       ;;
     label_ids)
       request_url='repos/{owner}/{repo}/labels'
@@ -284,16 +281,12 @@ run_input() {
   args+=(--url)
   args+=("$request_url")
   depts=($(echo "$request_url" | grep -o '{[[:alpha:]]*}' | grep -o '[^{][[:alpha:]]*[^}]'))
-
-  [ $debug_mode -eq 0 ] && printf "DEPTS:\n\t%s\n" ${depts[@]}
-
   for dep in ${depts[@]}; do
     case $dep in
       'owner') args+=(--owner $GITHUB_REPOSITORY_OWNER);;
       'repo') args+=(--repo $(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'));;
       'user') args+=(--user tatehanawalt);;
       *)
-        printf '\n\n'
         write_error "unrecognized dependency $dep\n"
         before_exit
         exit 1
@@ -305,21 +298,18 @@ run_input() {
     printf "args:\n"
     printf " • %s\n" ${args[@]}
     git_req ${args[@]}
-    printf "\n\ngit_req exit_code=$?\n"
+    printf "git_req exit_code=$?\n"
     before_exit
     exit 1
   fi
 
   results=($(git_req ${args[@]}))
   exit_code=${results[0]}
-
   printf "exit_code: %d\n" $exit_code
   echo "${results[@]:1}" | jq
-
   if [ ! -z "$search_string" ]; then
     echo "${results[@]:1}" | jq --arg field_name "$field_val" -r $search_string
   fi
-
   before_exit
   exit 0
 }
@@ -476,7 +466,6 @@ exit $request_status
 # WITH_AUTH=0
 # QUERY_BASE=contributors
 # SEARCH_FIELD=login
-# depts+=( \$OWNER \$REPO )
 # depts+=(REPO)
 # QUERY_BASE=contributors
 # QUERY_BASE=collaborators/$USER/permission
@@ -497,14 +486,7 @@ exit $request_status
 # printf "\n\n%s\n\n" ${results[@]}
 # printf "exit_code: %d\n" ${results[0]}
       # echo "$request_url"
-      # depts=($(echo "$request_url" | grep -o '$[[:alpha:]]*'))
-      # printf "depts: %d\n" ${#depts[@]}
-      # printf "\t%s\n" ${depts[@]}
       # printf "request_url: %s\n" $request_url
-      # for dep in ${depts[@]}; do
-      #   subval=$(eval "echo \"$dep\"")
-      #   request_url=$(echo $request_url | sed s/$dep/$subval/)
-      # done
       # printf "request_url: %s\n" $request_url
       # args=(--url)
       # args+=($request_url)
@@ -570,3 +552,5 @@ exit $request_status
 # OWNER="$GITHUB_REPOSITORY_OWNER"
 # REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
 # kv_map=()
+
+# [ $debug_mode -eq 0 ] && printf "DEPTS:\n\t%s\n" ${depts[@]}
