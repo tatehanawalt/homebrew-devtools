@@ -16,7 +16,7 @@ for row in $(echo "${DEFAULT_LABELS}" | jq -r '.[] | @base64'); do
   dataJson=$(echo ${row} | base64 --decode)
   IFS=$'\n'
   args=(--url)
-  args+=('repos/$OWNER/$REPO/labels')
+  args+=('repos/{owner}/{repo}/labels')
   args+=(--method)
   args+=(POST)
   args+=(--repo)

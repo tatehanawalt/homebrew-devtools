@@ -1,5 +1,7 @@
 #!/bin/bash
 
+debug_mode=1
+
 # IFS=$"\n"
 max_field_len=0
 Black='\033[0;30m'
@@ -178,44 +180,54 @@ default_labels() {
   # CURRENT_LABELS
 }
 
-#  git_post() {
 git_req() {
   POSITIONAL=()
-  post_args=()
+  args=()
   req_url=""
   while [[ $# -gt 0 ]];
   do
   key="$1"
   shift
   case $key in
+    --auth)
+      # TODO::
+      # "Authorization: token $GITHUB_AUTH_TOKEN"
+      ;;
     --debug)
       debugging=0
       ;;
     --id)
-      req_url=$(echo "$req_url" | sed s/\$ID/$1/)
+      req_url=$(echo "$req_url" | sed s/{id}/$1/)
       ;;
     --json-body)
-      post_args+=(-d)
-      post_args+=("$1")
+      args+=(-d)
+      args+=("$1")
       ;;
     --labels_csv)
       labels=("$(echo -e $1 | tr , '\n')")
       json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
-      post_args+=(-d)
-      post_args+=("$json_data")
+      args+=(-d)
+      args+=("$json_data")
       ;;
     --method)
-      post_args+=(-X)
-      post_args+=($1)
+      args+=(-X)
+      args+=($1)
       ;;
     --owner)
-      req_url=$(echo "$req_url" | sed s/\$OWNER/$1/)
+      req_url=$(echo "$req_url" | sed s/{owner}/$1/)
       ;;
     --repo)
-      req_url=$(echo "$req_url" | sed s/\$REPO/$1/)
+      req_url=$(echo "$req_url" | sed s/{repo}/$1/)
       ;;
     --url)
+      if [[ "$1" =~ ^/ ]]; then
+        write_error "git_req url invalid format. url must not start witha /. url=${1}"
+        exit 1
+      fi
       req_url="$1"
+      ;;
+    --user)
+      req_url=$(echo "$req_url" | sed s/{user}/$1/)
       ;;
     *)
       POSITIONAL+=("$key")
@@ -224,17 +236,23 @@ git_req() {
   esac
   shift
   done
-  post_args+=(-s)
-  post_args+=(-w)
-  post_args+=("HTTPSTATUS:%{http_code}")
+  args+=(-s)
+  args+=(-w)
+  args+=("HTTPSTATUS:%{http_code}")
   if [ ! -z "$GITHUB_AUTH_TOKEN" ]; then
-    post_args+=(-H)
-    post_args+=("Authorization: token $GITHUB_AUTH_TOKEN")
+    args+=(-H)
+    args+=("Authorization: token $GITHUB_AUTH_TOKEN")
   fi
-  post_args+=(-H)
-  post_args+=("Accept: application/vnd.github.v3+json")
-  post_args+=("$(git_url)/$req_url")
-  response=$(curl "${post_args[@]}")
+  args+=(-H)
+  args+=("Accept: application/vnd.github.v3+json")
+  args+=("$(git_url)/$req_url")
+
+
+  # printf "\nargs:\n"
+  # printf "\t%s\n" ${args[@]}
+
+
+  response=$(curl "${args[@]}")
   result=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   results=($request_status)
@@ -468,7 +486,7 @@ git_req() {
  # printf "request_status: %d\n" $request_status
  # labels=($(echo -e "$labels_csv" | tr ',' '\n'))
  # data=$(printf '%s\n' "${labels[@]}" | jq -R . | jq -s .)
- # post_args+=("$(printf '%s\n' "${labels[@]}" | jq -R . | jq -s .)")
+ # args+=("$(printf '%s\n' "${labels[@]}" | jq -R . | jq -s .)")
  # data=$(printf "[%s]" $(printf "\"%s\"," "${labels[@]}" | sed 's/,$//'))
  # IFS=$'\n'
  # printf "%s\n" ${@}
@@ -568,7 +586,7 @@ git_req() {
  #            specific=DIFF_FORMULA,LABELS,DIFF_FILES,DIFF_DIRS,PR_LABELS,PR_ID,PR_ADD_LABELS
  #            '
 
- # results=($(git_post ${args[@]}))
+ # results=($(args ${args[@]}))
  # printf "exit_code: %d\n" ${results[0]}
  # echo "${results[@]:1}" | jq
  # before_exit
