@@ -1,8 +1,10 @@
 #!/bin/bash
 
-my_path=$(readlink $0)
+my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
+if [ $CI -ne 0 ]; then
+  my_path=$(readlink $0)
+fi
 . $(dirname $my_path)/helpers.sh
-
 
 
 
