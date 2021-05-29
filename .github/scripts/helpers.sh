@@ -8,11 +8,25 @@ NC='\033[0m' # No Color
 Red='\033[0;31m'
 clr=$(printf %b $Red)
 nclr=$(printf %b $NC)
+# echo -e "\033[38;5;208mpeach\033[0;00m"
+ferpf_color=$(echo -e "\033[38;5;50m")
+alert_color=$(echo -e "\033[38;5;255m")
+
+
+# printf "mypath:  %s\n" "$0"
+# printf "mypath:  %s\n"
+#  SCRIPTPATH="$(cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+# DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# for ((i=0; i<=256; i++)); do nc=$(clfn $i) ferpf "$i\n"; done
+
+clfn() {
+  echo -e "\033[38;5;$1m"
+}
+
 IN_LOG=0
 IN_CI=1
 [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 HELPERS_LOG_TOPICS=()
-
 
 # env var template specified
 HAS_TEMPLATE=1
@@ -24,6 +38,36 @@ if [ -z "$template" ]; then
 else
   HAS_TEMPLATE=0
 fi
+
+show_colors() {
+  echo -en "\n   +  "
+  for i in {0..35}; do
+  printf "%2b " $i
+  done
+  printf "\n\n %3b  " 0
+  for i in {0..15}; do
+  echo -en "\033[48;5;${i}m  \033[m "
+  done
+  #for i in 16 52 88 124 160 196 232; do
+  for i in {0..6}; do
+  let "i = i*36 +16"
+  printf "\n\n %3b  " $i
+  for j in {0..35}; do
+  let "val = i+j"
+  echo -en "\033[48;5;${val}m  \033[m "
+  done
+  done
+  echo -e "\n"
+  exit 0
+}
+
+
+ferpf() {
+  # [ -z "$nc" ] && printf "%b" $ferpf_color
+  [ -z "$nc" ] && printf "%b" $ferpf_color || printf "%b" $nc
+  printf $* 1>&2
+  printf "%b" $nclr
+}
 
 # Call before exitiing mainly for summarizing results and activity
 before_exit() {

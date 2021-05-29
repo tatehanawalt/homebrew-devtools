@@ -1,17 +1,11 @@
 #!/bin/bash
 
-echo -e "\n\nThis is the git_api\n\n"
+. $(dirname $(readlink $0))/helpers.sh
+# . "$(dirname $0)/helpers.sh"
 
-
-echo -e "locoated: ${0}\n\n"
-
-
-
-exit 0
-
-
-. "$(dirname $0)/helpers.sh"
-
+nc=$alert_color ferpf "\nUI text prints to stderr\n\n"
+nc=$alert_color ferpf "supress by piping  stderr to /dev/null\n\n\n"
+nc=$(clfn 201) ferpf " $: git_api [ ... ] 2> /dev/null'\n\n\n"
 
 # These are global args like enter debug and stuff
 for arg in $@; do
@@ -28,11 +22,9 @@ run_input() {
     printf "run_input:\n"
     printf "%s\n" ${@}
   fi
-
   args=()
   request_url='' # url request path
   search_string=''
-
   case $1 in
     artifacts)
       request_url='repos/{owner}/{repo}/actions/artifacts'
@@ -287,7 +279,6 @@ run_input() {
   args+=(--url)
   args+=("$request_url")
   depts=($(echo "$request_url" | grep -o '{[[:alpha:]]*}' | grep -o '[^{][[:alpha:]]*[^}]'))
-
   for dep in ${depts[@]}; do
     case $dep in
       'owner') args+=(--owner $GITHUB_REPOSITORY_OWNER);;
@@ -300,30 +291,38 @@ run_input() {
         ;;
     esac
   done
-
+  ferpf "args:\n"
+  ferpf " • %s\n" ${args[@]}
+  ferpf "\n"
   if [ $debug_mode -eq 0 ]; then
-    printf "args:\n"
-    printf " • %s\n" ${args[@]}
     git_req ${args[@]}
-    printf "git_req exit_code=$?\n"
+
+    ferpf "exit_code=$?\n\n"
+
     before_exit
     exit 1
   fi
-
   results=($(git_req ${args[@]}))
   exit_code=${results[0]}
-  printf "exit_code: %d\n" $exit_code
+
+  ferpf "exit_code: %d\n\n" $exit_code
+
   [ $write_out -eq 0 ] && echo "${results[@]:1}" | jq
   if [ ! -z "$search_string" ]; then
     echo "${results[@]:1}" | jq --arg field_name "$field_val" -r $search_string
   fi
-  before_exit
-  exit 0
 }
 
+ferpf "template:\n"
+ferpf "\t%s\n" ${template[@]}
+ferpf "\n"
+
 for cmd in $(echo "$template" | tr ',' '\n'); do
-  printf "cmd: %s\n" ${cmd}
+  ferpf "command: %s\n" ${cmd}
+  ferpf "\n"
+
   run_input $cmd
+  ferpf "\n"
   # log $cmd
   # request_status=0
   # run_input $cmd
@@ -332,4 +331,6 @@ for cmd in $(echo "$template" | tr ',' '\n'); do
 done
 
 before_exit
+
+
 exit $request_status
