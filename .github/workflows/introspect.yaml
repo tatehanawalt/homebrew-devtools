@@ -15,6 +15,7 @@ jobs:
         env:
           template: label_names
 
+      # Get formula related metadata
       - name: formula_data
         id: formula_data
         run: ./.github/scripts/introspect.sh
