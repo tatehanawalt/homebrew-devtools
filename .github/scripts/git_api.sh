@@ -1,7 +1,12 @@
 #!/bin/bash
 
-. $(dirname $(readlink $0))/helpers.sh
-# . "$(dirname $0)/helpers.sh"
+my_path=$(readlink $0)
+
+. $(dirname $my_path)/helpers.sh
+
+# generate usage: uncomment the next block
+show_colors
+
 
 nc=$alert_color ferpf "\nUI text prints to stderr\n\n"
 nc=$alert_color ferpf "supress by piping  stderr to /dev/null\n\n\n"
@@ -17,14 +22,26 @@ done
 
 [ $debug_mode -eq 0 ] && printf "debug_mode: %d\n" $debug_mode
 
+
+usage() {
+  ferpf "giit_api.sh usage:\n"
+  # Generate usage by running the search_file function against the path
+  # to this file
+}
 run_input() {
+
+  # args forwarded to the git api helper method
+  args=()
+  # url request path
+  request_url=''
+  # a jq search expression for successful response data
+  search_string=''
+
   if [ $debug_mode -eq 0 ]; then
     printf "run_input:\n"
     printf "%s\n" ${@}
   fi
-  args=()
-  request_url='' # url request path
-  search_string=''
+
   case $1 in
     artifacts)
       request_url='repos/{owner}/{repo}/actions/artifacts'
@@ -41,68 +58,12 @@ run_input() {
       request_url='repos/{owner}/{repo}/collaborators/{user}'
       args+=(--auth)
       ;;
-    help)
-      echo "
-      artifacts
-      collaborators
-      collaborator_usernames
-      is_collaborator
-      labels
-      label_names
-      label_ids
-      pull_request
-      pull_request_labels
-      pull_request_label_names
-      pull_request_commits
-      pull_request_files
-      pull_request_merged
-      pull_requests
-      release
-      releases
-      release_assets
-      release_latest
-      release_latest_id
-      release_latest_tag
-      tagged
-      repo_branches
-      repo_branch_names
-      repo_user_permissions
-      repo_contributors
-      repo_contributor_names
-      repo_languages
-      repo_language_names
-      repo_tags
-      repo_teams
-      repo_topics
-      repo_workflow
-      repo_workflows
-      repo_workflow_id
-      repo_workflow_ids
-      repo_workflow_names
-      repo_workflow_runs
-      repo_workflow_completed_runs
-      repo_workflow_run_ids
-      repo_workflow_completed_run_ids
-      repo_workflow_usage
-      workflow_runs
-      workflow_completed_runs
-      workflow_run_ids
-      workflow_completed_run_ids
-      delete_workflow_run
-      workflow_run_numbers
-      workflow_run_job
-      workflow_run_jobs
-      user_repos
-      user_repo_names" | sort
-      exit 1
-      ;;
     labels)
       request_url='repos/{owner}/{repo}/labels'
       ;;
     label_names)
       request_url='repos/{owner}/{repo}/labels'
       search_string='. | map(.name) | join (",")'
-      # search_string='. | map(.name) | join(",")'
       ;;
     label_ids)
       request_url='repos/{owner}/{repo}/labels'
@@ -185,7 +146,7 @@ run_input() {
       search_string='keys | join("\n")'
       ;;
     repo_tags)
-      request_url='/repos/{owner}/{repo}/tags'
+      request_url='repos/{owner}/{repo}/tags'
       args+=(--auth)
       ;;
     repo_teams)
@@ -201,8 +162,10 @@ run_input() {
       ;;
     repo_workflow_id)
       request_url='repos/{owner}/{repo}/actions/workflows'
-      field_val=$NAME
-      search_string='.workflows | .[] | select(.name == $field_name) | .id'
+      # field_val=$NAME
+      write_error "todo - fix name dependency"
+      exit 1
+      # search_string='.workflows | .[] | select(.name == $field_name) | .id'
       ;;
     repo_workflows)
       request_url='repos/{owner}/{repo}/actions/workflows'
@@ -230,9 +193,9 @@ run_input() {
       request_url='repos/{owner}/{repo}/actions/runs'
       search_strinig='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
       ;;
-    #repo_workflow_usage)
-    #  QUERY_BASE=actions/workflows/$ID/timing
-    #  ;;
+    repo_workflow_usage)
+      request_url='repos/{owner}/{repo}/workflows/{id}/timing'
+      ;;
     workflow_runs)
       request_url='repos/{owner}/{repo}/workflows/{id}/runs'
       ;;
@@ -254,8 +217,8 @@ run_input() {
       args+=(--auth)
       ;;
     workflow_run_numbers)
-      QUERY_BASE=actions/workflows/$ID/runs
-      SEARCH_STRING='.workflow_runs | map(.run_number) | join(",")'
+      request_url='repos/{owner}/{repo}/actions/workflows/{id}/runs'
+      # SEARCH_STRING='.workflow_runs | map(.run_number) | join(",")'
       ;;
     workflow_run_job)
       request_url='repos/{owner}/{repo}/actions/jobs/{job_id}'
@@ -296,9 +259,7 @@ run_input() {
   ferpf "\n"
   if [ $debug_mode -eq 0 ]; then
     git_req ${args[@]}
-
     ferpf "exit_code=$?\n\n"
-
     before_exit
     exit 1
   fi
@@ -315,12 +276,12 @@ run_input() {
 
 ferpf "template:\n"
 ferpf "\t%s\n" ${template[@]}
-ferpf "\n"
 
+
+[ -z "$template" ] && usage
 for cmd in $(echo "$template" | tr ',' '\n'); do
   ferpf "command: %s\n" ${cmd}
   ferpf "\n"
-
   run_input $cmd
   ferpf "\n"
   # log $cmd

@@ -11,7 +11,8 @@ nclr=$(printf %b $NC)
 # echo -e "\033[38;5;208mpeach\033[0;00m"
 ferpf_color=$(echo -e "\033[38;5;50m")
 alert_color=$(echo -e "\033[38;5;255m")
-
+pref_space='   ' # Used in doc gen
+lp='   '
 # printf "mypath:  %s\n" "$0"
 # printf "mypath:  %s\n"
 #  SCRIPTPATH="$(cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
@@ -21,6 +22,123 @@ alert_color=$(echo -e "\033[38;5;255m")
 clfn() {
   echo -e "\033[38;5;$1m"
 }
+
+# max_method_signature_width=$(($max_method_signature_width + ${#pref_space}))
+
+case_signatures() {
+  signatures=$(sed -n '/case \$1 in/I,/esac/I{ s/#.*//; /^[[:space:]]*$/d; /(/d; p;}' $1)
+  signatures=$(printf "%s\n" ${signatures[@]} | sed 's/^[[:space:]]*//g' | sed -e '2,$!d' -e '$d')
+  methods=($(echo "${signatures[@]}" | \
+    grep -o '^.*)' | \
+    grep -o '^.*[:alpha:].*[^)]' | \
+    awk '{ gsub(/ /,""); print }' | \
+    tr -s '')) # don't neeeed the tr but just for good measure
+
+  # printf "pref_space width: ${#pref_space}\n"
+  # printf "\n"
+  # printf "METHODS(%d):\n\n" ${#methods[@]}
+
+  # This is a csv of the method signatures and the character length of the
+  # longest method signature.
+  methods_csv=$(join_by , ${methods[@]})
+  max_method_signature_width=$(csv_max_length $methods_csv)
+
+  # no widths stored - requires_auth is a zero or a one and the method_bodies is
+  # what we use to get values used by the other methods
+  # method_bodies=()
+
+  # Does the body of the method flag the request params with --auth?
+  requires_auth=()
+
+  # the paths added to the api url to make the http request
+  method_paths=()
+  max_request_path_width=0
+
+  # fields are essentially parameters embedded in the request path
+  path_fields=()
+  path_fields_max_width=0
+
+  # The method we use to make the web request (POST, PUT, DELETE, etc...)
+  request_methods=()
+  request_method_max_width=0
+
+
+  for ((i=0; i<${#methods[@]}; i++)); do
+    method="${methods[$i]}"
+    # printf "METHOD:\n%s\n" $method
+    def=$(sed -n "/[[:space:]]$method)/I,/;;/I{ p;}" $1)
+    # printf "DEF:\n%s\n" "${def[@]}"
+
+    # Request Path
+    request_path=$(echo "$def" | sed '/#/d' | grep -o "request_url.*" | sed 's/^.*=//' | tr -d '"' | tr -d "'")
+    method_paths+=("$request_path")
+    # printf "%s\n" $request_path
+    [ ${#request_path} -gt $max_request_path_width ] && max_request_path_width=${#request_path}
+
+    # fields which are value substitutions from the request path
+    fields=$(echo "$request_path" | tr '/' '\n' | grep -o "{.*" | sort)
+    field_str=$(printf "%s " $fields | sed 's/ *$//' | tr -d '{' | tr -d '}')
+    path_fields+=("${field_str[@]}")
+    [ ${#field_str} -gt $path_fields_max_width ] && path_fields_max_width=${#field_str}
+    # printf "%s\n" $field_str
+
+    # Request requires auth
+    auth_str=$(echo "$def" | grep -o '\-\-auth')
+    method_requires_auth=1
+    [ ! -z "$auth_str" ] && method_requires_auth=0
+    # printf "\trequires_auth: %d\n" $method_requires_auth
+    requires_auth+=($method_requires_auth)
+
+    # Request Method
+    method_str=$(echo "$def" | grep -o '\-\-method[^)]*' | sed 's/.*method//' | tr -d ' ')
+    request_methods+=("$method_str")
+    [ ${#method_str} -gt $request_method_max_width ] && request_method_max_width=${#method_str}
+  done
+
+
+  (( bar_width = (5 * ${#lp}) + $max_method_signature_width + $max_request_path_width + $path_fields_max_width + $request_method_max_width))
+
+  printf "${val}%s" divbar "%0.s-" {1..$bar_width}
+
+  val="-"
+  div_bar=$(printf '=%.0s' {1..150})
+
+  printf "%s%s\n" $(val) $div_bar
+
+  ferpf "%smethods:                    %d\n" "${lp}" ${#methods[@]}
+  ferpf "%smethod_paths:               %d\n" "${lp}" ${#method_paths[@]}
+  ferpf "%spath_fields:                %d\n" "${lp}" ${#path_fields[@]}
+  ferpf "%srequires_auth:              %d\n" "${lp}" ${#requires_auth[@]}
+  ferpf "%srequest_methods:            %d\n" "${lp}" ${#request_methods[@]}
+  printf "%s%s\n" "${lp}" $div_bar
+  ferpf "%smax_method_signature_width: %d\n" "$lp" $max_method_signature_width
+  ferpf "%smax_request_path_width:     %d\n" "$lp" $max_request_path_width
+  ferpf "%spath_fields_max_width:      %d\n" "$lp" $path_fields_max_width
+  ferpf "%srequest_method_max_width:   %d\n" "$lp" $request_method_max_width
+  printf "%s%s\n" "${lp}" $div_bar
+  for ((i=0; i<${#methods[@]}; i++)); do
+    method="${methods[$i]}"
+    req_path=${method_paths[$i]}
+    path_fields=${path_fields[$i]}
+    request_method=${request_methods[$i]}
+    ferpf "${lp}|${lp}%-${max_method_signature_width}s${lp}|" $method
+    ferpf "${lp}|${lp}%-${max_request_path_width}s${lp}|" $req_path
+    ferpf "${lp}|${lp}%-${path_fields_max_width}s${lp}|" $path_fields
+    ferpf "${lp}|${lp}%-${request_method_max_width}s${lp}|" $request_method
+    ferpf "\n"
+    # [ $(($i % 6)) -eq 5 ] && ferpf "\n"
+    [ $(($i % 6)) -eq 5 ] && ferpf "%s%s\n" ${lp} ${div_bar}
+  done
+  ferpf "\n"
+}
+
+
+
+search_file() {
+  case_signatures $1
+}
+
+
 
 IN_LOG=0
 IN_CI=1
@@ -158,7 +276,7 @@ csv_max_length() {
   IFS=$'\n'
   max_field_len=0
   for field in $(printf $1 | tr ',' '\n'); do
-    [ ${#field} -gt $max_field_len ] && max_field_len=$((${#field} + 1))
+    [ ${#field} -gt $max_field_len ] && max_field_len=$((${#field}))
   done
   echo "$max_field_len"
 }
@@ -266,3 +384,32 @@ default_labels() {
   # DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq --arg name "$name" '. | . + [{"name": "demo1", "description": "demo description", "color": "F28E1C"}]')
   # CURRENT_LABELS
 }
+
+# for ((i=0; i<${#methods[@]}; i++)); do
+#     printf "%-${field_width}s|" $(printf "${pref_space}%s" ${methods[$i]})
+#     [ $(($i % 10)) -eq 7 ] && echo
+# done
+# for ((i=0; i<${#methods[@]}; i++)); do
+#   printf "%-${field_width}s|" $(printf "${pref_space}%s" ${methods[$i]})
+#   sed -n "/[[:space:]]$methods[$i])/I,/;;/I{ p;}" $1
+#   url=$(echo "$def" | sed '/#/d' | grep -o "request_url.*" | sed 's/^.*=//' | tr -d '"' | tr -d "'")
+#   method_paths+=$("$url")
+#   [ $(($i % 10)) -eq 7 ] && echo
+# done
+# return
+# printf "METHODS_CSV:\n\n%s\n" $methods_csv
+# for method in ${methods[@]}; do
+#   printf "%s:\n\n" $method
+#   def=$(sed -n "/[[:space:]]$method)/I,/;;/I{ p;}" $1)
+#   url=$(echo "$def" | sed '/#/d' | grep -o "request_url.*" | sed 's/^.*=//' | tr -d '"' | tr -d "'")
+#   printf "${pref_space}PATH=%s\n" "$url"
+#   fields=$(echo "$url" | tr '/' '\n' | grep -o "{.*" | sort)
+#   printf "${pref_space}FIELDS="
+#   printf "%s," $fields | sed 's/,$/\n/'
+#   method_str=$(echo "$def" | grep -o '\-\-method[^)]*' | sed 's/.*method//' | tr -d ' ')
+#   [ ! -z "$method_str" ] && printf "${pref_space}METHOD=%s\n" $method_str
+#   # auth_str=$(echo "$def" | grep -o '\-\-auth')
+#   # [ ! -z "$auth_str" ] && printf "${pref_space}AUTH=true\n"
+#   echo
+# done
+# return

@@ -1,7 +1,6 @@
 #compdef git_api
 
 #!/usr/bin/env zsh
-
 # zsh completions - add path of this dir to fpath
 # For me, that looks like:
 #
@@ -14,79 +13,72 @@
 
 local state
 local -a cmpl_values=();
-# cmpl_values+=('artifacts')
+
+
+
+
+
 
 cmpl_values+=('labels:label json')
 cmpl_values+=('label_names:label names')
 cmpl_values+=('label_ids:label ids')
 
-cmpl_values+=('pull_request:description here')
-cmpl_values+=('pull_request_labels:pull_request')
-cmpl_values+=('pull_request_label_names:pull_request')
-cmpl_values+=('pull_request_commits:pull_request')
-cmpl_values+=('pull_request_files:pull_request')
-cmpl_values+=('pull_request_merged:pull_request')
-cmpl_values+=('pull_requests:pull_request')
-
-cmpl_values+=('release:releases')
-cmpl_values+=('releases:releases')
-cmpl_values+=('release_assets:releases')
-cmpl_values+=('release_latest:releases')
-cmpl_values+=('release_latest_id:releases')
-cmpl_values+=('release_latest_tag:releases')
-
-
-cmpl_values+=('tagged:description here')
-
-cmpl_values+=('repo_branches:branch')
-cmpl_values+=('repo_branch_names:branch')
-
-cmpl_values+=('repo_languages:repo')
-cmpl_values+=('repo_language_names:repo')
-cmpl_values+=('repo_tags:repo')
-cmpl_values+=('repo_teams:repo')
-cmpl_values+=('repo_topics:repo')
-
-cmpl_values+=('repo_workflow:workflows (repo specific!)')
-cmpl_values+=('repo_workflows:workflows (repo specific!)')
-cmpl_values+=('repo_workflow_id:workflows (repo specific!)')
-cmpl_values+=('repo_workflow_ids:workflows (repo specific!)')
-cmpl_values+=('repo_workflow_names:workflows (repo specific!)')
-cmpl_values+=('repo_workflow_runs:workflows (repo specific!)')
-cmpl_values+=('repo_workflow_completed_runs:workflows (repo specific!)')
-cmpl_values+=('repo_workflow_run_ids:workflows (repo specific!)')
-cmpl_values+=('repo_workflow_completed_run_ids:workflows (repo specific!)')
-cmpl_values+=('repo_workflow_usage:workflows (repo specific!)')
-
-cmpl_values+=('workflow_runs:workflows')
-cmpl_values+=('workflow_completed_runs:workflows')
-cmpl_values+=('workflow_run_ids:workflows')
-cmpl_values+=('workflow_completed_run_ids:workflows')
-cmpl_values+=('delete_workflow_run:workflows')
-cmpl_values+=('workflow_run_numbers:workflows')
-cmpl_values+=('workflow_run_job:workflows')
-cmpl_values+=('workflow_run_jobs:workflows')
-
-cmpl_values+=('collaborators:users')
-cmpl_values+=('collaborator_usernames:users')
-cmpl_values+=('is_collaborator:users')
-cmpl_values+=('user_repos:users')
-cmpl_values+=('user_repo_names:users')
-cmpl_values+=('repo_user_permissions:users')
-cmpl_values+=('repo_contributors:users')
-cmpl_values+=('repo_contributor_names:users')
 
 _arguments -C '1:commands:->cmnds'
-
 case $state in
   cmnds)
     _describe -t cmpl_values 'git_api commands' cmpl_values && ret=0
     ;;
 esac
-
-
 ret=0
 
+# cmpl_values+=('pull_request:description here')
+# cmpl_values+=('pull_request_labels:pull_request')
+# cmpl_values+=('pull_request_label_names:pull_request')
+# cmpl_values+=('pull_request_commits:pull_request')
+# cmpl_values+=('pull_request_files:pull_request')
+# cmpl_values+=('pull_request_merged:pull_request')
+# cmpl_values+=('pull_requests:pull_request')
+# cmpl_values+=('release:releases')
+# cmpl_values+=('releases:releases')
+# cmpl_values+=('release_assets:releases')
+# cmpl_values+=('release_latest:releases')
+# cmpl_values+=('release_latest_id:releases')
+# cmpl_values+=('release_latest_tag:releases')
+# cmpl_values+=('tagged:description here')
+# cmpl_values+=('repo_branches:branch')
+# cmpl_values+=('repo_branch_names:branch')
+# cmpl_values+=('repo_languages:repo')
+# cmpl_values+=('repo_language_names:repo')
+# cmpl_values+=('repo_tags:repo')
+# cmpl_values+=('repo_teams:repo')
+# cmpl_values+=('repo_topics:repo')
+# cmpl_values+=('repo_workflow:workflows (repo specific!)')
+# cmpl_values+=('repo_workflows:workflows (repo specific!)')
+# cmpl_values+=('repo_workflow_id:workflows (repo specific!)')
+# cmpl_values+=('repo_workflow_ids:workflows (repo specific!)')
+# cmpl_values+=('repo_workflow_names:workflows (repo specific!)')
+# cmpl_values+=('repo_workflow_runs:workflows (repo specific!)')
+# cmpl_values+=('repo_workflow_completed_runs:workflows (repo specific!)')
+# cmpl_values+=('repo_workflow_run_ids:workflows (repo specific!)')
+# cmpl_values+=('repo_workflow_completed_run_ids:workflows (repo specific!)')
+# cmpl_values+=('repo_workflow_usage:workflows (repo specific!)')
+# cmpl_values+=('workflow_runs:workflows')
+# cmpl_values+=('workflow_completed_runs:workflows')
+# cmpl_values+=('workflow_run_ids:workflows')
+# cmpl_values+=('workflow_completed_run_ids:workflows')
+# cmpl_values+=('delete_workflow_run:workflows')
+# cmpl_values+=('workflow_run_numbers:workflows')
+# cmpl_values+=('workflow_run_job:workflows')
+# cmpl_values+=('workflow_run_jobs:workflows')
+# cmpl_values+=('collaborators:users')
+# cmpl_values+=('collaborator_usernames:users')
+# cmpl_values+=('is_collaborator:users')
+# cmpl_values+=('user_repos:users')
+# cmpl_values+=('user_repo_names:users')
+# cmpl_values+=('repo_user_permissions:users')
+# cmpl_values+=('repo_contributors:users')
+# cmpl_values+=('repo_contributor_names:users')
 
 
 # case '$state' in
