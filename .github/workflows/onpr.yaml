@@ -47,6 +47,7 @@ jobs:
               action=${{ steps.action_data.outputs.OUTPUTS }}
               diff=${{ steps.diff.outputs.OUTPUTS }}
               '
+
       # Actually attach labels to the pr
       - id: label_pr
         name: label_pr
