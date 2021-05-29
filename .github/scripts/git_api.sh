@@ -2,11 +2,6 @@
 
 . "$(dirname $0)/helpers.sh"
 
-printf "params:\n"
-printf "%s\n" ${@}
-
-IFS=$'\n'
-
 # These are global args like enter debug and stuff
 for arg in $@; do
   case $arg in
@@ -306,7 +301,7 @@ run_input() {
   results=($(git_req ${args[@]}))
   exit_code=${results[0]}
   printf "exit_code: %d\n" $exit_code
-  echo "${results[@]:1}" | jq
+  [ $write_out -eq 0 ] && echo "${results[@]:1}" | jq
   if [ ! -z "$search_string" ]; then
     echo "${results[@]:1}" | jq --arg field_name "$field_val" -r $search_string
   fi

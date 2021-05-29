@@ -2,6 +2,7 @@
 
 debug_mode=1
 write_out=1
+IFS=$'\n'
 
 max_field_len=0
 Black='\033[0;30m'
@@ -190,10 +191,8 @@ git_req() {
   shift
   case $key in
     --auth)
-      # TODO::
-      # "Authorization: token $GITHUB_AUTH_TOKEN"
-      printf "\n\nauthnot implemented in git_Req\n"
-      exit 1
+      # TODO:: "Authorization: token $GITHUB_AUTH_TOKEN"
+      write_error "auth not implemented in git_Req\n" && exit 1
       ;;
     --id)
       req_url=$(echo "$req_url" | sed s/{id}/$1/)
@@ -233,25 +232,20 @@ git_req() {
   esac
   shift
   done
+  args+=( -s -w "HTTPSTATUS:%{http_code}" )
 
-  args+=(-s)
-  args+=(-w)
-  args+=("HTTPSTATUS:%{http_code}")
+  # add an auth token
   if [ ! -z "$GITHUB_AUTH_TOKEN" ]; then
-    args+=(-H)
-    args+=("Authorization: token $GITHUB_AUTH_TOKEN")
+    args+=( -H "Authorization: token $GITHUB_AUTH_TOKEN" )
   fi
-  args+=(-H)
-  args+=("Accept: application/vnd.github.v3+json")
 
+  args+=( -H "Accept: application/vnd.github.v3+json" )
   [ $debug_mode -eq 0 ] && printf "request path: %s\n" ${req_url}
   args+=("https://api.github.com/$req_url")
-
   if [ $debug_mode -eq 0 ]; then
     printf "\nargs:\n"
     printf "\t%s\n" ${args[@]}
   fi
-
   response=$(curl "${args[@]}")
   result=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
