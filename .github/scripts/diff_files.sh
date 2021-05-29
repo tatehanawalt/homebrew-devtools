@@ -112,7 +112,6 @@ for ext in ${diff_ext[@]}; do
       ;;
     *)
       write_error "$(basename $0) Unhandled Extension $ext - line $LINENO"
-      exit 1
       ;;
   esac
 done
