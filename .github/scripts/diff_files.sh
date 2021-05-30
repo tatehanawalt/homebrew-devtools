@@ -79,50 +79,20 @@ done
 for ext in ${diff_ext[@]};
 do
 case $ext in
-  c)
-    printf "c\n"
-    add_label_set+=( "c" )
-    ;;
-  cpp)
-    printf "c++\n"
-    add_label_set+=( "cpp" )
-    ;;
-  json)
-    printf "json\n"
-    add_label_set+=( "json" )
-    ;;
-  md)
-    printf "markdown\n"
-    add_label_set+=( "documentation" )
-    add_label_set+=( "markdown" )
-    ;;
-  py)
-    printf "python\n"
-    add_label_set+=( "python" )
-    ;;
-  rb)
-    printf "ruby\n"
-    add_label_set+=( "ruby" )
-    ;;
-  sh)
-    printf "shell\n"
-    add_label_set+=( "shell" )
-    ;;
-  svg)
-    printf "svg - leave this for now...\n"
-    ;;
-  yaml)
-    printf "yaml\n"
-    add_label_set+=( "yaml" )
-    ;;
+  c)    add_label_set+=(c);;
+  cpp)  add_label_set+=(cpp);;
+  json) add_label_set+=(json);;
+  md)   add_label_set+=( documentation markdown );;
+  py)   add_label_set+=(python);;
+  rb)   add_label_set+=(ruby);;
+  sh)   add_label_set+=(shell) ;;
+  svg)  printf "svg - leave this for now...\n" ;;
+  yaml) add_label_set+=(yaml) ;;
   yml)
-    printf "yml\n"
-    add_label_set+=( "yaml" )
+    add_label_set+=(yaml)
     echo "::warning file=$(basename $0),line=$LINENO::Encountered a yml file... $(basename $0):$LINENO"
     ;;
-  *)
-    write_error "$(basename $0) Unhandled Extension $ext - line $LINENO"
-    ;;
+  *) write_error "$(basename $0) Unhandled Extension $ext - line $LINENO" ;;
 esac
 done
 
