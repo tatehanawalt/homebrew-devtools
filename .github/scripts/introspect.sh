@@ -1,10 +1,6 @@
 #!/bin/bash
 
 my_path=$0
-# my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
-# if [ "$CI" != "true" ]; then
-#   my_path=$(readlink $0)
-# fi
 . $(dirname $my_path)/helpers.sh
 
 # Introspection generates / parses data related to the contents of the
@@ -205,3 +201,8 @@ esac
 
 before_exit
 exit 0
+
+# my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
+# if [ "$CI" != "true" ]; then
+#   my_path=$(readlink $0)
+# fi
