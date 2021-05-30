@@ -1,40 +1,10 @@
 #!/bin/bash
 
 my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
-if [ $CI -ne 0 ]; then
+if [ "$CI" != "true" ]; then
   my_path=$(readlink $0)
 fi
 . $(dirname $my_path)/helpers.sh
-
-
-
-# echo -e "\033[38;5;81m { ${NC}"
-# for i in {0..256}; do
-#   echo $i
-#   ferpf_color=$(echo -e "\033[38;5;${i}m")
-#   ferpf "This is the color\n"
-# done
-# show_colors
-search_file $my_path
-
-# generate usage: uncomment the next block
-# search_file $1
-
-
-nc=$alert_color ferpf "\nUI text prints to stderr\n\n"
-nc=$alert_color ferpf "supress by piping  stderr to /dev/null\n\n\n"
-nc=$(clfn 201) ferpf " $: git_api [ ... ] 2> /dev/null'\n\n\n"
-
-# These are global args like enter debug and stuff
-for arg in $@; do
-  case $arg in
-    -d) debug_mode=0;; # print debug logging
-    -o) write_out=0;;  # write the result to standard output
-  esac
-done
-
-[ $debug_mode -eq 0 ] && ferpf "debug_mode: %d\n" $debug_mode
-
 
 usage() {
   ferpf "giit_api.sh usage:\n"
@@ -42,7 +12,6 @@ usage() {
   # to this file
 }
 run_input() {
-
   # args forwarded to the git api helper method
   args=()
   # url request path
@@ -286,9 +255,14 @@ run_input() {
     echo "${results[@]:1}" | jq --arg field_name "$field_val" -r $search_string
   fi
 }
-ferpf "template:\n"
-ferpf "\t%s\n" ${template[@]}
 
+
+
+
+in_ci
+
+
+exit 0
 
 [ -z "$template" ] && usage
 for cmd in $(echo "$template" | tr ',' '\n'); do

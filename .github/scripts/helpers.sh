@@ -1,24 +1,58 @@
 #!/bin/bash
 
-debug_mode=1
-write_out=1
+helpers_start_time=$(date +%s)
 IFS=$'\n'
-max_field_len=0
-NC='\033[0m' # No Color
-Red='\033[0;31m'
-clr=$(printf %b $Red)
-nclr=$(printf %b $NC)
-ferpf_color=$(echo -e "\033[38;5;24m")
-# ferpf_color=$(echo -e "\033[38;5;13m")
-# ferpf_color=$(echo -e "\033[38;5;100m")
-alert_color=$(echo -e "\033[38;5;255m")
-pref_space='   ' # Used in doc gen
-lp='   '
-IN_LOG=0
-IN_CI=1
-[ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-HELPERS_LOG_TOPICS=()
+silent_mode=1
+debug_mode=1
+debug() {
+  if [ -z "$debug_mode" ];
+  then
+    return 1
+  fi
+  if [ $debug_mode -eq 0 ];
+  then
+    return 0
+  fi
+  return 1
+}
 
+# Parse args for silent, debug etc...
+for arg in $@; do
+  case $arg in
+    # Print debug logging
+    -d) debug_mode=0;;
+    # silent mode - disables output (including debug messages)
+    -s)
+      silent_mode=0
+      eval "exec 2> /dev/null"
+      ;;
+  esac
+done
+
+max_field_len=0
+
+# Specify Colors
+noc=$(echo -en '\033[0m')
+red=$(echo -en '\033[0;31m')
+blue_navy=$(echo -en '\033[38;5;25m')
+blue=$(echo -en '\033[38;5;33m')
+dark_grey=$(echo -en '\033[38;5;235m')
+# Assign colors
+alert_color=$(echo -en "\033[38;5;255m")
+error_color=$red
+log_color=$blue_navy
+ferpf_color=$dark_grey
+decorate_color=$noc
+field_color=$blue
+
+
+lp=' '
+table_indent=''
+print_debug_header=1
+
+# IN_CI=1
+# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+HELPERS_LOG_TOPICS=()
 # env var template specified
 HAS_TEMPLATE=1
 if [ -z "$template" ]; then
@@ -30,12 +64,11 @@ else
   HAS_TEMPLATE=0
 fi
 
-
-clfn() {
-  echo -e "\033[38;5;$1m"
-}
 case_signatures() {
-  signatures=$(sed -n '/case \$1 in/I,/esac/I{ s/#.*//; /^[[:space:]]*$/d; /(/d; p;}' $1)
+  div_bar=$(printf '=%.0s' {1..122} | sed 's/=/-/g' | sed "s/^/$decorate_color/")
+  div_wall=$(echo -e "$decorate_color|$ferpf_color")
+  function_body=$(sed -n '/^run_input/I,/^}/I{ p;}' $1)
+  signatures=$(echo "$function_body" | sed -n '/case \$1 in/I,/esac/I{ s/#.*//; /^[[:space:]]*$/d; /(/d; p;}')
   signatures=$(printf "%s\n" ${signatures[@]} | sed 's/^[[:space:]]*//g' | sed -e '2,$!d' -e '$d')
   methods=($(echo "${signatures[@]}" | \
     grep -o '^.*)' | \
@@ -48,142 +81,180 @@ case_signatures() {
   methods_csv=$(join_by , ${methods[@]})
   max_method_signature_width=$(csv_max_length $methods_csv)
 
-  # no widths stored - requires_auth is a zero or a one and the method_bodies is
-  # what we use to get values used by the other methods
-  # method_bodies=()
+  method_paths=()             # the paths added to the api url to make the http request
+  max_request_path_width=0    # max width of any path used
+  path_fields=()              # fields are essentially parameters embedded in the request path
+  path_fields_max_width=0     # max width of field set
+  request_methods=()          # The method we use to make the web request (POST, PUT, DELETE, etc...)
+  request_method_max_width=0  # max width of any request method
+  requires_auth=()            # Does the method body contain the --auth flag
 
-  # Does the method body contain the --auth flag
-  requires_auth=()
-  # the paths added to the api url to make the http request
-  method_paths=()
-  max_request_path_width=0
-  # fields are essentially parameters embedded in the request path
-  path_fields=()
-  path_fields_max_width=0
-  # The method we use to make the web request (POST, PUT, DELETE, etc...)
-  request_methods=()
-  request_method_max_width=0
-
-
-  for ((i=0; i<${#methods[@]}; i++)); do
+  for ((i=0; i<${#methods[@]}; i++));
+  do
     method="${methods[$i]}"
-    # printf "METHOD:\n%s\n" $method
     def=$(sed -n "/[[:space:]]$method)/I,/;;/I{ p;}" $1)
-    # printf "DEF:\n%s\n" "${def[@]}"
-
     # Request Path
     request_path=$(echo "$def" | sed '/#/d' | grep -o "request_url.*" | sed 's/^.*=//' | tr -d '"' | tr -d "'")
     method_paths+=("$request_path")
-    # printf "%s\n" $request_path
     [ ${#request_path} -gt $max_request_path_width ] && max_request_path_width=${#request_path}
-
     # fields which are value substitutions from the request path
     fields=$(echo "$request_path" | tr '/' '\n' | grep -o "{.*" | sort)
     field_str=$(printf "%s " $fields | sed 's/ *$//' | tr -d '{' | tr -d '}')
     path_fields+=("${field_str[@]}")
     [ ${#field_str} -gt $path_fields_max_width ] && path_fields_max_width=${#field_str}
-    # printf "%s\n" $field_str
-
     # Request requires auth
     auth_str=$(echo "$def" | grep -o '\-\-auth')
     method_requires_auth=1
     [ ! -z "$auth_str" ] && method_requires_auth=0
-    # printf "\trequires_auth: %d\n" $method_requires_auth
     requires_auth+=($method_requires_auth)
-
     # Request Method
     method_str=$(echo "$def" | grep -o '\-\-method[^)]*' | sed 's/.*method//' | tr -d ' ')
+    [ -z "$method_str" ] && printf -v method_str "GET"
     request_methods+=("$method_str")
     [ ${#method_str} -gt $request_method_max_width ] && request_method_max_width=${#method_str}
   done
 
-  val="-"
-  div_bar=$(printf '=%.0s' {1..148} | sed 's/=/-/g')
-  div_wall=$(echo -e "\033[31m|\033[0m")
-  darker=$(echo -e "\033[31m|\235[0m")
+  ferpf "%s%s\n" "$table_indent" "$div_bar"
+  ferpf "%smethods:                    %d\n" "$table_indent" ${#methods[@]}
+  ferpf "%smethod_paths:               %d\n" "$table_indent" ${#method_paths[@]}
+  ferpf "%spath_fields:                %d\n" "$table_indent" ${#path_fields[@]}
+  ferpf "%srequires_auth:              %d\n" "$table_indent" ${#requires_auth[@]}
+  ferpf "%srequest_methods:            %d\n" "$table_indent" ${#request_methods[@]}
+  ferpf "%s%s\n" "$table_indent" $div_bar
+  ferpf "%smax_method_signature_width: %d\n" "$table_indent" $max_method_signature_width
+  ferpf "%smax_request_path_width:     %d\n" "$table_indent" $max_request_path_width
+  ferpf "%spath_fields_max_width:      %d\n" "$table_indent" $path_fields_max_width
+  ferpf "%srequest_method_max_width:   %d\n" "$table_indent" $request_method_max_width
 
-  div_bar=$(echo $div_bar |  sed "s/^/^/")
-
-  echo -e "\033[38;5;235m"
-
-  printf "%s%s\n" ${lp} $div_bar
-  ferpf "%smethods:                    %d\n" "${lp}" ${#methods[@]}
-  ferpf "%smethod_paths:               %d\n" "${lp}" ${#method_paths[@]}
-  ferpf "%spath_fields:                %d\n" "${lp}" ${#path_fields[@]}
-  ferpf "%srequires_auth:              %d\n" "${lp}" ${#requires_auth[@]}
-  ferpf "%srequest_methods:            %d\n" "${lp}" ${#request_methods[@]}
-  ferpf "%s%s\n" "${lp}" $div_bar
-  ferpf "%smax_method_signature_width: %d\n" "$lp" $max_method_signature_width
-  ferpf "%smax_request_path_width:     %d\n" "$lp" $max_request_path_width
-  ferpf "%spath_fields_max_width:      %d\n" "$lp" $path_fields_max_width
-  ferpf "%srequest_method_max_width:   %d\n" "$lp" $request_method_max_width
-  ferpf "%s%s\n" "${lp}" $div_bar
-
-  brak_color=33
-  l_brak=$(echo -e "\033[38;5;${brak_color}m{${NC}")
-  r_brak=$(echo -e "\033[38;5;${brak_color}m}${NC}")
-
-  l_brak=$(printf "{%b" "\033[38;5;${brak_color}m")
-  printf -v r_brak "%b}" $NC
-
+  # First horizontal bar of the table
+  ferpf "%s%s\n" "$table_indent" "$div_bar"
   for ((i=0; i<${#methods[@]}; i++)); do
+    # Get table column values
     method="${methods[$i]}"
     req_path=${method_paths[$i]}
     path_fields=${path_fields[$i]}
-
-    # Method Signature
-    ferpf "${lp}$div_wall${lp}%-${max_method_signature_width}s${lp}" $method
     request_method=${request_methods[$i]}
-    row_str=$(printf "${lp}$div_wall${lp}%-${max_request_path_width}s${lp}" $req_path)
-    row_str=$(echo $row_str | sed "s/}/$r_brak/g" | sed "s/{/$l_brak/g")
-
-    # Method Path
-    ferpf $row_str
-    #  ferpf "${lp}$div_wall${lp}%-${max_request_path_width}s${lp}" $req_path
-
-    # Fields
-    ferpf "${lp}$div_wall${lp}%-${path_fields_max_width}s${lp}" $path_fields
-
-    # Request Http method
-    ferpf "${lp}$div_wall${lp}%-${request_method_max_width}s${lp}$div_wall" $request_method
-    ferpf "\n"
-    # [ $(($i % 6)) -eq 5 ] && ferpf "\n"
-    [ $(($i % 6)) -eq 5 ] && ferpf "%s%s\n" ${lp} ${div_bar}
+    # Format table row column values
+    printf -v sig_row "%s%-${max_method_signature_width}s%s" "$lp" "$method" "$lp"
+    printf -v path_row "%s%-${max_request_path_width}s%s" "$lp" "$req_path" "$lp"
+    printf -v fields_row "%s%-${path_fields_max_width}s%s" "$lp" "$path_fields" "$lp"
+    printf -v request_method_row "%s%-${request_method_max_width}s%s" "$lp" "$request_method" "$lp"
+    # Row substitutions (highlighting)
+    path_row=$(echo $path_row | sed "s/}/$ferpf_color}/g" | sed "s/{/{$field_color/g")
+    # Table row offset indent (set above, not here)
+    ferpf "%s" "$table_indent"
+    # Print the actual row
+    #ferpf "%s" "$div_wall"          # Table Row Entrypoint
+    ferpf "%s" "${sig_row}"          # Method Signature
+    ferpf "%s" "$div_wall"           # Vertical Divider
+    ferpf "%s" "${path_row}"         # Request Path
+    ferpf "%s" "$div_wall"           # Vertical Divider
+    ferpf "%s" "$fields_row"         # Fields
+    ferpf "%s" "$div_wall"           # Vertical Divider
+    ferpf "%s" "$request_method_row" # Request Method
+    #ferpf "%s" "$div_wall"          # Vertical Divider
+    ferpf "\n"                       # End of row
+    # Split the table for readability
+    #[ $(($i % 6)) -eq 5 ] && ferpf "%s%s\n" "$lp" "$div_bar"
   done
-  ferpf "${lp}%s\n" $div_bar
-  echo
+  # Last horizontal bar in the table
+  ferpf "%s%s\n\n" "$table_indent" "$div_bar"
 }
 search_file() {
   case_signatures $1
 }
+
+
+ferpf() {
+  if [ ${#@} -lt 1 ]; then
+    echo 1>&2
+    return
+  fi
+  # [ -z "$nc" ] && printf "%b" $ferpf_color
+  # printf "%b" $ferpf_color &>/dev/null
+  # [ -z "$nc" ] || printf "%b" $nc
+  printf $* 1>&2
+  #printf $* 1>&2
+  # printf "$noc"
+}
+
+set_fg() {
+  if [ $1 -eq -1 ]; then
+    echo -en '\033[0m'
+  else
+    echo -en "\033[38;5;${1}m"
+  fi
+}
+set_bg() {
+  if [ $1 -eq -1 ]; then
+    echo -en '\033[0m'
+  else
+    echo -en "\033[48;5;${1}m"
+  fi
+}
+pallette() {
+  for i in {0..255}; do
+    i_rem=$(expr $i % 10)
+    [ $i_rem -eq 0 ] && printf "$table_indent"
+    set_bg $i
+    printf "%s\t" "$i"
+    set_bg -1
+    [ $i_rem -eq 9 ] && echo
+  done
+  echo -e "\n"
+  for i in {0..255}; do
+    i_rem=$(expr $i % 10)
+    [ $i_rem -eq 0 ] && printf "$table_indent"
+    set_fg $i
+    printf "%s\t" "$i $@"
+    set_fg -1
+    [ $i_rem -eq 9 ] && echo
+  done
+  # printf -v blank " %.0s" {1..${#msg}}
+  # echo "width: ${#msg}\n"
+  # echo "width: ${#msg}\n"
+  # printf -v msg "$index$@"
+  # set_fg $i
+  # echo -en $msg
+  # set_fg -1
+  # echo -en $msg
+  # set_bg $i
+  # set_fg 255
+  # echo -en $msg
+  # set_fg 0
+  # echo -en $msg
+  # set_bg -1
+  # | fmt -c -w $COLUMNS
+
+  set_fg -1
+  set_bg -1
+  echo
+}
 show_colors() {
   echo -en "\n   +  "
-  for i in {0..35}; do
+  for i in {0..35};
+  do
   printf "%2b $i" $i
   done
   printf "\n\n %3b  " 0
-  for i in {0..15}; do
+  for i in {0..15};
+  do
   echo -en "\033[48;5;${i}m $i \033[m "
   done
   #for i in 16 52 88 124 160 196 232; do
-  for i in {0..6}; do
+  for i in {0..6};
+  do
   let "i = i*36 +16"
   printf "\n\n %3b $i " $i
-  for j in {0..35}; do
-  let "val = i+j"
-  echo -en "\033[48;5;${val}m  \033[m "
-  done
+    for j in {0..35};
+    do
+    let "val = i+j"
+    echo -en "\033[48;5;${val}m  \033[m "
+    done
   done
   echo -e "\n"
   exit 0
 }
-ferpf() {
-  # [ -z "$nc" ] && printf "%b" $ferpf_color
-  [ -z "$nc" ] && printf "%b" $ferpf_color || printf "%b" $nc
-  printf $* 1>&2
-  printf "%b" $nclr
-}
-
 
 # Call before exitiing mainly for summarizing results and activity
 before_exit() {
@@ -302,23 +373,25 @@ contains() {
 get_prefix() {
   printf "\t"
 }
+
 write_error() {
+  echo -en $error_color
   echo "::error::$1"
-  printf "\n%b$1%b\n\n" "${Red}" "${NC}"
+  echo -en $noc
+  # printf "$noc\n"
 }
 log() {
-  [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-  if [ $IN_LOG -ne 0 ]; then
-    [ $IN_CI -eq 0 ] && echo "::endgroup::"
+  echo -en "$log_color"
+  [ -z $in_log ] && in_log=0
+  if [ $in_log -ne 0 ]; then
+    echo "::endgroup::"
   fi
-  IN_LOG=0
+  in_log=0
   if [ ! -z "$1" ]; then
     group=$(echo $1 | tr [[:lower:]] [[:upper:]])
-    [ $IN_CI -eq 0 ] && echo "::group::$group"
-    [ $IN_CI -eq 1 ] && printf "${Blue}$group:${NC}\n"
-    IN_LOG=1
+    echo "::group::${group}"
+    in_log=1
   fi
-  return 0
 }
 log_result_set() {
   printf "$(get_prefix)%s\n" $(echo -e $1 | tr ',' '\n')
@@ -336,7 +409,9 @@ write_result_set() {
   [ -z "$key" ] && key="result"
   key=$(echo $key | tr [[:lower:]] [[:upper:]])
   log $key
-  log_result_set "$result" "$key"
+
+  printf "$(get_prefix)%s\n" $(echo -e "$result" | tr ',' '\n')
+
   result="${result//'%'/'%25'}"
   result="${result//$'\n'/'%0A'}"
   result="${result//$'\r'/'%0D'}"
@@ -344,7 +419,6 @@ write_result_set() {
   [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }
-
 print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
 }
@@ -361,7 +435,7 @@ print_field_table() {
     lbl_clr=''
     if [[ "$field" =~ .*\=.* ]]; then
       lbl_clr=$Yellow
-      field=$(echo $field | tr [[:lower:]] [[:upper:]] | sed "s/^/$clr/" | sed "s/=/=$nclr/" )
+      field=$(echo $field | tr [[:lower:]] [[:upper:]] | sed "s/^/$clr/" )
       # field=$(echo $field | sed "s/\=/$( printf %b ${NC} )\=/ )")
       # field=$(echo $field | sed s/$/$(printf %b $NC)$/)
     fi
@@ -381,7 +455,51 @@ default_labels() {
   # CURRENT_LABELS
 }
 
+in_ci() {
+  [ -z "$CI" ] && return 1
+  [ "$CI" = "true" ] && return 0
+  return 1
+}
 
-# (( bar_width = (5 * ${#lp}) + $max_method_signature_width + $max_request_path_width + $path_fields_max_width + $request_method_max_width))
-# printf "${val}%s" divbar "%0.s-" {1..$bar_width}
-# echo -e "\033[38;5;208mpeach\033[0;00m"
+if debug; then
+  [ $silent_mode -eq 1 ] && echo -en "\033c\n"
+  echo -e "DEBUG MODE:" | tr -s ' ' | fmt -c -w $(tput cols) 1>&2
+  ferpf "${table_indent}UI text prints to stderr\n" | tr -s ' ' | fmt -c -w $(tput cols)
+  ferpf '\tsupress by piping stderr to /dev/null\n' | tr -s ' ' | fmt -c -w $(tput cols)
+  ferpf '\t$: git_api 2> /dev/null\n'
+  ferpf '\t$: git_api 2> /dev/null\n'
+  echo 1>&2
+  echo -e "args: ${#@}" 1>&2
+  for ((i=0; i<${#@}; i++)); do
+    echo -e "  $i - ${!i}" 1>&2
+  done
+  echo 1>&2
+  echo -e "helpers: $0" 1>&2
+  echo -e "my_path: $(readlink $0)" 1>&2
+  echo -e "helpers_start_time: ${helpers_start_time}" 1>&2
+  echo -e "debug_mode=$debug_mode" 1>&2
+  echo -e "silent_mode=$silent_mode" 1>&2
+  echo 1>&2
+  [ $silent_mode -eq 1 ] && pallette 'clr' && echo 1>&2
+  write_error "test error"
+  echo 1>&2
+  log sample_log
+  ferpf
+  search_file $my_path
+  ferpf
+fi
+
+
+
+
+# # These are global args like enter debug and stuff
+# for arg in $@; do
+#   echo -e "arg: $arg"
+#   case $arg in
+#     -d) debug_mode=0;; # print debug logging
+#     -o) write_out=0;;  # write the result to standard output
+#     # silent mode - disables output (including debug messages)
+#     # -s) eval "exec 2> /dev/null";;
+#   esac
+# done
+# [ $debug_mode -eq 0 ] && ferpf "debug_mode: %d\n" $debug_mode
