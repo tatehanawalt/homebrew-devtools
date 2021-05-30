@@ -10,12 +10,9 @@ args+=(POST)
 
 
 labels=($(echo -e $LABELS | tr , '\n'))
-
-# echo "labels:"
-# printf "\t%s\n" ${labels[@]}
-
-json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
-
+echo "labels:"
+printf "\t%s\n" ${labels[@]}
+json_data=$(printf "%s\n" "${labels[@]}" | jq -R . | jq -s .)
 printf "\njson_data\n${json_data}\n"
 
 args+=(--json-body)
@@ -33,7 +30,6 @@ git_req ${args[@]}
 
 before_exit
 exit 0
-
 
 # args+=(--labels_csv)
 # args+=("$LABELS")
