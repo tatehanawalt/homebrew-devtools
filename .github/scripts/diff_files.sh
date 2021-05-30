@@ -46,9 +46,18 @@ diff_dirs=($(for_csv "$diff_files_csv" dirname | sort -u))
 diff_dirs_csv=$(join_by , ${diff_dirs[@]})
 write_result_set "$diff_dirs_csv" DIFF_DIRS
 
-diff_ext=($(printf "%s\n" ${diff_files[@]} | sed 's/.*\.//' | sed 's/.*\///' | sort -u))
-diff_ext_csv=$(join_by , ${diff_ext[@]})
-write_result_set "$diff_ext_csv" DIFF_EXT
+diff_ext=()
+for f_path in ${diff_files[@]}; do
+
+  filename="${f_path##*/}"
+
+  echo "filename: $filename"
+
+  # dext=$(echo )
+#   diff_ext=($(printf "%s\n" ${diff_files[@]} | sed 's/.*\.//' | sed 's/.*\///' | sort -u))
+#  diff_ext_csv=$(join_by , ${diff_ext[@]})
+#  write_result_set "$diff_ext_csv" DIFF_EXT
+done
 
 for dir_path in ${diff_dirs[@]};
 do
