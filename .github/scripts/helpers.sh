@@ -382,7 +382,7 @@ write_error() {
 log() {
   debug && printf 'called_from_function: %s\n' "$(caller)"
 
-  echo -en "$log_color"
+  # echo -en "$log_color"
   [ -z $in_log ] && in_log=0
   if [ $in_log -ne 0 ]; then
     echo "::endgroup::"
