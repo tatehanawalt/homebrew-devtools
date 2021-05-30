@@ -51,7 +51,7 @@ for f_path in ${diff_files[@]}; do
 
   filename="${f_path##*/}"
 
-  ext_name="$(echo $filename | sed 's/.*\.//')"
+  ext_name="$(echo $filename | sed 's/^[^\.]*//')"
 
   echo "filename: $filename"
   echo "ext_name: $ext_name"
