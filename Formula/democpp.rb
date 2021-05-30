@@ -18,19 +18,19 @@ class Democpp < Formula
     url 'https://github.com/tatehanawalt/.th_sys.git', branch: 'main'
   end
   stable do
-    url "https://github.com/tatehanawalt/th_sys/releases/download/0.0.4/democpp.tar.gz", :using => :curl
-    sha256 "2719c4a119584c0de398fc6408d1813473b6e436da9d7b706446a5b37dc96857"
+    url 'https://github.com/tatehanawalt/th_sys/releases/download/0.0.4/democpp.tar.gz', :using => :curl
+    sha256 '2719c4a119584c0de398fc6408d1813473b6e436da9d7b706446a5b37dc96857'
   end
   def install
-      if build.head?
-          cd "democpp" do
-              system "clang++", "main.cpp", "-o", "main"
-              bin.install "main" => "democpp"
-              man1.install "doc/man/democpp.1"
-          end
-          return
+    if build.head?
+      cd 'democpp' do
+          system "clang++", "main.cpp", "-o", "main"
+          bin.install 'main' => 'democpp'
+          man1.install "doc/man/democpp.1"
       end
-      bin.install "main" => "democpp"
-      man1.install "doc/man/democpp.1"
+      return
+    end
+    bin.install 'main' => 'democpp'
+    man1.install 'doc/man/democpp.1'
   end
 end
