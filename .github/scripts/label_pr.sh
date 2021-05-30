@@ -7,8 +7,14 @@ args=(--url)
 args+=('repos/{owner}/{repo}/issues/{id}/labels')
 args+=(--method)
 args+=(POST)
-args+=(--labels_csv)
-args+=("$LABELS")
+
+
+labels=("$(echo -e $1 | tr , '\n')")
+json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
+
+
+args+=(--json-body)
+args+=("$json_data")
 args+=(--id)
 args+=($ID)
 args+=(--repo)
@@ -17,13 +23,16 @@ args+=(--owner)
 args+=($GITHUB_REPOSITORY_OWNER)
 
 printf "\t%s\n" ${args[@]}
-# results=($(args ${args[@]}))
-# printf "exit_code: %d\n" ${results[0]}
-# echo "${results[@]:1}" | jq
 
 git_req ${args[@]}
 
 before_exit
 exit 0
 
+
+# args+=(--labels_csv)
+# args+=("$LABELS")
+# results=($(args ${args[@]}))
+# printf "exit_code: %d\n" ${results[0]}
+# echo "${results[@]:1}" | jq
 # IFS=$'\n'

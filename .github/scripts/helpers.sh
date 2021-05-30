@@ -289,12 +289,12 @@ git_req() {
       args+=(-d)
       args+=("$1")
       ;;
-    --labels_csv)
-      labels=("$(echo -e $1 | tr , '\n')")
-      json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
-      args+=(-d)
-      args+=("$json_data")
-      ;;
+#    --labels_csv)
+#      labels=("$(echo -e $1 | tr , '\n')")
+#      json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
+#      args+=(-d)
+#      args+=("$json_data")
+#      ;;
     --method)
       args+=(-X)
       args+=($1)
