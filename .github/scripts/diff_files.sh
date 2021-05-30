@@ -54,46 +54,36 @@ done
 diff_ext=($(printf "%s\n" ${diff_ext[@]} | sort -u))
 write_result_set $(join_by , ${diff_ext[@]}) diff_ext
 
-for dir_path in ${diff_dirs[@]};
-do
-case $dir_path in
-  Formula)
-    add_label_set+=( brew )
-    ;;
-  .github/workflows | .github/scripts)
-    add_label_set+=( action )
-    ;;
-esac
+for dir_path in ${diff_dirs[@]}; do
+  case $dir_path in
+    Formula) add_label_set+=( brew );;
+    .github/workflows | .github/scripts) add_label_set+=( action );;
+  esac
 done
 
-for fname in ${diff_files[@]};
-do
-case $fname in
-  Formula/*.rb)
-    add_label_set+=( formula )
-    add_label_set+=( $(basename $fname | sed 's/\..*//') )
-    ;;
-esac
+for fname in ${diff_files[@]}; do
+  case $fname in
+    Formula/*.rb) add_label_set+=( formula brew $(basename $fname | sed 's/\..*//') );;
+  esac
 done
 
-for ext in ${diff_ext[@]};
-do
-case $ext in
-  c)    add_label_set+=(c);;
-  cpp)  add_label_set+=(cpp);;
-  json) add_label_set+=(json);;
-  md)   add_label_set+=( documentation markdown );;
-  py)   add_label_set+=(python);;
-  rb)   add_label_set+=(ruby);;
-  sh)   add_label_set+=(shell) ;;
-  svg)  printf "svg - leave this for now...\n" ;;
-  yaml) add_label_set+=(yaml) ;;
-  yml)
-    add_label_set+=(yaml)
-    echo "::warning file=$(basename $0),line=$LINENO::Encountered a yml file... $(basename $0):$LINENO"
-    ;;
-  *) write_error "$(basename $0) Unhandled Extension $ext - line $LINENO" ;;
-esac
+for ext in ${diff_ext[@]}; do
+  case $ext in
+    c)    add_label_set+=(c);;
+    cpp)  add_label_set+=(cpp);;
+    json) add_label_set+=(json);;
+    md)   add_label_set+=( documentation markdown );;
+    py)   add_label_set+=(python);;
+    rb)   add_label_set+=(ruby);;
+    sh)   add_label_set+=(shell) ;;
+    svg)  printf "svg - leave this for now...\n" ;;
+    yaml) add_label_set+=(yaml) ;;
+    yml)
+      add_label_set+=(yaml)
+      echo "::warning file=$(basename $0),line=$LINENO::Encountered a yml file... $(basename $0):$LINENO"
+      ;;
+    *) write_error "$(basename $0) Unhandled Extension $ext - line $LINENO" ;;
+  esac
 done
 
 diff_add_label_set=($(printf "%s\n" ${add_label_set[@]} | sed 's/.*\.//' | sort -u))
