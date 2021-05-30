@@ -54,10 +54,13 @@ for f_path in ${diff_files[@]}; do
   ext_name="$(echo $filename | sed 's/^[^\.]*//')"
 
   echo "filename: $filename"
-  [ -z "$ext_name" ] && continue
   [ "$ext_name" = "$filename" ] && continue
-  echo "ext_name: $ext_name"
 
+  ext_name="$(echo $ext_name | sed 's/^\.//')"
+  [ -z "$ext_name" ] && continue
+
+  echo "ext_name: $ext_name"
+  diff_ext+=("$ext_name")
   # dext=$(echo )
 #   diff_ext=($(printf "%s\n" ${diff_files[@]} | sed 's/.*\.//' | sed 's/.*\///' | sort -u))
 #  diff_ext_csv=$(join_by , ${diff_ext[@]})
