@@ -50,8 +50,9 @@ diff_ext=()
 for f_path in ${diff_files[@]}; do
 
   filename="${f_path##*/}"
-
+  ext_name="$(echo $filename | sed s/.*\.//)"
   echo "filename: $filename"
+  echo "ext_name: $ext_name"
 
   # dext=$(echo )
 #   diff_ext=($(printf "%s\n" ${diff_files[@]} | sed 's/.*\.//' | sed 's/.*\///' | sort -u))
