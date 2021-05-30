@@ -326,14 +326,10 @@ git_req() {
     printf "\t%s\n" ${args[@]}
   fi
 
-
-
-  echo "req_url: $req_url"
-  echo "args:"
-  printf "\t%s\n" ${args[@]}
-  echo
-
-
+  # echo "req_url: $req_url"
+  # echo "args:"
+  # printf "\t%s\n" ${args[@]}
+  # echo
 
   response=$(curl "${args[@]}")
   result=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
