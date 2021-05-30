@@ -9,7 +9,11 @@ args+=(--method)
 args+=(POST)
 
 
-labels=("$(echo -e $1 | tr , '\n' | sed 's/^brew$/:beer:/')")
+labels=($(echo -e $1 | tr , '\n'))
+
+echo "labels:"
+printf "\t%s\n" ${labels[@]}
+
 json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
 
 
