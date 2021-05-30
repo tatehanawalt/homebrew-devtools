@@ -1,33 +1,33 @@
 name: pr-formula-tag
 on: [pull_request]
 jobs:
+  assignAuthor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: samspills/assign-pr-to-author@v1.0
+        if: github.event_name == 'pull_request' && github.event.action == 'opened'
+        with:
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
+
   inspect-env:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
-      # Get id of this pr
-      - name: action_data
+      - name: action_data # Get id of this pr
         id: action_data
         run: ./.github/scripts/action_data.sh
         shell: bash
-
-      # Set of existing label names
-      - name: label_names
+      - name: label_names # Set of existing label names
         id: label_names
         run: ./.github/scripts/git_api.sh
         shell: bash
         env:
           template: label_names
-
-      # Get various different changes from the commits making up the pr
-      - id: diff
+      - id: diff          # Get various different changes from the commits making up the pr
         name: diff
         run: ./.github/scripts/diff_files.sh
         shell: bash
-
-      # show the environment variables and inspect diffs/outputs
-      - name: show_env
+      - name: show_env    # show the environment variables and inspect diffs/outputs
         run: ./.github/scripts/introspect.sh
         shell: bash
         env:
@@ -47,9 +47,7 @@ jobs:
               action=${{ steps.action_data.outputs.OUTPUTS }}
               diff=${{ steps.diff.outputs.OUTPUTS }}
               '
-
-      # Actually attach labels to the pr
-      - id: label_pr
+      - id: label_pr      # Actually attach labels to the pr
         name: label_pr
         run: ./.github/scripts/label_pr.sh
         shell: bash
