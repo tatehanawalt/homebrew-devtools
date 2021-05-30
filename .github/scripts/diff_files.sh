@@ -36,10 +36,10 @@ then
 fi
 
 diff_files=($(git diff --name-only $GITHUB_BASE_REF | sed 's/[[:space:]]$//g' | sed 's/^[[:space:]]//g' | sort -u))
-write_result_set $(join_by , ${diff_files[@]}) DIFF_FILES
+write_result_set $(join_by , ${diff_files[@]}) diff_files
 
 diff_dirs=($(for_csv "$diff_files_csv" dirname | sort -u))
-write_result_set $(join_by , ${diff_dirs[@]}) DIFF_DIRS
+write_result_set $(join_by , ${diff_dirs[@]}) diff_dirs
 
 diff_ext=()
 for f_path in ${diff_files[@]}; do
@@ -50,7 +50,7 @@ for f_path in ${diff_files[@]}; do
   [ -z "$ext_name" ] && continue
   diff_ext+=("$ext_name")
 done
-diff_ext=($(printf "%s\n" ${diff_ext} | sort -u))
+diff_ext=($(printf "%s\n" ${diff_ext[@]} | sort -u))
 write_result_set $(join_by , ${diff_ext[@]}) diff_ext
 
 for dir_path in ${diff_dirs[@]};
