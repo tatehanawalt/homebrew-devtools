@@ -49,10 +49,3 @@ echo "${results[@]:1}" | jq
 
 before_exit
 exit 0
-
-# args+=(--labels_csv)
-# args+=("$LABELS")
-# results=($(args ${args[@]}))
-# printf "exit_code: %d\n" ${results[0]}
-# echo "${results[@]:1}" | jq
-# IFS=$'\n'
