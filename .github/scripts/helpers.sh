@@ -279,22 +279,17 @@ git_req() {
   shift
   case $key in
     --auth)
-      # TODO:: "Authorization: token $GITHUB_AUTH_TOKEN"
-      write_error "auth not implemented in git_Req\n" && exit 1
+      [ -z "$GITHUB_AUTH_TOKEN" ] && write_error "GITHUB_AUTH_TOKEN not set in git_Req\n" && exit 1
+      args+=(-H "Authorization: token $GITHUB_AUTH_TOKEN")
+      continue
       ;;
     --id)
       req_url=$(echo "$req_url" | sed s/{id}/$1/)
       ;;
     --json-body)
       args+=(-d)
-      args+=("$1")
+      args+=($1)
       ;;
-#    --labels_csv)
-#      labels=("$(echo -e $1 | tr , '\n')")
-#      json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
-#      args+=(-d)
-#      args+=("$json_data")
-#      ;;
     --method)
       args+=(-X)
       args+=($1)
@@ -321,17 +316,25 @@ git_req() {
   shift
   done
   args+=( -s -w "HTTPSTATUS:%{http_code}" )
-  # add an auth token
-  if [ ! -z "$GITHUB_AUTH_TOKEN" ]; then
-    args+=( -H "Authorization: token $GITHUB_AUTH_TOKEN" )
-  fi
+
   args+=( -H "Accept: application/vnd.github.v3+json" )
   [ $debug_mode -eq 0 ] && printf "request path: %s\n" ${req_url}
+
   args+=("https://api.github.com/$req_url")
   if [ $debug_mode -eq 0 ]; then
     printf "\nargs:\n"
     printf "\t%s\n" ${args[@]}
   fi
+
+
+
+  echo "req_url: $req_url"
+  echo "args:"
+  printf "\t%s\n" ${args[@]}
+  echo
+
+
+
   response=$(curl "${args[@]}")
   result=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
   request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
@@ -491,3 +494,9 @@ fi
 
 # IN_CI=1
 # [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
+#    --labels_csv)
+#      labels=("$(echo -e $1 | tr , '\n')")
+#      json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
+#      args+=(-d)
+#      args+=("$json_data")
+#      ;;
