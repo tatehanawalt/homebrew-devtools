@@ -36,7 +36,8 @@ then
 fi
 
 diff_files=($(git diff --name-only $GITHUB_BASE_REF | sed 's/[[:space:]]$//g' | sed 's/^[[:space:]]//g' | sort -u))
-write_result_set $(join_by , ${diff_files[@]}) diff_files
+diff_files_csv=$(join_by , ${diff_files[@]})
+write_result_set "$diff_files_csv" diff_files
 
 diff_dirs=($(for_csv "$diff_files_csv" dirname | sort -u))
 write_result_set $(join_by , ${diff_dirs[@]}) diff_dirs
