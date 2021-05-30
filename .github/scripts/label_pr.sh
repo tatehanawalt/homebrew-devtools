@@ -9,13 +9,14 @@ args+=(--method)
 args+=(POST)
 
 
-labels=($(echo -e $labels | tr , '\n'))
+labels=($(echo -e $LABELS | tr , '\n'))
 
 # echo "labels:"
 # printf "\t%s\n" ${labels[@]}
 
 json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
 
+printf "\njson_data\n${json_data}\n"
 
 args+=(--json-body)
 args+=("$json_data")
