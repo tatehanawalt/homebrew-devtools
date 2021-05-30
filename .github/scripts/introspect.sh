@@ -6,10 +6,6 @@ my_path=$0
 # Introspection generates / parses data related to the contents of the
 # specific repository by parsing the local filesystem resources
 
-if [ -z "$FORMULA_DIR" ]; then
-  FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
-fi
-
 formula_path() {
   [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
   [ ! -f "$FORMULA_DIR/$1.rb" ] && return 1
@@ -159,12 +155,10 @@ all() {
   done
 }
 
+if [ -z "$FORMULA_DIR" ]; then
+  FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
+fi
 
-# [ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
-
-
-
-IFS=$'\n'
 case $template in
   all)
     all
@@ -206,3 +200,5 @@ exit 0
 # if [ "$CI" != "true" ]; then
 #   my_path=$(readlink $0)
 # fi
+# [ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
+# IFS=$'\n'

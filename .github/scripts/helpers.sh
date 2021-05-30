@@ -21,6 +21,7 @@ for arg in $@; do
   case $arg in
     # Print debug logging
     -d) debug_mode=0;;
+
     # silent mode - disables output (including debug messages)
     -s)
       silent_mode=0
