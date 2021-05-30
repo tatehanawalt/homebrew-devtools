@@ -9,10 +9,10 @@ args+=(--method)
 args+=(POST)
 
 
-labels=($(echo -e $1 | tr , '\n'))
+labels=($(echo -e $labels | tr , '\n'))
 
-echo "labels:"
-printf "\t%s\n" ${labels[@]}
+# echo "labels:"
+# printf "\t%s\n" ${labels[@]}
 
 json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
 

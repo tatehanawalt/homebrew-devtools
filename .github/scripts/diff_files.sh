@@ -50,14 +50,16 @@ write_result_set $(join_by , ${diff_ext[@]}) diff_ext
 
 for dir_path in ${diff_dirs[@]}; do
   case $dir_path in
-    Formula) add_label_set+=( brew );;
+    # Formula) add_label_set+=( brew );;
+    Formula) add_label_set+=(":beer:");;
     .github/workflows | .github/scripts) add_label_set+=( action );;
   esac
 done
 
 for fname in ${diff_files[@]}; do
   case $fname in
-    Formula/*.rb) add_label_set+=( formula brew $(basename $fname | sed 's/\..*//') );;
+    # Formula/*.rb) add_label_set+=( formula brew $(basename $fname | sed 's/\..*//') );;
+    Formula/*.rb) add_label_set+=( formula ":beer:" $(basename $fname | sed 's/\..*//') );;
   esac
 done
 
