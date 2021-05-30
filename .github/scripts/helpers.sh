@@ -378,9 +378,10 @@ write_error() {
   echo -en $error_color
   echo "::error::$1"
   echo -en $noc
-  # printf "$noc\n"
 }
 log() {
+  debug && printf 'called_from_function: %s\n' "$(caller)"
+
   echo -en "$log_color"
   [ -z $in_log ] && in_log=0
   if [ $in_log -ne 0 ]; then
@@ -409,14 +410,13 @@ write_result_set() {
   [ -z "$key" ] && key="result"
   key=$(echo $key | tr [[:lower:]] [[:upper:]])
   log $key
-
   printf "$(get_prefix)%s\n" $(echo -e "$result" | tr ',' '\n')
-
   result="${result//'%'/'%25'}"
   result="${result//$'\n'/'%0A'}"
   result="${result//$'\r'/'%0D'}"
   printf "$key='$result'\n"
-  [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
+  in_ci && echo "::set-output name=$key::$(echo -e $result)"
+  # [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }
 print_field() {
@@ -488,18 +488,3 @@ if debug; then
   search_file $my_path
   ferpf
 fi
-
-
-
-
-# # These are global args like enter debug and stuff
-# for arg in $@; do
-#   echo -e "arg: $arg"
-#   case $arg in
-#     -d) debug_mode=0;; # print debug logging
-#     -o) write_out=0;;  # write the result to standard output
-#     # silent mode - disables output (including debug messages)
-#     # -s) eval "exec 2> /dev/null";;
-#   esac
-# done
-# [ $debug_mode -eq 0 ] && ferpf "debug_mode: %d\n" $debug_mode

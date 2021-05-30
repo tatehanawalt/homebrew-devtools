@@ -1,16 +1,21 @@
 #!/bin/bash
 
-. "$(dirname $0)/helpers.sh" ${@}
+my_path=$0
+# my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
+# if [ "$CI" != "true" ]; then
+#   my_path=$(readlink $0)
+# fi
+. $(dirname $my_path)/helpers.sh
 
 # Introspection generates / parses data related to the contents of the
 # specific repository by parsing the local filesystem resources
 
-FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
-[ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
-[ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
+if [ -z "$FORMULA_DIR" ]; then
+  FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
+fi
 
 formula_path() {
-  [ ! -d $FORMULA_DIR ] && return 1
+  [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
   [ ! -f "$FORMULA_DIR/$1.rb" ] && return 1
   printf "$FORMULA_DIR/$1.rb"
 }
@@ -153,6 +158,11 @@ all() {
   done
 }
 
+
+# [ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
+
+
+
 IFS=$'\n'
 case $template in
   all)
@@ -162,7 +172,7 @@ case $template in
     write_result_set "$(join_by , $($1))" $1
     ;;
   show_env)
-    IFS=$'\n'
+    # IFS=$'\n'
     env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
     INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | tr ' ' '\n' | sed 's/^[[:space:]]*//' | sed '/^$/d')
     groups=($(printf "${INSPECT_GROUPS[@]}\nenv=$env_csv" | tr ' ' '\n' | sort))
