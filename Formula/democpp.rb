@@ -9,13 +9,13 @@
 # usage   :See the repo README file for usage
 #==============================================================================
 class Democpp < Formula
-  depends_on "llvm" => :install            # dependencies
-  desc "Brew install democpp"             # formula description
-  homepage "https://www.TateHanawalt.com" # my website
+  depends_on "llvm" => :install           # dependencies
+  desc 'Brew install democpp'             # formula description
+  homepage 'https://www.TateHanawalt.com' # my website
   revision 0                              # force compile with no version changes
-  version "0.0.0"                         # Formulae version
+  version '0.0.0'                         # Formulae version
   head do
-    url "https://github.com/tatehanawalt/.th_sys.git", branch: "main"
+    url 'https://github.com/tatehanawalt/.th_sys.git', branch: 'main'
   end
   stable do
     url "https://github.com/tatehanawalt/th_sys/releases/download/0.0.4/democpp.tar.gz", :using => :curl

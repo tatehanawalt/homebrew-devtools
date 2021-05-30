@@ -8,20 +8,15 @@ add_label_set=()
 [ -z "$GITHUB_HEAD_REF" ] && GITHUB_HEAD_REF=main # current ref
 
 # Using the BASE branch
-if [ -z "$GITHUB_BASE_REF" ];
-then
+if [ -z "$GITHUB_BASE_REF" ]; then
   write_error "$(basename $0) GITHUB_BASE_REF length is 0... set GITHUB_BASE_REF=<branch_name> - line $LINENO"
   exit 1
 fi
-
-if [ -z "$GITHUB_WORKSPACE" ];
-then
+if [ -z "$GITHUB_WORKSPACE" ]; then
   write_error "$(basename $0) GITHUB_WORKSPACE length is 0 - line $LINENO"
   exit 1
 fi
-
-if [ ! -d "$GITHUB_WORKSPACE" ];
-then
+if [ ! -d "$GITHUB_WORKSPACE" ]; then
   write_error "$(basename $0) GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE - line $LINENO"
   exit 1
 fi
@@ -29,8 +24,7 @@ fi
 git fetch origin "$GITHUB_BASE_REF" &>/dev/null
 git branch "$GITHUB_BASE_REF" FETCH_HEAD &>/dev/null
 
-if [ -z $(git branch --list "$GITHUB_BASE_REF") ];
-then
+if [ -z $(git branch --list "$GITHUB_BASE_REF") ]; then
   write_error "$(basename $0) FETCH_HEAD for branch $GITHUB_BASE_REF - line $LINENO"
   exit 1
 fi
