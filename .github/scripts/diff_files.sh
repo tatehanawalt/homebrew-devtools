@@ -5,12 +5,10 @@ my_path=$0
 
 add_label_set=()
 
-echo "GITHUB_BASE_REF=$GITHUB_BASE_REF"
-
-
+# echo "GITHUB_BASE_REF=$GITHUB_BASE_REF"
 #  Compare against the main branch
-# [ -z "$GITHUB_BASE_REF" ] && GITHUB_BASE_REF=main # original ref
-# [ -z "$GITHUB_HEAD_REF" ] && GITHUB_HEAD_REF=main # current ref
+[ -z "$GITHUB_BASE_REF" ] && GITHUB_BASE_REF=main # original ref
+[ -z "$GITHUB_HEAD_REF" ] && GITHUB_HEAD_REF=main # current ref
 
 # Using the BASE branch
 if [ -z "$GITHUB_BASE_REF" ];
