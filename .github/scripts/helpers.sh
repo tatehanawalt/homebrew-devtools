@@ -4,6 +4,7 @@ helpers_start_time=$(date +%s)
 IFS=$'\n'
 silent_mode=1
 debug_mode=1
+
 debug() {
   if [ -z "$debug_mode" ];
   then
@@ -13,6 +14,11 @@ debug() {
   then
     return 0
   fi
+  return 1
+}
+in_ci() {
+  [ -z "$CI" ] && return 1
+  [ "$CI" = "true" ] && return 0
   return 1
 }
 
@@ -46,14 +52,12 @@ ferpf_color=$dark_grey
 decorate_color=$noc
 field_color=$blue
 
-
 lp=' '
 table_indent=''
 print_debug_header=1
 
-# IN_CI=1
-# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
 HELPERS_LOG_TOPICS=()
+
 # env var template specified
 HAS_TEMPLATE=1
 if [ -z "$template" ]; then
@@ -456,12 +460,6 @@ default_labels() {
   # CURRENT_LABELS
 }
 
-in_ci() {
-  [ -z "$CI" ] && return 1
-  [ "$CI" = "true" ] && return 0
-  return 1
-}
-
 if debug; then
   [ $silent_mode -eq 1 ] && echo -en "\033c\n"
   echo -e "DEBUG MODE:" | tr -s ' ' | fmt -c -w $(tput cols) 1>&2
@@ -489,3 +487,7 @@ if debug; then
   search_file $my_path
   ferpf
 fi
+
+
+# IN_CI=1
+# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally

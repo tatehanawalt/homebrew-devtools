@@ -21,6 +21,8 @@ printf "\t%s\n" ${args[@]}
 # printf "exit_code: %d\n" ${results[0]}
 # echo "${results[@]:1}" | jq
 
+git_req ${args[@]}
+
 before_exit
 exit 0
 
