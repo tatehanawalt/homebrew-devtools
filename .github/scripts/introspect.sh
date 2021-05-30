@@ -47,6 +47,7 @@ formula_method_body() {
     sed 's/.*".*//' | \
     sed "s/.*'.*//" | \
     sed '/^$/d')
+
   # Standard padding for a method signature
   signatures_prefix=$(echo "$sub_slim_file" | head -n 2 | tail -n 1 | sed 's/[[:alnum:]].*//')
   # printf "|%s|\n\n" $signatures_prefix
