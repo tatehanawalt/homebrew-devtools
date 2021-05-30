@@ -39,33 +39,21 @@ then
 fi
 
 diff_files=($(git diff --name-only $GITHUB_BASE_REF | sed 's/[[:space:]]$//g' | sed 's/^[[:space:]]//g'))
-diff_files_csv=$(join_by , ${diff_files[@]})
-write_result_set "$diff_files_csv" DIFF_FILES
+write_result_set $(join_by , ${diff_files[@]}) DIFF_FILES
 
 diff_dirs=($(for_csv "$diff_files_csv" dirname | sort -u))
-diff_dirs_csv=$(join_by , ${diff_dirs[@]})
-write_result_set "$diff_dirs_csv" DIFF_DIRS
+write_result_set $(join_by , ${diff_dirs[@]}) DIFF_DIRS
 
 diff_ext=()
 for f_path in ${diff_files[@]}; do
-
   filename="${f_path##*/}"
-
   ext_name="$(echo $filename | sed 's/^[^\.]*//')"
-
-  echo "filename: $filename"
   [ "$ext_name" = "$filename" ] && continue
-
   ext_name="$(echo $ext_name | sed 's/^\.//')"
   [ -z "$ext_name" ] && continue
-
-  echo "ext_name: $ext_name"
   diff_ext+=("$ext_name")
-  # dext=$(echo )
-#   diff_ext=($(printf "%s\n" ${diff_files[@]} | sed 's/.*\.//' | sed 's/.*\///' | sort -u))
-#  diff_ext_csv=$(join_by , ${diff_ext[@]})
-#  write_result_set "$diff_ext_csv" DIFF_EXT
 done
+write_result_set $(join_by , ${diff_ext[@]}) diff_ext
 
 for dir_path in ${diff_dirs[@]};
 do
@@ -148,3 +136,5 @@ exit 0
 
 # has_diff_branch=$(git branch --list "$GITHUB_BASE_REF")
 # IFS=$'\n'
+# diff_files_csv=$(join_by , ${diff_files[@]})
+# diff_dirs_csv=$(join_by , ${diff_dirs[@]})
