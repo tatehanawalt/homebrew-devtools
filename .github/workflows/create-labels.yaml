@@ -44,15 +44,12 @@ jobs:
               reference=EXISTING_LABELS,CHECK_CREATE_LABELS,KEYS_NOT_IN_SET
             '
       # For debugging and troubleshooting - introspective environment audit
-      - name: create_label
-        run: ./.github/scripts/create_labels.sh
-        shell: bash
-        env:
-          ADD_LABELS: "${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }},${{ steps.formula_data.outputs.FORMULA_NAMES }},${{ steps.diff.outputs.DIFF_ADD_LABEL_SET }}"
-          CURRENT_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
-          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-
-          CHECK_CREATE_LABELS: "${{ steps.keys_not_in_set.outputs.RESULT }}"
+      # - name: create_label
+      #   run: ./.github/scripts/create_labels.sh
+      #   shell: bash
+      #   env:
+      #     ADD_LABELS: "${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }},${{ steps.formula_data.outputs.FORMULA_NAMES }},${{ steps.diff.outputs.DIFF_ADD_LABEL_SET }}"
+      #     CURRENT_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
+      #     GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     CHECK_CREATE_LABELS: "${{ steps.keys_not_in_set.outputs.RESULT }}"
           # EXISTING_LABELS: "${{ steps.label_names.outputs.RESULT }}"

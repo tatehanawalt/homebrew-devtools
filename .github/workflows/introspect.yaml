@@ -15,6 +15,7 @@ jobs:
         env:
           template: label_names
 
+      # Get formula related metadata
       - name: formula_data
         id: formula_data
         run: ./.github/scripts/introspect.sh
@@ -41,39 +42,3 @@ jobs:
               formula=${{ steps.formula_data.outputs.OUTPUTS }}
             '
           LABEL_NAMES: "${{ steps.label_names.outputs.RESULT }}"
-
-      # Get the set of formula names
-      # - name: formula_names
-      #   id: formula_names
-      #   run: ./.github/scripts/introspect.sh
-      #   shell: bash
-      #   env:
-      #     template: formula_names
-      # Get the set of formula paths
-      # - name: formula_paths
-      #   id: formula_paths
-      #   run: ./.github/scripts/introspect.sh
-      #   shell: bash
-      #   env:
-      #     template: formula_paths
-      # Get the set of formula paths
-      # - name: formula_shas
-      #   id: formula_shas
-      #   run: ./.github/scripts/introspect.sh
-      #   shell: bash
-      #   env:
-      #     template: formula_shas
-      # Get the set of formula paths
-      # - name: formula_stable_urls
-      #   id: formula_stable_urls
-      #   run: ./.github/scripts/introspect.sh
-      #   shell: bash
-      #   env:
-      #     template: formula_stable_urls
-      # Get the set of formula paths
-      # - name: formula_head_urls
-      #   id: formula_head_urls
-      #   run: ./.github/scripts/introspect.sh
-      #   shell: bash
-      #   env:
-      #     template: formula_head_urls

@@ -1,16 +1,13 @@
 #!/bin/bash
 
-. "$(dirname $0)/helpers.sh" ${@}
+my_path=$0
+. $(dirname $my_path)/helpers.sh
 
 # Introspection generates / parses data related to the contents of the
 # specific repository by parsing the local filesystem resources
 
-FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
-[ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
-[ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
-
 formula_path() {
-  [ ! -d $FORMULA_DIR ] && return 1
+  [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
   [ ! -f "$FORMULA_DIR/$1.rb" ] && return 1
   printf "$FORMULA_DIR/$1.rb"
 }
@@ -42,8 +39,13 @@ formula_method_body() {
     sed 's/.*".*//' | \
     sed "s/.*'.*//" | \
     sed '/^$/d')
+
+
+  echo "$sub_slim_file"
+
   # Standard padding for a method signature
   signatures_prefix=$(echo "$sub_slim_file" | head -n 2 | tail -n 1 | sed 's/[[:alnum:]].*//')
+
   # printf "|%s|\n\n" $signatures_prefix
   echo "$slim_file" | awk "/$2/,/^${signatures_prefix}end/"
 }
@@ -113,12 +115,12 @@ formula_signatures() {
 }
 testfn() {
   IFS=$'\n'
-  printf "${Red}%s${Cyan}\n" $(echo "$1" | tr [[:lower:]] [[:upper:]])
+  printf "${Red}%s\n" $(echo "$1" | tr [[:lower:]] [[:upper:]])
   data=$($1)
-  printf "${Cyan}$(get_prefix)%s\n" $data
+  printf "$(get_prefix)%s\n" $data
   printf "${Red}%s\n" $(echo "${1}_CSV" | tr [[:lower:]] [[:upper:]])
   data_lcsv=$(join_by , $data)
-  printf "${Cyan}$(get_prefix)%s\n" $data_lcsv
+  printf "$(get_prefix)%s\n" $data_lcsv
   printf "${NC}"
   [ ! -z "$data_lcsv" ] && echo
 }
@@ -153,7 +155,10 @@ all() {
   done
 }
 
-IFS=$'\n'
+if [ -z "$FORMULA_DIR" ]; then
+  FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
+fi
+
 case $template in
   all)
     all
@@ -162,7 +167,7 @@ case $template in
     write_result_set "$(join_by , $($1))" $1
     ;;
   show_env)
-    IFS=$'\n'
+    # IFS=$'\n'
     env_csv=$(join_by , $(env | grep -o '^[^[:space:]].*' | sed 's/=.*//' | sort))
     INSPECT_GROUPS=$(echo "$INSPECT_GROUPS" | tr ' ' '\n' | sed 's/^[[:space:]]*//' | sed '/^$/d')
     groups=($(printf "${INSPECT_GROUPS[@]}\nenv=$env_csv" | tr ' ' '\n' | sort))
@@ -190,3 +195,10 @@ esac
 
 before_exit
 exit 0
+
+# my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
+# if [ "$CI" != "true" ]; then
+#   my_path=$(readlink $0)
+# fi
+# [ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
+# IFS=$'\n'

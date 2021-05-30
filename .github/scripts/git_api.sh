@@ -1,433 +1,280 @@
 #!/bin/bash
-# Setup the default parameters
 
-. "$(dirname $0)/helpers.sh"
+my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
+if [ "$CI" != "true" ]; then
+  my_path=$(readlink $0)
+fi
+. $(dirname $my_path)/helpers.sh
 
-[ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
-[ -z "$GITHUB_API_URL" ]          && GITHUB_API_URL="https://api.github.com"
-[ -z "$GITHUB_BASE_REF" ]         && GITHUB_BASE_REF="main"
-[ -z "$GITHUB_HEAD_REF" ]         && GITHUB_HEAD_REF="main"
-[ -z "$GITHUB_REPOSITORY" ]       && GITHUB_REPOSITORY="tatehanawalt/homebrew-devtools"
-[ -z "$GITHUB_REPOSITORY_OWNER" ] && GITHUB_REPOSITORY_OWNER="tatehanawalt"
-[ -z "$GITHUB_WORKSPACE" ]        && GITHUB_WORKSPACE=$(git rev-parse --show-toplevel)
-OWNER="$GITHUB_REPOSITORY_OWNER"
-REPO=$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')
-kv_map=()
-IFS=$'\n'
-
+usage() {
+  ferpf "giit_api.sh usage:\n"
+  # Generate usage by running the search_file function against the path
+  # to this file
+}
 run_input() {
-  printf "run_input: $@\n"
-  QUERY_URL=""
-  field_label=""
-  WITH_AUTH=1
-  WITH_SEARCH=1
-  WITH_DELETE=1
-  TOPIC=repos
-  SEARCH_STRING=''
+  # args forwarded to the git api helper method
+  args=()
+  # url request path
+  request_url=''
+  # a jq search expression for successful response data
+  search_string=''
+
+  if [ $debug_mode -eq 0 ]; then
+    printf "run_input:\n"
+    printf "%s\n" ${@}
+  fi
+
   case $1 in
     artifacts)
-      QUERY_BASE=actions/artifacts
+      request_url='repos/{owner}/{repo}/actions/artifacts'
       ;;
     collaborators)
-      QUERY_BASE=collaborators
-      WITH_AUTH=0
+      request_url='repos/{owner}/{repo}/collaborators'
+      args+=(--auth)
       ;;
     collaborator_names)
-      SEARCH_FIELD=login
-      QUERY_BASE=collaborators
-      WITH_AUTH=0
+      request_url='repos/{owner}/{repo}/collaborators/{user}'
+      search_string='. | map(.login) | join(",")'
       ;;
     is_collaborator)
-      QUERY_BASE=collaborators/$USER
-      WITH_AUTH=0
-      ;;
-
-    help)
-      echo "
-      artifacts
-      collaborators
-      collaborator_usernames
-      is_collaborator
-      labels
-      label_names
-      label_ids
-      pull_request
-      pull_request_labels
-      pull_request_label_names
-      pull_request_commits
-      pull_request_files
-      pull_request_merged
-      pull_requests
-      release
-      releases
-      release_assets
-      release_latest
-      release_latest_id
-      release_latest_tag
-      tagged
-      repo_branches
-      repo_branch_names
-      repo_user_permissions
-      repo_contributors
-      repo_contributor_names
-      repo_languages
-      repo_language_names
-      repo_tags
-      repo_teams
-      repo_topics
-      repo_workflow
-      repo_workflows
-      repo_workflow_id
-      repo_workflow_ids
-      repo_workflow_names
-      repo_workflow_runs
-      repo_workflow_completed_runs
-      repo_workflow_run_ids
-      repo_workflow_completed_run_ids
-      repo_workflow_usage
-      workflow_runs
-      workflow_completed_runs
-      workflow_run_ids
-      workflow_completed_run_ids
-      delete_workflow_run
-      workflow_run_numbers
-      workflow_run_job
-      workflow_run_jobs
-      user_repos
-      user_repo_names" | sort
-      exit 1
+      request_url='repos/{owner}/{repo}/collaborators/{user}'
+      args+=(--auth)
       ;;
     labels)
-      QUERY_BASE=labels
+      request_url='repos/{owner}/{repo}/labels'
       ;;
     label_names)
-      SEARCH_FIELD=name
-      QUERY_BASE=labels
+      request_url='repos/{owner}/{repo}/labels'
+      search_string='. | map(.name) | join (",")'
       ;;
     label_ids)
-      SEARCH_FIELD=id
-      QUERY_BASE=labels
+      request_url='repos/{owner}/{repo}/labels'
+      search_string='. | map(.id) | join(",")'
       ;;
     pull_request)
-      QUERY_BASE=pulls/$ID
+      request_url='repos/{owner}/{repo}/pulls/{id}'
       ;;
     pull_request_labels)
-      QUERY_BASE=pulls/$ID
-      SEARCH_STRING='.labels'
+      request_url='repos/{owner}/{repo}/pulls/{id}'
+      write_error "todo - specify search string for .labels field"
+      exit 1
       ;;
     pull_request_label_names)
-      QUERY_BASE=pulls/$ID
-      SEARCH_STRING='[.labels[]] | map(.name) | join(",")'
+      request_url='repos/{owner}/{repo}/pulls/{id}'
+      search_string='[.labels[]] | map(.name) | join(",")'
       ;;
     pull_request_commits)
-      QUERY_BASE=pulls/ID/commits
+      request_url='repos/{owner}/{repo}/pulls/{id}/commits'
       ;;
     pull_request_files)
-      QUERY_BASE=pulls/ID/files
+      request_url='repos/{owner}/{repo}/pulls/{id}/files'
       ;;
     pull_request_merged)
-      QUERY_BASE=pulls/ID/merge
+      request_url='repos/{owner}/{repo}/pulls/{id}/merge'
       ;;
-    pull_requests)
-      QUERY_BASE=pulls
+    pull_requests) # ✔
+      request_url='repos/{owner}/{repo}/pulls'
       ;;
     release)
-      QUERY_BASE=releases/$ID
+      request_url='repos/{owner}/{repo}/releases/{release_id}'
       ;;
     releases)
-      QUERY_BASE=releases
+      request_url='repos/{owner}/{repo}/releases'
       ;;
     release_assets)
-      QUERY_BASE=releases/$ID/assets
+      request_url='repos/{owner}/{repo}/releases/{release_id}/assets'
       ;;
     release_latest)
-      QUERY_BASE=releases/latest
+      request_url='repos/{owner}/{repo}/releases/latest'
       ;;
     release_latest_id)
-      QUERY_BASE=releases/latest
-      SEARCH_STRING='.id'
+      request_url='repos/{owner}/{repo}/releases/latest'
+      write_error "todo - specify search string for .id field"
+      exit 1
       ;;
     release_latest_tag)
-      QUERY_BASE=releases/latest
-      SEARCH_STRING='.tag_name'
+      request_url='repos/{owner}/{repo}/releases/latest'
+      write_error "todo - specify search string for .tag_name field"
+      exit 1
       ;;
     tagged)
-      QUERY_BASE=releases/tags/$TAG
+      request_url='repos/{owner}/{repo}/releases/tags/{tag}'
       ;;
-    repo_branches)
-      QUERY_BASE=branches
+    repo_branches) # ✔
+      request_url='repos/{owner}/{repo}/branches'
       ;;
     repo_branch_names)
-      QUERY_BASE=branches
-      SEARCH_FIELD=name
+      request_url='repos/{owner}/{repo}/branches'
+      search_string='. | map(.name) | join(",")'
       ;;
     repo_user_permissions)
-      QUERY_BASE=collaborators/$USER/permission
-      WITH_AUTH=0
+      request_url='repos/{owner}/{repo}/collaborators/{user}/permission'
+      args+=(--auth)
       ;;
     repo_contributors)
-      QUERY_BASE=contributors
+      request_url='repos/{owner}/{repo}/contributors'
+      write_error "todo - specify search string for .name field"
+      exit 1
       ;;
     repo_contributor_names)
-      QUERY_BASE=contributors
-      SEARCH_FIELD=login
+      request_url='repos/{owner}/{repo}/contributors'
+      search_string='. | map(.login) | join(",")'
       ;;
     repo_languages)
-      QUERY_BASE=languages
+      request_url='repos/{owner}/{repo}/languages'
       ;;
     repo_language_names)
-      QUERY_BASE=languages
-      SEARCH_STRING='keys | join("\n")'
+      request_url='repos/{owner}/{repo}/languages'
+      search_string='keys | join("\n")'
       ;;
     repo_tags)
-      QUERY_BASE=tags
-      WITH_AUTH=0
+      request_url='repos/{owner}/{repo}/tags'
+      args+=(--auth)
       ;;
     repo_teams)
-      QUERY_BASE=teams
-      WITH_AUTH=0
+      request_url='repos/{owner}/{repo}/teams'
+      args+=(--auth)
       ;;
     repo_topics)
-      QUERY_BASE=topics
-      WITH_AUTH=0
+      request_url='repos/{owner}/{repo}/topics'
+      args+=(--auth)
       ;;
     repo_workflow)
-      QUERY_BASE=actions/workflows/$ID
-      ;;
-    repo_workflows)
-      QUERY_BASE=actions/workflows
+      request_url='repos/{owner}/{repo}/actions/workflows/{id}'
       ;;
     repo_workflow_id)
-      QUERY_BASE=actions/workflows
-      SEARCH_FIELD=$NAME
-      SEARCH_STRING='.workflows | .[] | select(.name == $field_name) | .id'
+      request_url='repos/{owner}/{repo}/actions/workflows'
+      # field_val=$NAME
+      write_error "todo - fix name dependency"
+      exit 1
+      # search_string='.workflows | .[] | select(.name == $field_name) | .id'
+      ;;
+    repo_workflows)
+      request_url='repos/{owner}/{repo}/actions/workflows'
       ;;
     repo_workflow_ids)
-      QUERY_BASE=actions/workflows
-      SEARCH_STRING='.workflows | map(.id) | join(",")'
+      request_url='repos/{owner}/{repo}/actions/workflows'
+      search_string='.workflows | map(.id) | join(",")'
       ;;
     repo_workflow_names)
-      QUERY_BASE=actions/workflows
-      SEARCH_FIELD=name
-      SEARCH_STRING='.workflows | map(.[$field_name]) | join(",")'
+      request_url='repos/{owner}/{repo}/actions/workflows'
+      search_string='.workflows | map(.name) | join(",")'
       ;;
     repo_workflow_runs)
-      QUERY_BASE=actions/runs
+      request_url='repos/{owner}/{repo}/actions/runs'
       ;;
     repo_workflow_completed_runs)
-      QUERY_BASE=actions/runs
-      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")]'
+      request_url='repos/{owner}/{repo}/actions/runs'
+      search_string='[.workflow_runs[] | select(.status == "completed")]'
       ;;
     repo_workflow_run_ids)
-      QUERY_BASE=actions/runs
-      SEARCH_STRING='.workflow_runs | map(.id) | join(",")'
+      request_url='repos/{owner}/{repo}/actions/runs'
+      search_string='.workflow_runs | map(.id) | join(",")'
       ;;
     repo_workflow_completed_run_ids)
-      QUERY_BASE=actions/runs
-      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
+      request_url='repos/{owner}/{repo}/actions/runs'
+      search_strinig='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
       ;;
     repo_workflow_usage)
-      QUERY_BASE=actions/workflows/$ID/timing
+      request_url='repos/{owner}/{repo}/workflows/{id}/timing'
       ;;
     workflow_runs)
-      QUERY_BASE=actions/workflows/$ID/runs
+      request_url='repos/{owner}/{repo}/workflows/{id}/runs'
       ;;
     workflow_completed_runs)
-      QUERY_BASE=actions/workflows/$ID/runs
-      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")]'
+      request_url='repos/{owner}/{repo}/workflows/{id}/runs'
+      search_string='[.workflow_runs[] | select(.status == "completed")]'
       ;;
     workflow_run_ids)
-      QUERY_BASE=actions/workflows/$ID/runs
-      SEARCH_STRING='.workflow_runs | map(.id) | join(",")'
+      request_url='repos/{owner}/{repo}/workflows/{id}/runs'
+      search_string='.workflow_runs | map(.id) | join(",")'
       ;;
     workflow_completed_run_ids)
-      QUERY_BASE=actions/workflows/$ID/runs
-      SEARCH_STRING='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
+      request_url='repos/{owner}/{repo}/workflows/{id}/runs'
+      search_string='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
       ;;
     delete_workflow_run)
-      WITH_DELETE=0
-      QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/actions/runs/$ID"
+      request_url='repos/{owner}/{repo}/actions/runs/{id}'
+      args+=(--method DELETE)
+      args+=(--auth)
       ;;
     workflow_run_numbers)
-      QUERY_BASE=actions/workflows/$ID/runs
-      SEARCH_STRING='.workflow_runs | map(.run_number) | join(",")'
+      request_url='repos/{owner}/{repo}/actions/workflows/{id}/runs'
+      # SEARCH_STRING='.workflow_runs | map(.run_number) | join(",")'
       ;;
     workflow_run_job)
-      QUERY_BASE=actions/jobs/$ID
+      request_url='repos/{owner}/{repo}/actions/jobs/{job_id}'
       ;;
     workflow_run_jobs)
-      QUERY_BASE=actions/runs/$ID/jobs
+      request_url='repos/{owner}/{repo}/actions/runs/{run_id}/jobs'
       ;;
     user_repos)
-      TOPIC=users
-      QUERY_BASE=repos
-      QUERY_URL="$GITHUB_API_URL/$TOPIC/$USER/$QUERY_BASE"
-      field_label="${USER}_repos"
+      request_url='users/{user}/repos'
       ;;
-    user_repo_names)
-      TOPIC=users
-      QUERY_BASE=repos
-      QUERY_URL="$GITHUB_API_URL/$TOPIC/$USER/$QUERY_BASE"
-      SEARCH_FIELD=name
-      field_label="${USER}"
+    user_repo_names)  # ✔
+      request_url='users/{user}/repos'
+      search_string='.[] | .name'
       ;;
     *)
       write_error "$(basename $0) target $1 not recognized - line $LINENO"
       exit 1
       ;;
   esac
-  [ -z "$QUERY_URL" ] && QUERY_URL="$GITHUB_API_URL/$TOPIC/$OWNER/$REPO/$QUERY_BASE"
-  [ ! -z "$SEARCH_FIELD" ] && WITH_SEARCH=0
-  if [ $WITH_SEARCH -eq 0 ] && [ -z "$SEARCH_STRING" ]; then
-    # SEARCH_STRING='map(.[$field_name]) | join(",")'
-    # SEARCH_STRING='map(.[$field_name])'
-    SEARCH_STRING='.[] | .[$field_name]'
+
+  args+=(--url)
+  args+=("$request_url")
+  depts=($(echo "$request_url" | grep -o '{[[:alpha:]]*}' | grep -o '[^{][[:alpha:]]*[^}]'))
+  for dep in ${depts[@]}; do
+    case $dep in
+      'owner') args+=(--owner $GITHUB_REPOSITORY_OWNER);;
+      'repo') args+=(--repo $(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'));;
+      'user') args+=(--user tatehanawalt);;
+      *)
+        write_error "unrecognized dependency $dep\n"
+        before_exit
+        exit 1
+        ;;
+    esac
+  done
+  ferpf "args:\n"
+  ferpf " • %s\n" ${args[@]}
+  ferpf "\n"
+  if [ $debug_mode -eq 0 ]; then
+    git_req ${args[@]}
+    ferpf "exit_code=$?\n\n"
+    before_exit
+    exit 1
   fi
-  printf "QUERY_URL=%s\n" "$QUERY_URL"
-  response=""
-  if [ $WITH_DELETE -eq 0 ]; then
-    response=$(curl \
-      -X DELETE \
-      -s \
-      -w "HTTPSTATUS:%{http_code}" \
-      -H "Authorization: token $GITHUB_AUTH_TOKEN" \
-      -H "Accept: application/vnd.github.v3+json" \
-      $QUERY_URL)
-  else
-    if [ ! -z "$GITHUB_AUTH_TOKEN" ]; then
-      response=$(curl \
-        -s \
-        -w "HTTPSTATUS:%{http_code}" \
-        -H "Authorization: token $GITHUB_AUTH_TOKEN" \
-        -H "Accept: application/vnd.github.v3+json" \
-        $QUERY_URL)
-    else
-      response=$(curl \
-        -s \
-        -w "HTTPSTATUS:%{http_code}" \
-        -H 'Accept: application/vnd.github.v3+json' \
-        $QUERY_URL)
-    fi
-  fi
-  output=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
-  request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-  request_status=$((${request_status} + 0))
-  [ $request_status -eq 200 ] && request_status=0
-  [ $request_status -eq 204 ] && request_status=0
-  if [[ "$request_status" =~ ^4[[:digit:]]* ]]; then
-    printf "%s" "$response" | jq -r '.message'
-    return 2
-  fi
-  printf "%s" "$output" | jq
-  printf "REQUEST_STATUS=%d\n" $request_status
-  if [ ! -z "$SEARCH_STRING" ]; then
-    result=($(echo $output | jq --arg field_name "$SEARCH_FIELD" -r "$SEARCH_STRING"))
-    if [ ! -z "$field_label" ]; then
-      write_result_map "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1 $field_label
-    else
-      write_result_set "$(join_by , $(printf "%s\n" ${result[@]} | sed 's/=.*//'))" $1
-    fi
+  results=($(git_req ${args[@]}))
+  exit_code=${results[0]}
+
+  ferpf "exit_code: %d\n\n" $exit_code
+
+  [ $write_out -eq 0 ] && echo "${results[@]:1}" | jq
+  if [ ! -z "$search_string" ]; then
+    echo "${results[@]:1}" | jq --arg field_name "$field_val" -r $search_string
   fi
 }
-kv_map+=($(echo "OWNER=$OWNER"))
-kv_map+=($(echo "USER=$USER"))
-kv_map+=($(echo "REPO=$REPO"))
-write_result_set $(join_by , $(printf "%s\n" ${kv_map[@]})) ${name}_kv_store
-write_result_set $template ${name}_template
-request_status=0
+
+
+
+
+in_ci
+
+
+exit 0
+
+[ -z "$template" ] && usage
 for cmd in $(echo "$template" | tr ',' '\n'); do
-  log $cmd
-  request_status=0
+  ferpf "command: %s\n" ${cmd}
+  ferpf "\n"
   run_input $cmd
+  ferpf "\n"
+  # log $cmd
+  # request_status=0
+  # run_input $cmd
   # echo -e "\nrequest_status: $request_status\n"
   # [ $request_status -ne 0 ] && break
 done
 before_exit
 exit $request_status
-
-
-
-# ESCAPED=$(echo "$ESCAPED" | sed 's/"//g')
-# ESCAPED="${ESCAPED//'%'/'%25'}"
-# ESCAPED="${ESCAPED//$'\n'/'%0A'}"
-# ESCAPED="${ESCAPED//$'\r'/'%0D'}"
-
-# core.addPath	Accessible using environment file GITHUB_PATH
-# core.debug	debug
-# core.error	error
-# core.endGroup	endgroup
-# core.exportVariable	Accessible using environment file GITHUB_ENV
-# core.getInput	Accessible using environment variable INPUT_{NAME}
-# core.getState	Accessible using environment variable STATE_{NAME}
-# core.isDebug	Accessible using environment variable RUNNER_DEBUG
-# core.saveState	save-state
-# core.setFailed	Used as a shortcut for ::error and exit 1
-# core.setOutput	set-output
-# core.setSecret	add-mask
-# core.startGroup	group
-# core.warning	warning file
-
-# [ ! -z "$GITHUB_HEAD_REF" ] && HEAD=$GITHUB_HEAD_REF
-# [ ! -z "$GITHUB_BASE_REF" ] && BASE=$GITHUB_BASE_REF
-# [ ! -z "$GITHUB_REPOSITORY_OWNER" ] && OWNER=$GITHUB_REPOSITORY_OWNER
-# [ ! -z "$GITHUB_WORKSPACE" ] && REPO=$GITHUB_WORKSPACE
-# GITHUB_API_URL          - https://api.github.com
-# GITHUB_AUTH_TOKEN       -
-# GITHUB_BASE_REF         - main
-# GITHUB_HEAD_REF         - diff_files_Action
-# GITHUB_REPOSITORY       - tatehanawalt/homebrew-devtools
-# GITHUB_REPOSITORY_OWNER - tatehanawalt
-# DEFAULTS
-
-#
-# artifacts)
-# collaborators)
-# collaborator_usernames)
-# is_collaborator)
-# labels)
-# label_names)
-# label_ids)
-# pull_request)
-# pull_request_labels)
-# pull_request_label_names)
-# pull_request_commits)
-# pull_request_files)
-# pull_request_merged)
-# pull_requests)
-# release)
-# releases)
-# release_assets)
-# release_latest)
-# release_latest_id)
-# release_latest_tag)
-# tagged)
-# repo_branches)
-# repo_branche_names)
-# repo_user_permissions)
-# repo_contributors)
-# repo_contributor_names)
-# repo_languages)
-# repo_language_names)
-# repo_tags)
-# repo_teams)
-# repo_topics)
-# repo_workflow)
-# repo_workflows)
-# repo_workflow_id)
-# repo_workflow_ids)
-# repo_workflow_names)
-# repo_workflow_runs)
-# repo_workflow_completed_runs)
-# repo_workflow_run_ids)
-# repo_workflow_completed_run_ids)
-# repo_workflow_usage)
-# workflow_runs)
-# workflow_completed_runs)
-# workflow_run_ids)
-# workflow_completed_run_ids)
-# delete_workflow_run)
-# workflow_run_numbers)
-# workflow_run_job)
-# workflow_run_jobs)
-# user_repos)
-# user_repo_names)
