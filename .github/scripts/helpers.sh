@@ -27,7 +27,6 @@ for arg in $@; do
   case $arg in
     # Print debug logging
     -d) debug_mode=0;;
-
     # silent mode - disables output (including debug messages)
     -s)
       silent_mode=0
@@ -44,8 +43,8 @@ red=$(echo -en '\033[0;31m')
 blue_navy=$(echo -en '\033[38;5;25m')
 blue=$(echo -en '\033[38;5;33m')
 dark_grey=$(echo -en '\033[38;5;235m')
+
 # Assign colors
-alert_color=$(echo -en "\033[38;5;255m")
 error_color=$red
 log_color=$blue_navy
 ferpf_color=$dark_grey
@@ -70,7 +69,7 @@ else
 fi
 
 case_signatures() {
-  div_bar=$(printf '=%.0s' {1..122} | sed 's/=/-/g' | sed "s/^/$decorate_color/")
+  div_bar=$(printf '=%.0s' {1..123} | sed 's/=/-/g' | sed "s/^/$decorate_color/")
   div_wall=$(echo -e "$decorate_color|$ferpf_color")
   function_body=$(sed -n '/^run_input/I,/^}/I{ p;}' $1)
   signatures=$(echo "$function_body" | sed -n '/case \$1 in/I,/esac/I{ s/#.*//; /^[[:space:]]*$/d; /(/d; p;}')
@@ -84,8 +83,8 @@ case_signatures() {
   # This is a csv of the method signatures and the character length of the
   # longest method signature.
   methods_csv=$(join_by , ${methods[@]})
-  max_method_signature_width=$(csv_max_length $methods_csv)
-
+  method_names=()             # method names
+  method_name_max_width=0     # max width of any method name
   method_paths=()             # the paths added to the api url to make the http request
   max_request_path_width=0    # max width of any path used
   path_fields=()              # fields are essentially parameters embedded in the request path
@@ -94,24 +93,32 @@ case_signatures() {
   request_method_max_width=0  # max width of any request method
   requires_auth=()            # Does the method body contain the --auth flag
 
-  for ((i=0; i<${#methods[@]}; i++));
-  do
+  for ((i=0; i<${#methods[@]}; i++)); do
     method="${methods[$i]}"
     def=$(sed -n "/[[:space:]]$method)/I,/;;/I{ p;}" $1)
+
     # Request Path
     request_path=$(echo "$def" | sed '/#/d' | grep -o "request_url.*" | sed 's/^.*=//' | tr -d '"' | tr -d "'")
+
+    [ -z "$request_path" ] && continue
+    method_names+=("$method")
+    [ ${#method} -gt $method_name_max_width ] && method_name_max_width=${#method}
+
     method_paths+=("$request_path")
     [ ${#request_path} -gt $max_request_path_width ] && max_request_path_width=${#request_path}
+
     # fields which are value substitutions from the request path
     fields=$(echo "$request_path" | tr '/' '\n' | grep -o "{.*" | sort)
     field_str=$(printf "%s " $fields | sed 's/ *$//' | tr -d '{' | tr -d '}')
     path_fields+=("${field_str[@]}")
     [ ${#field_str} -gt $path_fields_max_width ] && path_fields_max_width=${#field_str}
+
     # Request requires auth
     auth_str=$(echo "$def" | grep -o '\-\-auth')
     method_requires_auth=1
     [ ! -z "$auth_str" ] && method_requires_auth=0
     requires_auth+=($method_requires_auth)
+
     # Request Method
     method_str=$(echo "$def" | grep -o '\-\-method[^)]*' | sed 's/.*method//' | tr -d ' ')
     [ -z "$method_str" ] && printf -v method_str "GET"
@@ -119,37 +126,19 @@ case_signatures() {
     [ ${#method_str} -gt $request_method_max_width ] && request_method_max_width=${#method_str}
   done
 
-  ferpf "%s%s\n" "$table_indent" "$div_bar"
-  ferpf "%smethods:                    %d\n" "$table_indent" ${#methods[@]}
-  ferpf "%smethod_paths:               %d\n" "$table_indent" ${#method_paths[@]}
-  ferpf "%spath_fields:                %d\n" "$table_indent" ${#path_fields[@]}
-  ferpf "%srequires_auth:              %d\n" "$table_indent" ${#requires_auth[@]}
-  ferpf "%srequest_methods:            %d\n" "$table_indent" ${#request_methods[@]}
-  ferpf "%s%s\n" "$table_indent" $div_bar
-  ferpf "%smax_method_signature_width: %d\n" "$table_indent" $max_method_signature_width
-  ferpf "%smax_request_path_width:     %d\n" "$table_indent" $max_request_path_width
-  ferpf "%spath_fields_max_width:      %d\n" "$table_indent" $path_fields_max_width
-  ferpf "%srequest_method_max_width:   %d\n" "$table_indent" $request_method_max_width
-
   # First horizontal bar of the table
   ferpf "%s%s\n" "$table_indent" "$div_bar"
-  for ((i=0; i<${#methods[@]}; i++)); do
-    # Get table column values
-    method="${methods[$i]}"
-    req_path=${method_paths[$i]}
-    path_fields=${path_fields[$i]}
-    request_method=${request_methods[$i]}
-    # Format table row column values
-    printf -v sig_row "%s%-${max_method_signature_width}s%s" "$lp" "$method" "$lp"
-    printf -v path_row "%s%-${max_request_path_width}s%s" "$lp" "$req_path" "$lp"
-    printf -v fields_row "%s%-${path_fields_max_width}s%s" "$lp" "$path_fields" "$lp"
-    printf -v request_method_row "%s%-${request_method_max_width}s%s" "$lp" "$request_method" "$lp"
+
+  # Print the actual table
+  for ((i=0; i<${#method_names[@]}; i++)); do
+    printf -v sig_row "%s%-${method_name_max_width}s%s" "$lp" "${method_names[$i]}" "$lp"
+    printf -v path_row "%s%-${max_request_path_width}s%s" "$lp" "${method_paths[$i]}" "$lp"
     # Row substitutions (highlighting)
     path_row=$(echo $path_row | sed "s/}/$ferpf_color}/g" | sed "s/{/{$field_color/g")
-    # Table row offset indent (set above, not here)
-    ferpf "%s" "$table_indent"
-    # Print the actual row
-    #ferpf "%s" "$div_wall"          # Table Row Entrypoint
+    printf -v fields_row "%s%-${path_fields_max_width}s%s" "$lp" "${path_fields[$i]}" "$lp"
+    printf -v request_method_row "%s%-${request_method_max_width}s%s" "$lp" "${request_methods[$i]}" "$lp"
+    ferpf "%s" "$table_indent"       # Table row offset indent (set above, not here)
+    ferpf "%s" "$div_wall"           # Table Row Entrypoint
     ferpf "%s" "${sig_row}"          # Method Signature
     ferpf "%s" "$div_wall"           # Vertical Divider
     ferpf "%s" "${path_row}"         # Request Path
@@ -157,30 +146,22 @@ case_signatures() {
     ferpf "%s" "$fields_row"         # Fields
     ferpf "%s" "$div_wall"           # Vertical Divider
     ferpf "%s" "$request_method_row" # Request Method
-    #ferpf "%s" "$div_wall"          # Vertical Divider
+    ferpf "%s" "$div_wall"           # Vertical Divider
     ferpf "\n"                       # End of row
-    # Split the table for readability
-    #[ $(($i % 6)) -eq 5 ] && ferpf "%s%s\n" "$lp" "$div_bar"
   done
-  # Last horizontal bar in the table
-  ferpf "%s%s\n\n" "$table_indent" "$div_bar"
+  ferpf "%s%s" "$table_indent" "$div_bar" # Last horizontal bar in the table
 }
 search_file() {
   case_signatures $1
 }
-
 
 ferpf() {
   if [ ${#@} -lt 1 ]; then
     echo 1>&2
     return
   fi
-  # [ -z "$nc" ] && printf "%b" $ferpf_color
-  # printf "%b" $ferpf_color &>/dev/null
-  # [ -z "$nc" ] || printf "%b" $nc
+  printf "%b" $ferpf_color
   printf $* 1>&2
-  #printf $* 1>&2
-  # printf "$noc"
 }
 
 set_fg() {
@@ -483,16 +464,4 @@ if debug; then
   echo 1>&2
   log sample_log
   ferpf
-  search_file $my_path
-  ferpf
 fi
-
-
-# IN_CI=1
-# [ "$CI" = "true" ] && IN_CI=0 # IF RUN BY CI vs Locally
-#    --labels_csv)
-#      labels=("$(echo -e $1 | tr , '\n')")
-#      json_data=$(printf "%s" "${labels[@]}" | jq -R . | jq -s .)
-#      args+=(-d)
-#      args+=("$json_data")
-#      ;;

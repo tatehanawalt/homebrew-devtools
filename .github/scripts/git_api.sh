@@ -12,18 +12,13 @@ usage() {
   # to this file
 }
 run_input() {
-  # args forwarded to the git api helper method
-  args=()
-  # url request path
-  request_url=''
-  # a jq search expression for successful response data
-  search_string=''
-
+  args=()          # args forwarded to the git api helper method
+  request_url=''   # url request path
+  search_string='' # a jq search expression for successful response data
   if [ $debug_mode -eq 0 ]; then
-    printf "run_input:\n"
-    printf "%s\n" ${@}
+    ferpf "run_input:\n"
+    ferpf "%s\n" ${@}
   fi
-
   case $1 in
     artifacts)
       request_url='repos/{owner}/{repo}/actions/artifacts'
@@ -35,6 +30,10 @@ run_input() {
     collaborator_names)
       request_url='repos/{owner}/{repo}/collaborators/{user}'
       search_string='. | map(.login) | join(",")'
+      ;;
+    help)
+      search_file $my_path
+      return 1
       ;;
     is_collaborator)
       request_url='repos/{owner}/{repo}/collaborators/{user}'
@@ -72,7 +71,7 @@ run_input() {
     pull_request_merged)
       request_url='repos/{owner}/{repo}/pulls/{id}/merge'
       ;;
-    pull_requests) # ✔
+    pull_requests)
       request_url='repos/{owner}/{repo}/pulls'
       ;;
     release)
@@ -100,7 +99,7 @@ run_input() {
     tagged)
       request_url='repos/{owner}/{repo}/releases/tags/{tag}'
       ;;
-    repo_branches) # ✔
+    repo_branches)
       request_url='repos/{owner}/{repo}/branches'
       ;;
     repo_branch_names)
@@ -211,7 +210,7 @@ run_input() {
     user_repos)
       request_url='users/{user}/repos'
       ;;
-    user_repo_names)  # ✔
+    user_repo_names)
       request_url='users/{user}/repos'
       search_string='.[] | .name'
       ;;
@@ -220,7 +219,6 @@ run_input() {
       exit 1
       ;;
   esac
-
   args+=(--url)
   args+=("$request_url")
   depts=($(echo "$request_url" | grep -o '{[[:alpha:]]*}' | grep -o '[^{][[:alpha:]]*[^}]'))
@@ -231,50 +229,57 @@ run_input() {
       'user') args+=(--user tatehanawalt);;
       *)
         write_error "unrecognized dependency $dep\n"
-        before_exit
-        exit 1
+        return 1
         ;;
     esac
   done
-  ferpf "args:\n"
-  ferpf " • %s\n" ${args[@]}
-  ferpf "\n"
   if [ $debug_mode -eq 0 ]; then
+    ferpf "args:\n"
+    ferpf " • %s\n" ${args[@]}
+    ferpf "\n\n"
     git_req ${args[@]}
-    ferpf "exit_code=$?\n\n"
+    ferpf
+    # ferpf "exit_code=$?\n\n"
     before_exit
     exit 1
   fi
   results=($(git_req ${args[@]}))
   exit_code=${results[0]}
 
-  ferpf "exit_code: %d\n\n" $exit_code
+  echo $exit_code
 
-  [ $write_out -eq 0 ] && echo "${results[@]:1}" | jq
   if [ ! -z "$search_string" ]; then
     echo "${results[@]:1}" | jq --arg field_name "$field_val" -r $search_string
+  else
+    echo "${results[@]:1}" | jq
   fi
 }
 
 
 
-
-in_ci
-
-
-exit 0
-
-[ -z "$template" ] && usage
-for cmd in $(echo "$template" | tr ',' '\n'); do
-  ferpf "command: %s\n" ${cmd}
-  ferpf "\n"
-  run_input $cmd
-  ferpf "\n"
-  # log $cmd
-  # request_status=0
-  # run_input $cmd
-  # echo -e "\nrequest_status: $request_status\n"
-  # [ $request_status -ne 0 ] && break
-done
+exit_code=0
+if in_ci; then
+  for cmd in $(echo "$template" | tr ',' '\n'); do
+    ferpf "command: %s\n" ${cmd}
+    results=($(run_input $cmd))
+    echo $results
+    echo "${results[@]:1}"
+  done
+else
+  results=($(run_input $1))
+  exit_code=$?
+  echo "${results[@]:1}" | jq
+  if [ $exit_code -eq 0 ]; then
+    exit_code=$results
+  fi
+fi
 before_exit
-exit $request_status
+exit $exit_code
+
+# IFS=$'\n'
+# results=($(run_input $1))
+# echo "${results[@]:1}" | jq
+#echo ${#results[@]}
+# echo $results
+# [ $write_out -eq 0 ] && echo "${results[@]:1}" | jq
+# run_input $1
