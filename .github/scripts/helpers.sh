@@ -1,7 +1,6 @@
 #!/bin/bash
 
 helpers_start_time=$(date +%s)
-IFS=$'\n'
 silent_mode=1
 debug_mode=1
 
@@ -196,22 +195,6 @@ pallette() {
     set_fg -1
     [ $i_rem -eq 9 ] && echo
   done
-  # printf -v blank " %.0s" {1..${#msg}}
-  # echo "width: ${#msg}\n"
-  # echo "width: ${#msg}\n"
-  # printf -v msg "$index$@"
-  # set_fg $i
-  # echo -en $msg
-  # set_fg -1
-  # echo -en $msg
-  # set_bg $i
-  # set_fg 255
-  # echo -en $msg
-  # set_fg 0
-  # echo -en $msg
-  # set_bg -1
-  # | fmt -c -w $COLUMNS
-
   set_fg -1
   set_bg -1
   echo
@@ -251,73 +234,72 @@ before_exit() {
 
 # Shared github api helper method
 git_req() {
+  IFS=$'\n'
   positional=()
   args=()
   req_url=""
-  while [[ $# -gt 0 ]];
-  do
-  key="$1"
-  shift
-  case $key in
-    --auth)
-      [ -z "$GITHUB_AUTH_TOKEN" ] && write_error "GITHUB_AUTH_TOKEN not set in git_Req\n" && exit 1
-      args+=(-H "Authorization: token $GITHUB_AUTH_TOKEN")
-      continue
-      ;;
-    --id)
-      req_url=$(echo "$req_url" | sed s/{id}/$1/)
-      ;;
-    --json-body)
-      args+=(-d)
-      args+=($1)
-      ;;
-    --method)
-      args+=(-X)
-      args+=($1)
-      ;;
-    --owner)
-      req_url=$(echo "$req_url" | sed s/{owner}/$1/)
-      ;;
-    --repo)
-      req_url=$(echo "$req_url" | sed s/{repo}/$1/)
-      ;;
-    --url)
-      [[ "$1" =~ ^/ ]] && write_error "git_req url invalid format. url must not start witha /. url=${1}" exit 1
-      [ ! -z "$req_url" ] && write_error "Attempted to set req_url twice. this can only be done once." && exit 1
-      req_url="$1"
-      ;;
-    --user)
-      req_url=$(echo "$req_url" | sed s/{user}/$1/)
-      ;;
-    *)
-      positional+=("$key")
-      continue
-      ;;
-  esac
-  shift
+  while [ $# -gt 0 ]; do
+    key="$1"
+    shift
+    case $key in
+      --auth)
+        [ -z "$GITHUB_AUTH_TOKEN" ] && write_error "GITHUB_AUTH_TOKEN not set in git_Req\n" && exit 1
+        args+=(-H "Authorization: token $GITHUB_AUTH_TOKEN")
+        continue
+        ;;
+      --id)
+        req_url=$(echo "$req_url" | sed s/{id}/$1/)
+        ;;
+      --json-body)
+        args+=(-d)
+        args+=($1)
+        ;;
+      --method)
+        args+=(-X)
+        args+=($1)
+        ;;
+      --owner)
+        req_url=$(echo "$req_url" | sed s/{owner}/$1/)
+        ;;
+      --repo)
+        req_url=$(echo "$req_url" | sed s/{repo}/$1/)
+        ;;
+      --url)
+        [[ "$1" =~ ^/ ]] && write_error "git_req url invalid format. url must not start witha /. url=${1}" exit 1
+        [ ! -z "$req_url" ] && write_error "Attempted to set req_url twice. this can only be done once." && exit 1
+        req_url="$1"
+        ;;
+      --user)
+        req_url=$(echo "$req_url" | sed s/{user}/$1/)
+        ;;
+      *)
+        positional+=("$key")
+        continue
+        ;;
+    esac
+    shift
   done
-  args+=( -s -w "HTTPSTATUS:%{http_code}" )
-
-  args+=( -H "Accept: application/vnd.github.v3+json" )
-  [ $debug_mode -eq 0 ] && printf "request path: %s\n" ${req_url}
-
+  args+=(-s)
+  args+=(-w)
+  args+=("HTTPSTATUS:%{http_code}")
+  args+=(-H)
+  args+=("Accept: application/vnd.github.v3+json")
   args+=("https://api.github.com/$req_url")
-  if [ $debug_mode -eq 0 ]; then
-    printf "\nargs:\n"
-    printf "\t%s\n" ${args[@]}
-  fi
 
-  # echo "req_url: $req_url"
-  # echo "args:"
-  # printf "\t%s\n" ${args[@]}
-  # echo
 
-  response=$(curl "${args[@]}")
-  result=$(echo $response | sed -e 's/HTTPSTATUS\:.*//g' | tr '\r\n' ' ')
-  request_status=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-  results=($request_status)
-  results+=($result)
-  printf "%s$IFS" ${results[@]}
+
+  # curl ${args[@]}
+  response=$(curl ${args[@]})
+  printf "%s\n" $(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+  echo "$response" | sed -e 's/HTTPSTATUS\:.*//g' | jq
+
+  # results=($(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g'))
+  # results+=($(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://'))
+  #printf "${response[@]}\n"
+  #printf "%s\n" $(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')
+  # echo ${results[@]}
+  # printf "$(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')\n"
+  # printf "$(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')\n"
 }
 
 # CSV set helpers

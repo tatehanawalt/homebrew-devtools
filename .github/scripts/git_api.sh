@@ -13,10 +13,12 @@ run_input() {
   args=()          # args forwarded to the git api helper method
   request_url=''   # url request path
   search_string='' # a jq search expression for successful response data
+
   if [ $debug_mode -eq 0 ]; then
     ferpf "run_input:\n"
     ferpf "%s\n" ${@}
   fi
+
   case $1 in
     artifacts)
       request_url='repos/{owner}/{repo}/actions/artifacts'
@@ -170,7 +172,7 @@ run_input() {
       ;;
     repo_workflow_completed_run_ids)
       request_url='repos/{owner}/{repo}/actions/runs'
-      search_strinig='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
+      search_string='[.workflow_runs[] | select(.status == "completed")] | map(.id) | join(",")'
       ;;
     repo_workflow_usage)
       request_url='repos/{owner}/{repo}/workflows/{id}/timing'
@@ -218,7 +220,8 @@ run_input() {
       ;;
   esac
   args+=(--url)
-  args+=("$request_url")
+  args+=($request_url)
+
   depts=($(echo "$request_url" | grep -o '{[[:alpha:]]*}' | grep -o '[^{][[:alpha:]]*[^}]'))
   for dep in ${depts[@]}; do
     case $dep in
@@ -231,43 +234,63 @@ run_input() {
         ;;
     esac
   done
+
   if [ $debug_mode -eq 0 ]; then
     ferpf "args:\n"
+    IFS=$'\n'
     ferpf " • %s\n" ${args[@]}
-    ferpf "\n\n"
-    git_req ${args[@]}
-    ferpf
-    # ferpf "exit_code=$?\n\n"
-    before_exit
-    exit 1
+    ferpf "\n"
   fi
-  results=($(git_req ${args[@]}))
-  exit_code=${results[0]}
 
-  echo $exit_code
+  results=($(git_req ${args[@]}))
+  exit_code=$(echo "${results[0]}")
+  response_body="${results[@]:1}"
 
   if [ ! -z "$search_string" ]; then
-    echo "${results[@]:1}" | jq --arg field_name "$field_val" -r $search_string
-  else
-    echo "${results[@]:1}" | jq
+    response_body=$(echo "$response_body" | jq --arg field_name "$field_val" -r "$search_string")
   fi
+
+  echo "$response_body"
 }
 
-exit_code=0
-if in_ci; then
-  for cmd in $(echo "$template" | tr ',' '\n'); do
-    ferpf "command: %s\n" ${cmd}
-    results=($(run_input $cmd))
-    echo $results
-    echo "${results[@]:1}"
-  done
-else
-  results=($(run_input $1))
-  exit_code=$?
-  echo "${results[@]:1}" | jq
-  if [ $exit_code -eq 0 ]; then
-    exit_code=$results
-  fi
-fi
-before_exit
-exit $exit_code
+cmds=($(echo "$template" | tr ',' '\n'))
+for cmd in ${cmds[@]}; do
+  run_input $cmd
+done
+
+exit 0
+
+run_input $1
+
+# return $exit_code
+# return $response_body
+# exit_code=0
+# if in_ci; then
+#   for cmd in $(echo "$template" | tr ',' '\n'); do
+#     ferpf "command: %s\n" ${cmd}
+#     results=($(run_input $cmd))
+#     echo $results
+#     echo "${results[@]:1}"
+#   done
+# else
+#   results=($(run_input $1))
+#   exit_code=$?
+#   if [ $exit_code -eq 0 ]; then
+#     exit_code=$results
+#     echo "${results[@]:1}" | jq
+#   else
+#     printf "%s\n" "${results[@]}"
+#   fi
+# fi
+# before_exit
+# exit $exit_code
+# git_req ${args[@]}
+# echo "${results[0]}"
+# return 1
+# exit_code=${results[0]}
+# echo $exit_code
+# if [ ! -z "$search_string" ]; then
+  # echo "${results[@]:1}" | jq --arg field_name "$field_val" -r $search_string
+# else
+  # echo "${results[@]:1}" | jq
+# fi
