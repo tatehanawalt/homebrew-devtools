@@ -188,7 +188,7 @@ case $template in
     test_all
     ;;
   *)
-    write_error "$(basename $0) target $target not recognized - line $LINENO"
+    write_error "$(basename $0) template $template not recognized - line $LINENO"
     exit 1
     ;;
 esac

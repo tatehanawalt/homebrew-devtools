@@ -26,6 +26,7 @@ jobs:
         run: ./.github/scripts/introspect.sh
         shell: bash
         env:
+          template: show_env
           DIFF_FILES: ${{ steps.diff.outputs.DIFF_FILES }}
           DIFF_DIRS: ${{ steps.diff.outputs.DIFF_DIRS }}
           DIFF_EXT: ${{ steps.diff.outputs.DIFF_EXT }}
