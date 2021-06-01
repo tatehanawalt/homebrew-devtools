@@ -1,9 +1,7 @@
 #!/bin/bash
 
 my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
-if [ "$CI" != "true" ]; then
-  my_path=$(readlink $0)
-fi
+[ "$CI" != "true" ] && my_path=$(readlink $0)
 . $(dirname $my_path)/helpers.sh
 
 usage() {
@@ -255,8 +253,6 @@ run_input() {
   fi
 }
 
-
-
 exit_code=0
 if in_ci; then
   for cmd in $(echo "$template" | tr ',' '\n'); do
@@ -275,11 +271,3 @@ else
 fi
 before_exit
 exit $exit_code
-
-# IFS=$'\n'
-# results=($(run_input $1))
-# echo "${results[@]:1}" | jq
-#echo ${#results[@]}
-# echo $results
-# [ $write_out -eq 0 ] && echo "${results[@]:1}" | jq
-# run_input $1

@@ -6,6 +6,7 @@ jobs:
     steps:
       # Check out the repo
       - uses: actions/checkout@v2
+
       # Get the workflow id from the workflow name=$NAME
       - name: label_names
         id: label_names
@@ -13,6 +14,7 @@ jobs:
         shell: bash
         env:
           template: label_names
+
       # Get the set of formula names
       - name: formula_names
         id: formula_names
@@ -20,6 +22,7 @@ jobs:
         shell: bash
         env:
           template: formula_names
+
       # Get the set of formula names
       - name: keys_not_in_set
         id: keys_not_in_set
@@ -29,6 +32,7 @@ jobs:
           template: keys_not_in_set
           SET: ${{ steps.label_names.outputs.RESULT }}
           KEYS: ${{ steps.formula_names.outputs.RESULT }}
+
       # For debugging and troubleshooting - introspective environment audit
       - name: show_env
         id: show_env
@@ -43,6 +47,7 @@ jobs:
               git=GITHUB_ACTION,GITHUB_ACTIONS,GITHUB_ACTION_REF,GITHUB_ACTION_REPOSITORY,GITHUB_ACTOR,GITHUB_API_URL,GITHUB_BASE_REF,GITHUB_ENV,GITHUB_EVENT_NAME,GITHUB_EVENT_PATH,GITHUB_GRAPHQL_URL,GITHUB_HEAD_REF,GITHUB_JOB,GITHUB_PATH,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER,GITHUB_RETENTION_DAYS,GITHUB_RUN_ID,GITHUB_RUN_NUMBER,GITHUB_SERVER_URL,GITHUB_SHA,GITHUB_WORKFLOW,GITHUB_WORKSPACE
               reference=EXISTING_LABELS,CHECK_CREATE_LABELS,KEYS_NOT_IN_SET
             '
+
       # For debugging and troubleshooting - introspective environment audit
       # - name: create_label
       #   run: ./.github/scripts/create_labels.sh

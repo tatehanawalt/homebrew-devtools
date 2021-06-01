@@ -6,16 +6,19 @@ jobs:
     steps:
       # Github provided action to check out the source code
       - uses: actions/checkout@v2
+
       # Get id and other info about this pr
       - name: action_data
         id: action_data
         run: ./.github/scripts/action_data.sh
         shell: bash
+
       # Lists the files, directories modified in HEAD vs BASE
       - id: diff
         name: diff
         run: ./.github/scripts/diff_files.sh
         shell: bash
+
       # Get the workflow id from the workflow name=$NAME
       - name: vcs_info
         id: vcs_info
@@ -25,6 +28,7 @@ jobs:
           name: vcs_info
           template: label_names,repo_branch_names,repo_language_names,collaborator_names
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # Introspection - data about the file system
       - name: formula_data
         id: formula_data
@@ -32,6 +36,7 @@ jobs:
         shell: bash
         env:
           template: all
+
       # show the environment
       - name: show_env
         run: ./.github/scripts/introspect.sh
