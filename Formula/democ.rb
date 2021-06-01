@@ -10,7 +10,7 @@
 #==============================================================================
 class Democ < Formula
   depends_on "llvm" => :install           # dependencies
-  desc "Brew install democ"               # formula description
+  desc 'Brew install democ'               # formula description
   homepage "https://www.TateHanawalt.com" # my website
   revision 0                              # force compile with no version changes
   version "0.0.4"                         # Formulae version
