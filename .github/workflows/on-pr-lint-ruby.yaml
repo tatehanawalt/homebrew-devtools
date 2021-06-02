@@ -21,7 +21,7 @@ jobs:
       #  run: gem install rubocop
 
       - id: id
-        run: echo ::set-output name=RB::$(echo ${{steps.diff.outputs.DIFF_EXT}})
+        run: echo ::set-output name=RB::$(echo ${{steps.diff.outputs.DIFF_EXT}} | grep -o 'rb')
 
       - if: steps.diff.outputs.DIFF_EXT == '**rb**'
         name: se2
