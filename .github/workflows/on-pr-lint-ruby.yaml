@@ -13,22 +13,8 @@ jobs:
         run: ./.github/scripts/diff_files.sh
         shell: bash
 
-
-      #- uses: actions/setup-ruby@v1
-      #  with:
-      #    ruby-version: 2.6
-      #- name: Install Rubocop gem
-      #  run: gem install rubocop
-
       - id: ext
         run: echo ::set-output name=RB::$(echo ${{steps.diff.outputs.DIFF_EXT}} | grep -o 'rb')
-
-      - if: steps.ext.outputs.RB == 'rb'
-        name: se2
-        run: ./.github/scripts/introspect.sh
-        shell: bash
-        env:
-          template: show_env
 
       - if: steps.ext.outputs.RB == 'rb'
         uses: actions/setup-ruby@v1
