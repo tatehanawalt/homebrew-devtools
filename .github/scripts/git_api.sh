@@ -13,12 +13,10 @@ run_input() {
   args=()          # args forwarded to the git api helper method
   request_url=''   # url request path
   search_string='' # a jq search expression for successful response data
-
   if [ $debug_mode -eq 0 ]; then
     ferpf "run_input:\n"
     ferpf "%s\n" ${@}
   fi
-
   case $1 in
     artifacts)
       request_url='repos/{owner}/{repo}/actions/artifacts'
@@ -234,22 +232,18 @@ run_input() {
         ;;
     esac
   done
-
   if [ $debug_mode -eq 0 ]; then
     ferpf "args:\n"
     IFS=$'\n'
     ferpf " • %s\n" ${args[@]}
     ferpf "\n"
   fi
-
   results=($(git_req ${args[@]}))
   exit_code=$(echo "${results[0]}")
   response_body="${results[@]:1}"
-
   if [ ! -z "$search_string" ]; then
     response_body=$(echo "$response_body" | jq --arg field_name "$field_val" -r "$search_string")
   fi
-
   echo "$response_body"
 }
 
@@ -257,10 +251,6 @@ cmds=($(echo "$template" | tr ',' '\n'))
 for cmd in ${cmds[@]}; do
   run_input $cmd
 done
-
-exit 0
-
-run_input $1
 
 # return $exit_code
 # return $response_body
