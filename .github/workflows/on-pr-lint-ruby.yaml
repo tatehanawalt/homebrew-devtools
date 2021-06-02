@@ -20,7 +20,7 @@ jobs:
       #- name: Install Rubocop gem
       #  run: gem install rubocop
 
-      - if: steps.diff.outputs.DIFF_FILES == ''
+      - if: steps.diff.outputs.DIFF_FILES != ''
         name: se2
         run: ./.github/scripts/introspect.sh
         shell: bash
