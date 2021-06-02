@@ -1,24 +1,28 @@
 name: lintruby
-on:
-  push:
-    paths:
-      - '**.rb'
+on: [pull_request]
 jobs:
   lint-ruby:
     runs-on: ubuntu-latest
     steps:
       # Github provided action to check out the source code
       - uses: actions/checkout@v2
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      - name: Install Rubocop gem
-        run: gem install rubocop
 
       # Lists the files, directories modified in HEAD vs BASE
       - id: diff
         name: diff
         run: ./.github/scripts/diff_files.sh
+        shell: bash
+
+
+      #- uses: actions/setup-ruby@v1
+      #  with:
+      #    ruby-version: 2.6
+      #- name: Install Rubocop gem
+      #  run: gem install rubocop
+
+      - if: steps.diff.outputs.DIFF_FILES == ''
+        name: se2
+        run: ./.github/scripts/introspect.sh
         shell: bash
 
       # show the environment
