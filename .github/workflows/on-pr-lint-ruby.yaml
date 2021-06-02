@@ -24,6 +24,8 @@ jobs:
         name: se2
         run: ./.github/scripts/introspect.sh
         shell: bash
+        env:
+          template: show_env
 
       # show the environment
       - name: show_env
