@@ -21,6 +21,13 @@ jobs:
       #  run: gem install rubocop
 
       - if: steps.diff.outputs.DIFF_EXT == '**rb'
+        name: se2
+        run: ./.github/scripts/introspect.sh
+        shell: bash
+        env:
+          template: show_env
+
+      - if: steps.diff.outputs.DIFF_EXT == '**rb'
         uses: actions/setup-ruby@v1
         with:
           ruby-version: 2.6
