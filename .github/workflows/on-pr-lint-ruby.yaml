@@ -20,10 +20,10 @@ jobs:
       #- name: Install Rubocop gem
       #  run: gem install rubocop
 
-      - id: id
+      - id: ruby
         run: echo ::set-output name=RB::$(echo ${{steps.diff.outputs.DIFF_EXT}} | grep -o 'rb')
 
-      - if: steps.diff.outputs.DIFF_EXT == '**rb**'
+      - if: steps.ruby.outputs.RB == 'rb'
         name: se2
         run: ./.github/scripts/introspect.sh
         shell: bash
