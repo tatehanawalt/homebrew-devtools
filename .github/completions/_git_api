@@ -14,15 +14,9 @@
 local state
 local -a cmpl_values=();
 
-
-
-
-
-
 cmpl_values+=('labels:label json')
 cmpl_values+=('label_names:label names')
 cmpl_values+=('label_ids:label ids')
-
 
 _arguments -C '1:commands:->cmnds'
 case $state in
@@ -79,7 +73,6 @@ ret=0
 # cmpl_values+=('repo_user_permissions:users')
 # cmpl_values+=('repo_contributors:users')
 # cmpl_values+=('repo_contributor_names:users')
-
 
 # case '$state' in
 #   cmpl_values)

@@ -39,13 +39,9 @@ formula_method_body() {
     sed 's/.*".*//' | \
     sed "s/.*'.*//" | \
     sed '/^$/d')
-
-
   echo "$sub_slim_file"
-
   # Standard padding for a method signature
   signatures_prefix=$(echo "$sub_slim_file" | head -n 2 | tail -n 1 | sed 's/[[:alnum:]].*//')
-
   # printf "|%s|\n\n" $signatures_prefix
   echo "$slim_file" | awk "/$2/,/^${signatures_prefix}end/"
 }
@@ -155,9 +151,7 @@ all() {
   done
 }
 
-if [ -z "$FORMULA_DIR" ]; then
-  FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
-fi
+[ -z "$FORMULA_DIR" ] && FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
 
 case $template in
   all)
@@ -188,7 +182,7 @@ case $template in
     test_all
     ;;
   *)
-    write_error "$(basename $0) target $target not recognized - line $LINENO"
+    write_error "$(basename $0) template $template not recognized - line $LINENO"
     exit 1
     ;;
 esac
