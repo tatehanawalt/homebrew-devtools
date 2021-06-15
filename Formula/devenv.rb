@@ -24,21 +24,20 @@ class Devenv < Formula
     puts "service_name: #{service_name}\n"
     puts "service_name: #{HOMEBREW_PREFIX}\n"
     cd @name do
-      pkgshare.install "dev.zprofile"
+      pkgshare.install "zprofile"
       pkgshare.install "styles.less"
-      pkgshare.install "dev.zshrc"
+      pkgshare.install "zshrc"
     end
   end
   def caveats
     <<~EOS
-
       To activate devtools, add the following:
 
         To ~/.zprofile:
-        source #{HOMEBREW_PREFIX}/share/#{name}/dev.zprofile
+        source #{HOMEBREW_PREFIX}/share/#{name}/zprofile
 
         To ~/.zshrc:
-        source #{HOMEBREW_PREFIX}/share/#{name}/dev.zshrc
+        source #{HOMEBREW_PREFIX}/share/#{name}/zshrc
 
     EOS
   end
