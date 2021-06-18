@@ -33,7 +33,6 @@ class Demozsh < Formula
     lib.install 'demozsh.zsh'
 
     bin.install_symlink lib/"demozsh.zsh" => "demozsh"
-
     # bin.install 'demozsh.zsh' => 'demozsh'
     man1.install 'doc/man/demozsh.1'
   end
