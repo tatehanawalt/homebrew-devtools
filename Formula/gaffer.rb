@@ -11,16 +11,11 @@
 # frozen_string_literal: true
 
 # Demozsh Formula - brew formula for an example zsh script
-class Demozsh < Formula
-  desc 'Brew install demozsh'
+class Gaffer < Formula
+  desc 'Brew install gaffer'
   homepage 'https://www.TateHanawalt.com'
   version '0.0.0'
   revision 0
-
-  stable do
-    url 'https://github.com/tatehanawalt/th_sys/releases/download/0.0.4/demozsh.tar.gz', using: :curl
-    sha256 'c4d93067c46d0c76a432f7b2d1880310467cc5314bfe694791e845ec2810af4d'
-  end
 
   head do
     url 'https://github.com/tatehanawalt/.th_sys.git', branch: 'main'
@@ -29,16 +24,14 @@ class Demozsh < Formula
   bottle :unneeded
 
   def install_common
-    zsh_completion.install '_demozsh'
-    lib.install 'demozsh.zsh'
-    bin.install_symlink lib/"demozsh.zsh" => "demozsh"
-    # bin.install 'demozsh.zsh' => 'demozsh'
-    man1.install 'doc/man/demozsh.1'
+    zsh_completion.install '_gaffer'
+    lib.install ['gaffer.zsh', 'config.zsh']
+    bin.install_symlink lib/"gaffer.zsh" => "gaffer"
   end
 
   def install
     if build.head?
-      cd 'demozsh' do
+      cd 'gaffer' do
         install_common
       end
       return
