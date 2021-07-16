@@ -1,23 +1,17 @@
 <br>
+
 # <div align="center">TATE HANAWALT DEVTOOLS</div><br>
 
 ## <div align="center">Tools and Projects available through [BREW](https://brew.sh/)</div><br>
-
-<br>
-
-# 
 
 ![](./hello_world.svg)
 
 [![flush-all-completed-workflow-runs Actions Status](https://github.com/tatehanawalt/homebrew-devtools/workflows/flush-all-completed-workflow-runs/badge.svg)](https://github.com/tatehanawalt/homebrew-devtools/actions)
 
-# markdown change
-
 :x: Note:
 
 Everything is currently in development. Nothing is actually stable right now. Even if it appears stable from README content below...<br>
 
-<br>
 
 ## <div align="center">Installing</div>
 
@@ -43,10 +37,7 @@ Install tools using the **head** method by adding the `--HEAD` flag in the insta
 brew install --HEAD <package_name>
 ```
 
-<br>
-
 ## <div align="center">Tools</div><br><br>
-
 
 ##### Demogolang:
 
@@ -66,9 +57,6 @@ Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Insta
 <br>
 
 ## <div align="center">Contributing</div><br><br>
-<br>
-
-<br>
 
 ## <div align="center">Contributors</div><br>
 
@@ -76,5 +64,3 @@ Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Insta
 - contributor2
 - this is coming soooon....
 - hopefully...
-demo
-test change
