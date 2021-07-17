@@ -4,7 +4,7 @@
 #
 # export GITHUB_REPOSITORY=homebrew-devtools
 # export GITHUB_REPOSITORY_OWNER=tatehanawalt
-#
+# export ID=21
 #
 
 my_path=$0

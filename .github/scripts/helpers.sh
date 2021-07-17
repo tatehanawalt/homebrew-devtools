@@ -303,7 +303,8 @@ git_req() {
   args+=("Accept: application/vnd.github.v3+json")
   args+=("https://api.github.com/$req_url")
 
-  ferpf "ARGS: ${args[@]}\n"
+  printf "args:\n"
+  printf "\t%s\n" ${args[@]}
 
   curl ${args[@]}
   # response=$(curl ${args[@]})
