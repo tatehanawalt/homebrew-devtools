@@ -35,7 +35,7 @@ args+=($GITHUB_REPOSITORY_OWNER)
 printf "args:\n"
 printf "\t%s\n" $args
 
-git_req ${args[@]}
+git_req -d $args[@]
 # results=($(git_req ${args[@]}))
 # printf "exit_code: \n\t%d\n" ${results[0]}
 # echo "${results[@]:1}" | jq
