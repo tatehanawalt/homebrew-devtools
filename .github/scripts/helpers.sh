@@ -253,7 +253,7 @@ git_req() {
 
   pre_args $@
 
-  ferpf '\tDEBUGLOG 2\n'
+  ferpf "\tDEBUGLOG-2\n"
 
   IFS=$'\n'
   positional=()
