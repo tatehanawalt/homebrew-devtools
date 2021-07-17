@@ -303,13 +303,12 @@ git_req() {
   args+=("Accept: application/vnd.github.v3+json")
   args+=("https://api.github.com/$req_url")
 
-  ferpf "\n${args[@]}\n"
+  ferpf "ARGS: ${args[@]}\n"
 
   curl ${args[@]}
   # response=$(curl ${args[@]})
   # printf "%s\n" $(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
   # echo "$response" | sed -e 's/HTTPSTATUS\:.*//g' | jq
-
   # results=($(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g'))
   # results+=($(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://'))
   #printf "${response[@]}\n"
