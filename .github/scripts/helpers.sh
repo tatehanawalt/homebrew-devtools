@@ -153,7 +153,6 @@ case_signatures() {
 search_file() {
   case_signatures $1
 }
-
 ferpf() {
   if [ ${#@} -lt 1 ]; then
     echo 1>&2
@@ -285,7 +284,6 @@ git_req() {
   args+=(-H)
   args+=("Accept: application/vnd.github.v3+json")
   args+=("https://api.github.com/$req_url")
-
 
 
   # curl ${args[@]}

@@ -7,8 +7,6 @@ my_path=$0
 labels=($(echo -e $LABELS | tr , '\n'))
 
 printf "labels:\n"
-
-# "${labels[@]}"
 printf "\t%s\n" $labels
 
 json_data=$(printf "%s\n" "${labels[@]}" | jq -R . | jq -s .)
@@ -34,13 +32,12 @@ args+=($(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'))
 args+=(--owner)
 args+=($GITHUB_REPOSITORY_OWNER)
 
-prntf "args:\n"
-printf "\t%s\n" ${args[@]}
+printf "args:\n"
+printf "\t%s\n" $args
 
-results=($(git_req ${args[@]}))
-printf "exit_code: \n\t%d\n" ${results[0]}
-
-echo "${results[@]:1}" | jq
-
-before_exit
-exit 0
+git_req ${args[@]}
+# results=($(git_req ${args[@]}))
+# printf "exit_code: \n\t%d\n" ${results[0]}
+# echo "${results[@]:1}" | jq
+# before_exit
+# exit 0
