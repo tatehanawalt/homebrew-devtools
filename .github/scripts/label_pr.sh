@@ -6,16 +6,11 @@ my_path=$0
 [ -z "$LABELS" ] && write_error "LABELS not set in label_pr" && exit 1
 labels=($(echo -e $LABELS | tr , '\n'))
 
-echo
-echo "labels:"
-echo ${labels[@]}
+printf "labels:\n%s\n" "${labels[@]}"
 
-echo
 json_data=$(printf "%s\n" "${labels[@]}" | jq -R . | jq -s .)
 
-echo "json_data: "
-echo $json_data
-echo
+printf "json_data: \n%s\n" "$json_data"
 
 args=(--url)
 args+=('repos/{owner}/{repo}/issues/{id}/labels')
@@ -43,7 +38,6 @@ echo
 
 results=($(git_req ${args[@]}))
 printf "exit_code: %d\n" ${results[0]}
-echo
 
 echo "${results[@]:1}" | jq
 
