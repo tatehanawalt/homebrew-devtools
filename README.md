@@ -1,66 +1,153 @@
-<br>
 
-# <div align="center">TATE HANAWALT DEVTOOLS</div><br>
+<!-- documentation for the devtools project -->
 
-## <div align="center">Tools and Projects available through [BREW](https://brew.sh/)</div><br>
+<div align="center">
 
-![](./hello_world.svg)
+  # TATE HANAWALT DEVTOOLS #
 
-[![flush-all-completed-workflow-runs Actions Status](https://github.com/tatehanawalt/homebrew-devtools/workflows/flush-all-completed-workflow-runs/badge.svg)](https://github.com/tatehanawalt/homebrew-devtools/actions)
+  ## Tools and Projects available through [BREW](https://brew.sh/) ##
 
-:x: Note:
+  [Tools](#tools)
 
-Everything is currently in development. Nothing is actually stable right now. Even if it appears stable from README content below...<br>
+</div>
+
+- - - -
+
+***Everything is currently in development. Nothing is actually stable right now. Even if indicated by the following documentation.***
+
+- - - -
 
 
-## <div align="center">Installing</div>
 
-#### 1. Tap the repo:
+## Installing ##
+
+#### 1. Tap the repo: ####
 ```shell
 brew tap tatehanawalt/devtools
 ```
-<br>
 
-#### 2. Install any tools using either the **STABLE** or **HEAD** methods outlined below.
+#### 2. Install any tools using either the **STABLE** or **HEAD** methods outlined below. ####
+<details>
+  <br>
+  <summary>STABLE Install</summary>
 
-##### STABLE:<br>
-Install stable distribution with the standard brew install command:
-```shell
-brew install <package_name>
-```
-##### HEAD:<br>
-Head deploys the latest code directly from the projects source. You will get the latest elements of the tools but the tools may not always work to the standards offered from the stable installatioin method
+  Install stable distribution with the standard brew install command:
 
-Install tools using the **head** method by adding the `--HEAD` flag in the install command just before the `<package_name>`. For example:
+  ```shell
+  brew install <package_name>
+  ```
+  <br>
+</details>
 
-```shell
-brew install --HEAD <package_name>
-```
+<details>
+  <br>
+  <summary>HEAD Install</summary>
 
-## <div align="center">Tools</div><br><br>
+  Head deploys the latest code directly from the projects source. You will get the latest elements of the tools but the tools may not always work to the standards offered from the stable installatioin method
 
-##### Demogolang:
+  Install tools using the **head** method by adding the `--HEAD` flag in the install command just before the `<package_name>`. For example:
 
-Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall demogolang`<br>Written In: `golang`<br>
-##### Democ:
+  ```shell
+  brew install --HEAD <package_name>
+  ```
+  <br>
+</details>
 
-Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall democ`<br>Written In: `c`<br>
-##### Democpp:
+- - - -
 
-Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall democpp`<br>Written In: `cpp`<br>
-##### Demozsh:
 
-Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall demozsh`<br>Written In: `zsh`<br>
-##### Demonodejs:
 
-Description: Tool details on the way...<br>Usage: Usage cominig soon...<br>Install Stable: `brew intstall demonodejs`<br>Written In: `nodejs`<br>
-<br>
+## Tools<a name="tools"></a> ##
 
-## <div align="center">Contributing</div><br><br>
+<details>
+  <br>
+  <summary>Demogolang</summary>
 
-## <div align="center">Contributors</div><br>
+  Description: Tool details on the way...
 
-- contributor1
-- contributor2
-- this is coming soooon....
-- hopefully...
+  Written In: `golang`
+
+  Usage: Usage cominig soon...
+
+  Install Stable:
+  ```shell
+  brew intstall demogolang
+  ```
+  <br>
+</details>
+
+<details>
+  <br>
+  <summary>Democ</summary>
+
+  Description: Tool details on the way...
+
+  Written In: `c`
+
+  Usage: Usage cominig soon...
+
+  Install Stable:
+  ```shell
+  brew intstall democ
+  ```
+  <br>
+</details>
+
+<details>
+  <br>
+  <summary>Democpp</summary>
+
+  Description: Tool details on the way...
+
+  Written In: `cpp`
+
+  Usage: Usage cominig soon...
+
+  Install Stable:
+  ```shell
+  brew intstall democpp
+  ````
+  <br>
+</details>
+
+<details>
+  <br>
+  <summary>Demozsh</summary>
+
+  Description: Tool details on the way...
+
+  Written In: `zsh`
+
+  Usage: Usage cominig soon...
+
+  Install Stable:
+  ```shell
+  brew intstall demozsh
+  ```
+  <br>
+</details>
+
+<details>
+  <br>
+  <summary>Demonodejs</summary>
+
+  Description: Tool details on the way...
+
+  Written In: `nodejs`
+
+  Usage: Usage cominig soon...
+
+  Install Stable:
+  ```shell
+  brew intstall demonodejs
+  ```
+  <br>
+</details>
+
+- - - -
+
+<!-- ![](./hello_world.svg) -->
+
+[![flush-all-completed-workflow-runs Actions Status](https://github.com/tatehanawalt/homebrew-devtools/workflows/flush-all-completed-workflow-runs/badge.svg)](https://github.com/tatehanawalt/homebrew-devtools/actions)
+
+- - - -
