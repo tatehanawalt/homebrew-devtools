@@ -17,6 +17,10 @@
 
 Nothing is actually stable right now. Even if indicated by the following documentation.
 
+<!-- ![](./hello_world.svg) -->
+
+[![flush-all-completed-workflow-runs Actions Status](https://github.com/tatehanawalt/homebrew-devtools/workflows/flush-all-completed-workflow-runs/badge.svg)](https://github.com/tatehanawalt/homebrew-devtools/actions)
+
 <br>
 
 ## Installing ##
@@ -143,11 +147,3 @@ brew tap tatehanawalt/devtools
   ```
   <br>
 </details>
-
-- - - -
-
-<!-- ![](./hello_world.svg) -->
-
-[![flush-all-completed-workflow-runs Actions Status](https://github.com/tatehanawalt/homebrew-devtools/workflows/flush-all-completed-workflow-runs/badge.svg)](https://github.com/tatehanawalt/homebrew-devtools/actions)
-
-- - - -
