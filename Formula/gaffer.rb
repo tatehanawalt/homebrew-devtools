@@ -9,8 +9,6 @@
 # usage   :See the repo README file for usage
 # ==============================================================================
 # frozen_string_literal: true
-
-# Demozsh Formula - brew formula for an example zsh script
 class Gaffer < Formula
   desc 'Brew install gaffer'
   homepage 'https://www.TateHanawalt.com'
