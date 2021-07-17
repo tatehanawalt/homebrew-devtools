@@ -5,6 +5,8 @@
 
   # TATE HANAWALT DEVTOOLS #
 
+  <br>
+
   [Tools](#Tools) and Projects available through [BREW](https://brew.sh/)
 
 </div>
