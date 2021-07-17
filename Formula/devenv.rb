@@ -41,15 +41,16 @@ class Devenv < Formula
 
     EOS
   end
-  #  plist_options manual: "opensearch"
-  #  service do
-  #    run opt_bin/"opensearch"
-  #    working_dir var
-  #    log_path var/"log/opensearch.log"
-  #    error_log_path var/"log/opensearch.log"
-  #  end
   test do
     # (testpath/".zshrc").write "source #{HOMEBREW_PREFIX}/share/#{name}/#{name}.zsh\n"
     # system "zsh", "--login", "-i", "-c", "${#name} help"
   end
 end
+
+#  plist_options manual: "opensearch"
+#  service do
+#    run opt_bin/"opensearch"
+#    working_dir var
+#    log_path var/"log/opensearch.log"
+#    error_log_path var/"log/opensearch.log"
+#  end
