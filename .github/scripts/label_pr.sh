@@ -4,7 +4,7 @@ my_path=$0
 . "$(dirname $my_path)/helpers.sh"
 
 [ -z "$LABELS" ] && write_error "LABELS not set in label_pr" && exit 1
-labels=($(echo -e $LABELS | tr , '\n'))
+labels=($(echo -e $LABELS | tr ',' '\n'))
 
 printf "labels:\n"
 printf "\t%s\n" $labels

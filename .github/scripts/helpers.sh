@@ -21,6 +21,21 @@ in_ci() {
   return 1
 }
 
+pre_args() {
+  # Parse args for silent, debug etc...
+  for arg in $@; do
+    case $arg in
+      # Print debug logging
+      -d) debug_mode=0;;
+      # silent mode - disables output (including debug messages)
+      -s)
+        silent_mode=0
+        eval "exec 2> /dev/null"
+        ;;
+    esac
+  done
+} # Same as for loop below
+
 # Parse args for silent, debug etc...
 for arg in $@; do
   case $arg in
@@ -233,6 +248,13 @@ before_exit() {
 
 # Shared github api helper method
 git_req() {
+
+  ferpf '\tDEBUGLOG1\n'
+
+  pre_args $@
+
+  ferpf '\tDEBUGLOG 2\n'
+
   IFS=$'\n'
   positional=()
   args=()
@@ -284,7 +306,6 @@ git_req() {
   args+=(-H)
   args+=("Accept: application/vnd.github.v3+json")
   args+=("https://api.github.com/$req_url")
-
 
   # curl ${args[@]}
   response=$(curl ${args[@]})
