@@ -9,13 +9,13 @@
 
 </div>
 
-- - - -
+
+
 
 ***Everything is currently in development.***
 
 Nothing is actually stable right now. Even if indicated by the following documentation.
 
-- - - -
 
 
 
