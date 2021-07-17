@@ -25,10 +25,8 @@ pre_args() {
   # Parse args for silent, debug etc...
   for arg in $@; do
     case $arg in
-      # Print debug logging
-      -d) debug_mode=0;;
-      # silent mode - disables output (including debug messages)
-      -s)
+      -d) debug_mode=0;; # Print debug logging
+      -s) # silent mode - disables output (including debug messages)
         silent_mode=0
         eval "exec 2> /dev/null"
         ;;
@@ -253,8 +251,6 @@ git_req() {
 
   pre_args $@
 
-  ferpf "\tDEBUGLOG-2\n"
-
   IFS=$'\n'
   positional=()
   args=()
@@ -307,10 +303,12 @@ git_req() {
   args+=("Accept: application/vnd.github.v3+json")
   args+=("https://api.github.com/$req_url")
 
-  # curl ${args[@]}
-  response=$(curl ${args[@]})
-  printf "%s\n" $(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-  echo "$response" | sed -e 's/HTTPSTATUS\:.*//g' | jq
+  ferpf "\n${args[@]}\n"
+
+  curl ${args[@]}
+  # response=$(curl ${args[@]})
+  # printf "%s\n" $(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+  # echo "$response" | sed -e 's/HTTPSTATUS\:.*//g' | jq
 
   # results=($(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g'))
   # results+=($(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://'))
