@@ -5,7 +5,7 @@
 
   # TATE HANAWALT DEVTOOLS #
 
-  [Tools](#tools) and Projects available through [BREW](https://brew.sh/)
+  [Tools](#Tools) and Projects available through [BREW](https://brew.sh/)
 
 </div>
 
@@ -61,7 +61,7 @@ brew tap tatehanawalt/devtools
 
 
 
-## Tools<a name="tools"></a> ##
+## Tools ##
 
 <details>
   <br>
