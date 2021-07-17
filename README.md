@@ -57,8 +57,8 @@ brew tap tatehanawalt/devtools
   <br>
 </details>
 
-- - - -
 
+<br>
 
 
 ## Tools ##
