@@ -6,10 +6,12 @@ my_path=$0
 [ -z "$LABELS" ] && write_error "LABELS not set in label_pr" && exit 1
 labels=($(echo -e $LABELS | tr , '\n'))
 
-printf "labels:\n%s\n" "${labels[@]}"
+printf "labels:\n"
+
+# "${labels[@]}"
+printf "\t%s\n" $labels
 
 json_data=$(printf "%s\n" "${labels[@]}" | jq -R . | jq -s .)
-
 printf "json_data: \n%s\n" "$json_data"
 
 args=(--url)
@@ -32,12 +34,11 @@ args+=($(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'))
 args+=(--owner)
 args+=($GITHUB_REPOSITORY_OWNER)
 
-echo "args:"
-printf "  %s\n" ${args[@]}
-echo
+prntf "args:\n"
+printf "\t%s\n" ${args[@]}
 
 results=($(git_req ${args[@]}))
-printf "exit_code: %d\n" ${results[0]}
+printf "exit_code: \n\t%d\n" ${results[0]}
 
 echo "${results[@]:1}" | jq
 
