@@ -254,13 +254,20 @@ git_req() {
   args=()
   req_url=""
 
+  
+
+
   while [ $# -gt 0 ]; do
     key="$1"
     shift
     case $key in
       --auth)
-        [ -z "$GITHUB_AUTH_TOKEN" ] && write_error "GITHUB_AUTH_TOKEN not set in git_Req\n" && exit 1
-        args+=(-H "Authorization: token $GITHUB_AUTH_TOKEN")
+        if [ -z "$GITHUB_AUTH_TOKEN" ]; then
+          write_error "GITHUB_AUTH_TOKEN not set in git_Req\n"
+          can_exec=1
+        else
+          args+=(-H "Authorization: token $GITHUB_AUTH_TOKEN")
+        fi
         continue
         ;;
       --id)
@@ -305,6 +312,8 @@ git_req() {
 
   printf "args:\n"
   printf "\t%s\n" ${args[@]}
+
+  [ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
 
   curl ${args[@]}
   # response=$(curl ${args[@]})

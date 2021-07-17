@@ -52,20 +52,22 @@ then
 else
   labels=($(echo -e $LABELS | tr ',' '\n'))
   json_data=$(printf "%s\n" "${labels[@]}" | jq -R . | jq -s .)
-  # printf "json_data: \n%s\n" "$json_data"
   args+=(--json-body)
-  args+=("$json_data")
-  # args+=(""$(echo $json_data))
+  args+=( "$json_data" )
+  # args+=($(echo $json_data))
 fi
 
-printf "args:\n"
+printf "args: ${#args[@]}\n"
 printf "\t%s\n" ${args[@]}
-
+echo
+printf "%s " ${args[@]}
 echo
 
-[ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
+# [ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
 
-git_req -d ${args[@]}
+args+=(-d)
+
+git_req "${ARGS[@]}"
 
 # results=($(git_req ${args[@]}))
 # printf "exit_code: \n\t%d\n" ${results[0]}
