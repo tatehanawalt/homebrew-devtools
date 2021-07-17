@@ -247,14 +247,13 @@ before_exit() {
 # Shared github api helper method
 git_req() {
 
-  ferpf '\tDEBUGLOG1\n'
-
   pre_args $@
 
   IFS=$'\n'
   positional=()
   args=()
   req_url=""
+
   while [ $# -gt 0 ]; do
     key="$1"
     shift
@@ -296,6 +295,7 @@ git_req() {
     esac
     shift
   done
+
   args+=(-s)
   args+=(-w)
   args+=("HTTPSTATUS:%{http_code}")

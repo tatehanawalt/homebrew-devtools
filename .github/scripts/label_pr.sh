@@ -54,7 +54,8 @@ else
   json_data=$(printf "%s\n" "${labels[@]}" | jq -R . | jq -s .)
   # printf "json_data: \n%s\n" "$json_data"
   args+=(--json-body)
-  args+=($(echo $json_data))
+  args+=("$json_data")
+  # args+=(""$(echo $json_data))
 fi
 
 printf "args:\n"
