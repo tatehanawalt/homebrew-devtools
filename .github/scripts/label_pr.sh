@@ -12,7 +12,7 @@ printf "\t%s\n" $labels
 json_data=$(printf "%s\n" "${labels[@]}" | jq -R . | jq -s .)
 printf "json_data: \n%s\n" "$json_data"
 
-args=(--url)
+args=( --url )
 args+=('repos/{owner}/{repo}/issues/{id}/labels')
 args+=(--method)
 args+=(POST)
@@ -34,6 +34,9 @@ args+=($GITHUB_REPOSITORY_OWNER)
 
 printf "args:\n"
 printf "\t%s\n" $args
+
+printf "\n\nARGS:\n\n"
+printf "\t${args[@]}\n"
 
 git_req -d $args[@]
 # results=($(git_req ${args[@]}))
