@@ -51,9 +51,18 @@ then
   write_error "LABELS not set in label_pr"
 else
   labels=($(echo -e $LABELS | tr ',' '\n'))
-  json_data=$(printf "%s\n" "${labels[@]}" | jq -R . | jq -s .)
+
+  printf "%s\n" ${labels[@]} | jq -R . | jq -s -c .
+
+  json_data=$(printf "%s\n" "${labels[@]}" | jq -R . | jq -s -c .)
+
+
+  printf "json_data: %s\n" "${json_data[@]}"
+
+  # json_data=$(printf "%s\n" "${labels[@]}" | jq -R . | jq -s .)
+
   args+=(--json-body)
-  args+=( "$json_data" )
+  args+=($json_data)
   # args+=($(echo $json_data))
 fi
 
@@ -64,10 +73,9 @@ printf "%s " ${args[@]}
 echo
 
 # [ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
+# args+=(-d)
 
-args+=(-d)
-
-git_req "${ARGS[@]}"
+git_req "${args[@]}"
 
 # results=($(git_req ${args[@]}))
 # printf "exit_code: \n\t%d\n" ${results[0]}

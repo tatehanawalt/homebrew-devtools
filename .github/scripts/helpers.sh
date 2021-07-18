@@ -247,15 +247,14 @@ before_exit() {
 # Shared github api helper method
 git_req() {
 
-  pre_args $@
+  printf "\t• %s\n" $@
+
+  # pre_args $@
 
   IFS=$'\n'
   positional=()
   args=()
   req_url=""
-
-  
-
 
   while [ $# -gt 0 ]; do
     key="$1"
