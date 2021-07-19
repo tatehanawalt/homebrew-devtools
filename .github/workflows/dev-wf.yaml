@@ -12,7 +12,6 @@ jobs:
         shell: bash
 
       # Inspect the parameters and environment before deleting each workflow run
-      # THIS IS NOT MANDATORY - this step could be omitted entirely
       - name: show_env
         id: show_env
         run: ./.github/scripts/introspect.sh show_env
