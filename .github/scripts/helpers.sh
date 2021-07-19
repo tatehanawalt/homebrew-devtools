@@ -297,6 +297,7 @@ function git_req() {
 function for_csv() {
   IFS=$'\n'
   for field in $(echo $1 | tr ',' '\n'); do
+    [ -z "$field" ] && continue
     $2 $field
   done
 }

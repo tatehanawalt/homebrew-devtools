@@ -239,6 +239,9 @@ function exec_template() {
       'user')
         args+=(--user tatehanawalt)
         ;;
+      'id')
+        args+=(--id $ID)
+        ;;
       *)
         write_error "unrecognized dependency $dep\n"
         return 1
@@ -249,21 +252,30 @@ function exec_template() {
   [ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
   results=$(git_req ${args[@]})
   [ ! -z "$search_string" ] && results=$(echo "$results" | jq --arg field_name "$field_val" -r "$search_string")
-
-
   echo $results
-
   write_result_set $results RESULT
 }
 
 [ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
 [ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined" && exit 1
 
-exec_template $TEMPLATE
+function for_each_id() {
+  id_count=$((id_count + 1))
+  echo "ID=$1"
+  ID=$1 exec_template $TEMPLATE
+}
+
+id_count=0
+for_csv "$ID" for_each_id
+[ $id_count -eq 0 ] && exec_template $TEMPLATE
+
+
+
+
+
 
 # result="$(exec_template $TEMPLATE)"
 # write_result_set $result RESULT
-
 # ferpf "exec_template:\n"
 # ferpf "%s\n" ${@}
 # function git_api() {
@@ -281,7 +293,6 @@ exec_template $TEMPLATE
 #   ferpf " • %s\n" ${args[@]}
 #   ferpf "\n"
 # fi
-
 # results=($(git_req ${args[@]}))
 # exit_code=$(echo "${results[0]}")
 # response_body="${results[@]:1}"
@@ -289,19 +300,15 @@ exec_template $TEMPLATE
 #   response_body=$(echo "$response_body" | jq --arg field_name "$field_val" -r "$search_string")
 # fi
 # echo "$response_body"
-
 # my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
 # [ "$CI" != "true" ] && my_path=$(readlink $0)
 # . $(dirname $my_path)/helpers.sh
-
 # test data:
 # export TEMPLATE=repo_workflow_completed_run_ids
-
 # cmds=($(echo "$TEMPLATE" | tr ',' '\n'))
 # for cmd in ${cmds[@]}; do
 #   exec_template $cmd
 # done
-
 # return $exit_code
 # return $response_body
 # exit_code=0
