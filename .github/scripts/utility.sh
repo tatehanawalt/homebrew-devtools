@@ -3,6 +3,9 @@
 # UTILITY provides multiple utility functions for processing raw data
 # this script shouldn't call any apis or anything...
 
+[ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
+[ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined - line $LINENO" && exit 1
+
 my_path=$0
 . "$(dirname $my_path)/helpers.sh"
 
@@ -38,11 +41,7 @@ function exec_template() {
       exit 1
       ;;
   esac
-
 }
-
-[ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
-[ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined - line $LINENO" && exit 1
 
 exec_template $TEMPLATE $@
 

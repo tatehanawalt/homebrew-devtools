@@ -6,9 +6,9 @@
 my_path=$0
 . $(dirname $my_path)/helpers.sh
 
-[ -z "$FORMULA_DIR" ] && FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
 [ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
 [ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined - line $LINENO" && exit 1
+[ -z "$FORMULA_DIR" ] && FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
 
 function formula_path() {
   [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1

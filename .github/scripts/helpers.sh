@@ -24,13 +24,6 @@ table_indent=''
 print_debug_header=1
 HELPERS_LOG_TOPICS=()
 
-function test_local() {
-  GITHUB_WORKSPACE='/Users/tatehanawalt/Documents/dev/homebrew-devtools'
-  GITHUB_REPOSITORY_OWNER=tatehanawalt
-  GITHUB_REPOSITORY=homebrew-devtools
-  ID=22
-}
-
 function debug() {
   if [ -z "$debug_mode" ];
   then
@@ -411,6 +404,16 @@ function default_labels() {
   # DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq --arg name "$name" '. | . + [{"name": "demo1", "description": "demo description", "color": "F28E1C"}]')
   # CURRENT_LABELS
 }
+
+
+
+function test_local() {
+  GITHUB_WORKSPACE='/Users/tatehanawalt/Documents/dev/homebrew-devtools'
+  GITHUB_REPOSITORY_OWNER=tatehanawalt
+  GITHUB_REPOSITORY=homebrew-devtools
+  ID=22
+}
+
 
 pre_args $@
 
