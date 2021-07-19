@@ -255,12 +255,14 @@ function exec_template() {
 
   [ ! -z "$search_string" ] && results=$(echo "$results" | jq --arg field_name "$field_val" -r "$search_string")
 
+  # write RESULT
   echo $results
 }
 
 function git_api() {
   while [ $# -gt 0 ]; do
-    exec_template $1
+    result=$(exec_template $1)
+    write_result_set "$result" RESULT
     shift
   done
 }
@@ -286,18 +288,6 @@ git_api $(echo $@ | sed 's/,/ /g' | tr -s ' ')
 # fi
 # echo "$response_body"
 
-# exec_template:
-# repo_workflow_completed_run_ids
-# jq: error (at <stdin>:0): Cannot index string with string "workflow_runs"
-# parse error: Expected string key before ':' at line 1, column 14
-#
-# ➜  scripts git:(main) ✗ ./git_api.sh repo_workflow_completed_run_ids
-# exec_template:
-# repo_workflow_completed_run_ids
-# {
-#   "total_count": 222,
-#   "workflow_runs": [
-#     {
 
 # my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
 # [ "$CI" != "true" ] && my_path=$(readlink $0)
@@ -305,7 +295,6 @@ git_api $(echo $@ | sed 's/,/ /g' | tr -s ' ')
 
 # test data:
 # export TEMPLATE=repo_workflow_completed_run_ids
-# export o
 
 # cmds=($(echo "$TEMPLATE" | tr ',' '\n'))
 # for cmd in ${cmds[@]}; do

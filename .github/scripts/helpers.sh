@@ -38,12 +38,12 @@ function debug() {
   fi
   return 1
 }
-
 function in_ci() {
   [ -z "$CI" ] && return 1
   [ "$CI" = "true" ] && return 0
   return 1
 }
+
 
 function pre_args() {
   # Parse args for silent, debug etc...
@@ -57,6 +57,7 @@ function pre_args() {
     esac
   done
 }
+
 
 function case_signatures() {
   div_bar=$(printf '=%.0s' {1..123} | sed 's/=/-/g' | sed "s/^/$decorate_color/")
@@ -141,10 +142,10 @@ function case_signatures() {
   done
   ferpf "%s%s" "$table_indent" "$div_bar" # Last horizontal bar in the table
 }
-
 function search_file() {
   case_signatures $1
 }
+
 
 function ferpf() { # Write to standard error
   if [ ${#@} -lt 1 ]; then
@@ -162,7 +163,6 @@ function set_fg() {
     echo -en "\033[38;5;${1}m"
   fi
 }
-
 function set_bg() {
   if [ $1 -eq -1 ]; then
     echo -en '\033[0m'
@@ -170,7 +170,6 @@ function set_bg() {
     echo -en "\033[48;5;${1}m"
   fi
 }
-
 function pallette() {
   for i in {0..255}; do
     i_rem=$(expr $i % 10)
@@ -193,7 +192,6 @@ function pallette() {
   set_bg -1
   echo
 }
-
 function show_colors() {
   echo -en "\n   +  "
   for i in {0..35};
@@ -308,7 +306,6 @@ function for_csv() {
     $2 $field
   done
 }
-
 function csv_max_length() {
   IFS=$'\n'
   max_field_len=0
@@ -317,7 +314,6 @@ function csv_max_length() {
   done
   echo "$max_field_len"
 }
-
 function join_by() {
   local d=${1-} f=${2-};
   if shift 2; then
@@ -326,7 +322,6 @@ function join_by() {
     #printf %s "$f" "${@/#/$d}" | sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
   fi
 }
-
 function contains() {
   IFS=$'\n'
   check=$1
@@ -338,7 +333,6 @@ function contains() {
   done
   return 1
 }
-
 function get_prefix() {
   printf "\t"
 }
@@ -348,7 +342,6 @@ function write_error() {
   echo "::error::$1"
   echo -en $noc
 }
-
 function log() {
   debug && printf 'called_from_function: %s\n' "$(caller)"
 
@@ -364,11 +357,9 @@ function log() {
     in_log=1
   fi
 }
-
 function log_result_set() {
   printf "$(get_prefix)%s\n" $(echo -e $1 | tr ',' '\n')
 }
-
 function command_log_which() {
   printf "%s\t%s\n" $1 "$(which $1)"
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
@@ -395,7 +386,6 @@ function write_result_set() {
 function print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
 }
-
 function print_field_table() {
   IFS=$'\n'
   field_val=$(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g' | sed '/^$/d' | sed 's/=/=\n/')
@@ -417,7 +407,6 @@ function print_field_table() {
   done
   # printf "$local_prefix%s\n" ${field_val[@]};
 }
-
 function default_labels() {
   cat $(dirname $0)/default_labels.json
   # printf "%s" '[{"name":":beer:","description":"Somehow related to homebrew","color":"F28E1C"},{"name":":bug:","description":"Literally a bug","color":"ffd438"},{"name":":alien:","description":"Something is unknown","color":"ffd438"},{"name":":robot:","description":"Robots are working on it!","color":"814fff"},{"name":":zap:","description":"A robot fixed something","color":"24a0ff"}]'
