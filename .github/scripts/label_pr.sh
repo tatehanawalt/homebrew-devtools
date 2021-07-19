@@ -3,49 +3,47 @@
 my_path=$0
 . "$(dirname $my_path)/helpers.sh"
 
-[ -z "$LABELS" ] && write_error "LABELS not set in label_pr" && exit 1
-labels=($(echo -e $LABELS | tr , '\n'))
-
-echo
-echo "labels:"
-echo ${labels[@]}
-
-echo
-json_data=$(printf "%s\n" "${labels[@]}" | jq -R . | jq -s .)
-
-echo "json_data: "
-echo $json_data
-echo
-
+can_exec=0
 args=(--url)
 args+=('repos/{owner}/{repo}/issues/{id}/labels')
 args+=(--method)
 args+=(POST)
 args+=(--auth)
-args+=(--json-body)
-args+=($(echo $json_data))
 
-[ -z "$ID" ] && write_error "ID not set in label_pr" && exit 1
+if [ -z "$GITHUB_REPOSITORY" ]; then
+  can_exec=1
+  write_error "GITHUB_REPOSITORY not set in label_pr"
+fi
+
+if [ -z "$GITHUB_REPOSITORY_OWNER" ]; then
+  can_exec=1
+  write_error "GITHUB_REPOSITORY_OWNER not set in label_pr"
+fi
+
+if [ -z "$ID" ]; then
+  can_exec=1
+  write_error "ID not set in label_pr"
+fi
+
+if [ -z "$LABELS" ]; then
+  can_exec=1
+  write_error "LABELS not set in label_pr"
+fi
+
 args+=(--id)
 args+=($ID)
 
-[ -z "$GITHUB_REPOSITORY" ] && write_error "GITHUB_REPOSITORY not set in label_pr" && exit 1
-args+=(--repo)
-args+=($(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'))
+labels=($(echo -e $LABELS | tr ',' '\n'))
+json_data=$(printf "%s\n" "${labels[@]}" | jq -R . | jq -s -c .)
+args+=(--json-body)
+args+=($json_data)
 
-[ -z "$GITHUB_REPOSITORY_OWNER" ] && write_error "GITHUB_REPOSITORY_OWNER not set in label_pr" && exit 1
 args+=(--owner)
 args+=($GITHUB_REPOSITORY_OWNER)
 
-echo "args:"
-printf "  %s\n" ${args[@]}
-echo
+args+=(--repo)
+args+=($(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'))
 
-results=($(git_req ${args[@]}))
-printf "exit_code: %d\n" ${results[0]}
-echo
+[ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
 
-echo "${results[@]:1}" | jq
-
-before_exit
-exit 0
+git_req ${args[@]}

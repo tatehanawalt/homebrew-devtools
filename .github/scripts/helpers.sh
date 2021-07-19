@@ -21,6 +21,19 @@ in_ci() {
   return 1
 }
 
+pre_args() {
+  # Parse args for silent, debug etc...
+  for arg in $@; do
+    case $arg in
+      -d) debug_mode=0;; # Print debug logging
+      -s) # silent mode - disables output (including debug messages)
+        silent_mode=0
+        eval "exec 2> /dev/null"
+        ;;
+    esac
+  done
+} # Same as for loop below
+
 # Parse args for silent, debug etc...
 for arg in $@; do
   case $arg in
@@ -153,7 +166,6 @@ case_signatures() {
 search_file() {
   case_signatures $1
 }
-
 ferpf() {
   if [ ${#@} -lt 1 ]; then
     echo 1>&2
@@ -234,17 +246,25 @@ before_exit() {
 
 # Shared github api helper method
 git_req() {
+  pre_args $@
+
+  can_exec=0
+
   IFS=$'\n'
   positional=()
   args=()
-  req_url=""
+  local req_url=""
   while [ $# -gt 0 ]; do
     key="$1"
     shift
     case $key in
       --auth)
-        [ -z "$GITHUB_AUTH_TOKEN" ] && write_error "GITHUB_AUTH_TOKEN not set in git_Req\n" && exit 1
-        args+=(-H "Authorization: token $GITHUB_AUTH_TOKEN")
+        if [ -z "$GITHUB_AUTH_TOKEN" ]; then
+          write_error "GITHUB_AUTH_TOKEN not set in git_Req"
+          can_exec=1
+        else
+          args+=(-H "Authorization: token $GITHUB_AUTH_TOKEN")
+        fi
         continue
         ;;
       --id)
@@ -279,27 +299,23 @@ git_req() {
     esac
     shift
   done
+
   args+=(-s)
+
+  # Output Format - see https://curl.se/docs/manpage.html
   args+=(-w)
   args+=("HTTPSTATUS:%{http_code}")
+
+  # Headers:
   args+=(-H)
   args+=("Accept: application/vnd.github.v3+json")
   args+=("https://api.github.com/$req_url")
 
+  [ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
 
-
-  # curl ${args[@]}
   response=$(curl ${args[@]})
-  printf "%s\n" $(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-  echo "$response" | sed -e 's/HTTPSTATUS\:.*//g' | jq
-
-  # results=($(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g'))
-  # results+=($(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://'))
-  #printf "${response[@]}\n"
-  #printf "%s\n" $(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')
-  # echo ${results[@]}
-  # printf "$(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')\n"
-  # printf "$(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')\n"
+  local status_code=$(echo "$response" | tail -n 1 | sed 's/.*HTTPSTATUS://g')
+  echo "$response"| sed 's/HTTPSTATUS.*//g'
 }
 
 # CSV set helpers
