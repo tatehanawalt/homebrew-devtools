@@ -1,22 +1,23 @@
 #!/bin/bash
 
-my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
-[ "$CI" != "true" ] && my_path=$(readlink $0)
-. $(dirname $my_path)/helpers.sh
+my_path=$0
+. "$(dirname $my_path)/helpers.sh"
 
-usage() {
+function usage() {
   ferpf "giit_api.sh usage:\n"
   # Generate usage by running the search_file function against the path
   # to this file
 }
-run_input() {
+
+function exec_template() {
   args=()          # args forwarded to the git api helper method
   request_url=''   # url request path
   search_string='' # a jq search expression for successful response data
-  if [ $debug_mode -eq 0 ]; then
-    ferpf "run_input:\n"
-    ferpf "%s\n" ${@}
-  fi
+  can_exec=0
+
+  ferpf "exec_template:\n"
+  ferpf "%s\n" ${@}
+
   case $1 in
     artifacts)
       request_url='repos/{owner}/{repo}/actions/artifacts'
@@ -217,40 +218,99 @@ run_input() {
       exit 1
       ;;
   esac
+
   args+=(--url)
   args+=($request_url)
 
   depts=($(echo "$request_url" | grep -o '{[[:alpha:]]*}' | grep -o '[^{][[:alpha:]]*[^}]'))
   for dep in ${depts[@]}; do
     case $dep in
-      'owner') args+=(--owner $GITHUB_REPOSITORY_OWNER);;
-      'repo') args+=(--repo $(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'));;
-      'user') args+=(--user tatehanawalt);;
+      'owner')
+        if [ -z "$GITHUB_REPOSITORY_OWNER" ]; then
+          can_exec=1
+          write_error "GITHUB_REPOSITORY_OWNER not set in git_api"
+        fi
+        args+=(--owner $GITHUB_REPOSITORY_OWNER)
+        ;;
+      'repo')
+        if [ -z "$GITHUB_REPOSITORY" ]; then
+          can_exec=1
+          write_error "GITHUB_REPOSITORY not set in git_api"
+        fi
+        args+=(--repo $(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'))
+        ;;
+      'user')
+        args+=(--user tatehanawalt)
+        ;;
       *)
         write_error "unrecognized dependency $dep\n"
         return 1
         ;;
     esac
   done
-  if [ $debug_mode -eq 0 ]; then
-    ferpf "args:\n"
-    IFS=$'\n'
-    ferpf " • %s\n" ${args[@]}
-    ferpf "\n"
-  fi
-  results=($(git_req ${args[@]}))
-  exit_code=$(echo "${results[0]}")
-  response_body="${results[@]:1}"
-  if [ ! -z "$search_string" ]; then
-    response_body=$(echo "$response_body" | jq --arg field_name "$field_val" -r "$search_string")
-  fi
-  echo "$response_body"
+
+  [ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
+
+  results=$(git_req ${args[@]})
+
+  [ ! -z "$search_string" ] && results=$(echo "$results" | jq --arg field_name "$field_val" -r "$search_string")
+
+  echo $results
 }
 
-cmds=($(echo "$template" | tr ',' '\n'))
-for cmd in ${cmds[@]}; do
-  run_input $cmd
-done
+function git_api() {
+  while [ $# -gt 0 ]; do
+    exec_template $1
+    shift
+  done
+}
+
+git_api $(echo $@ | sed 's/,/ /g' | tr -s ' ')
+
+
+
+
+
+# if [ $debug_mode -eq 0 ]; then
+#   ferpf "args:\n"
+#   IFS=$'\n'
+#   ferpf " • %s\n" ${args[@]}
+#   ferpf "\n"
+# fi
+
+# results=($(git_req ${args[@]}))
+# exit_code=$(echo "${results[0]}")
+# response_body="${results[@]:1}"
+# if [ ! -z "$search_string" ]; then
+#   response_body=$(echo "$response_body" | jq --arg field_name "$field_val" -r "$search_string")
+# fi
+# echo "$response_body"
+
+# exec_template:
+# repo_workflow_completed_run_ids
+# jq: error (at <stdin>:0): Cannot index string with string "workflow_runs"
+# parse error: Expected string key before ':' at line 1, column 14
+#
+# ➜  scripts git:(main) ✗ ./git_api.sh repo_workflow_completed_run_ids
+# exec_template:
+# repo_workflow_completed_run_ids
+# {
+#   "total_count": 222,
+#   "workflow_runs": [
+#     {
+
+# my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
+# [ "$CI" != "true" ] && my_path=$(readlink $0)
+# . $(dirname $my_path)/helpers.sh
+
+# test data:
+# export TEMPLATE=repo_workflow_completed_run_ids
+# export o
+
+# cmds=($(echo "$TEMPLATE" | tr ',' '\n'))
+# for cmd in ${cmds[@]}; do
+#   exec_template $cmd
+# done
 
 # return $exit_code
 # return $response_body
@@ -258,12 +318,12 @@ done
 # if in_ci; then
 #   for cmd in $(echo "$template" | tr ',' '\n'); do
 #     ferpf "command: %s\n" ${cmd}
-#     results=($(run_input $cmd))
+#     results=($(exec_template $cmd))
 #     echo $results
 #     echo "${results[@]:1}"
 #   done
 # else
-#   results=($(run_input $1))
+#   results=($(exec_template $1))
 #   exit_code=$?
 #   if [ $exit_code -eq 0 ]; then
 #     exit_code=$results

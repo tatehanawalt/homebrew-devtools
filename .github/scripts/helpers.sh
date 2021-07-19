@@ -3,50 +3,6 @@
 helpers_start_time=$(date +%s)
 silent_mode=1
 debug_mode=1
-
-debug() {
-  if [ -z "$debug_mode" ];
-  then
-    return 1
-  fi
-  if [ $debug_mode -eq 0 ];
-  then
-    return 0
-  fi
-  return 1
-}
-in_ci() {
-  [ -z "$CI" ] && return 1
-  [ "$CI" = "true" ] && return 0
-  return 1
-}
-
-pre_args() {
-  # Parse args for silent, debug etc...
-  for arg in $@; do
-    case $arg in
-      -d) debug_mode=0;; # Print debug logging
-      -s) # silent mode - disables output (including debug messages)
-        silent_mode=0
-        eval "exec 2> /dev/null"
-        ;;
-    esac
-  done
-} # Same as for loop below
-
-# Parse args for silent, debug etc...
-for arg in $@; do
-  case $arg in
-    # Print debug logging
-    -d) debug_mode=0;;
-    # silent mode - disables output (including debug messages)
-    -s)
-      silent_mode=0
-      eval "exec 2> /dev/null"
-      ;;
-  esac
-done
-
 max_field_len=0
 
 # Specify Colors
@@ -66,21 +22,43 @@ field_color=$blue
 lp=' '
 table_indent=''
 print_debug_header=1
-
 HELPERS_LOG_TOPICS=()
 
 # env var template specified
 HAS_TEMPLATE=1
-if [ -z "$template" ]; then
-  [ ! -z "$1" ] && template="$1"
-  if [ ! -z "$template" ]; then
-    HAS_TEMPLATE=0
-  fi
-else
-  HAS_TEMPLATE=0
-fi
 
-case_signatures() {
+function debug() {
+  if [ -z "$debug_mode" ];
+  then
+    return 1
+  fi
+  if [ $debug_mode -eq 0 ];
+  then
+    return 0
+  fi
+  return 1
+}
+
+function in_ci() {
+  [ -z "$CI" ] && return 1
+  [ "$CI" = "true" ] && return 0
+  return 1
+}
+
+function pre_args() {
+  # Parse args for silent, debug etc...
+  for arg in $@; do
+    case $arg in
+      -d) debug_mode=0;; # Print debug logging
+      -s) # silent mode - disables output (including debug messages)
+        silent_mode=0
+        eval "exec 2> /dev/null"
+        ;;
+    esac
+  done
+}
+
+function case_signatures() {
   div_bar=$(printf '=%.0s' {1..123} | sed 's/=/-/g' | sed "s/^/$decorate_color/")
   div_wall=$(echo -e "$decorate_color|$ferpf_color")
   function_body=$(sed -n '/^run_input/I,/^}/I{ p;}' $1)
@@ -163,10 +141,12 @@ case_signatures() {
   done
   ferpf "%s%s" "$table_indent" "$div_bar" # Last horizontal bar in the table
 }
-search_file() {
+
+function search_file() {
   case_signatures $1
 }
-ferpf() {
+
+function ferpf() { # Write to standard error
   if [ ${#@} -lt 1 ]; then
     echo 1>&2
     return
@@ -175,21 +155,23 @@ ferpf() {
   printf $* 1>&2
 }
 
-set_fg() {
+function set_fg() {
   if [ $1 -eq -1 ]; then
     echo -en '\033[0m'
   else
     echo -en "\033[38;5;${1}m"
   fi
 }
-set_bg() {
+
+function set_bg() {
   if [ $1 -eq -1 ]; then
     echo -en '\033[0m'
   else
     echo -en "\033[48;5;${1}m"
   fi
 }
-pallette() {
+
+function pallette() {
   for i in {0..255}; do
     i_rem=$(expr $i % 10)
     [ $i_rem -eq 0 ] && printf "$table_indent"
@@ -211,7 +193,8 @@ pallette() {
   set_bg -1
   echo
 }
-show_colors() {
+
+function show_colors() {
   echo -en "\n   +  "
   for i in {0..35};
   do
@@ -238,14 +221,14 @@ show_colors() {
 }
 
 # Call before exitiing mainly for summarizing results and activity
-before_exit() {
+function before_exit() {
   [ -z "$HELPERS_LOG_TOPICS" ] && return
   write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
   log
 }
 
 # Shared github api helper method
-git_req() {
+function git_req() {
   pre_args $@
 
   can_exec=0
@@ -319,13 +302,14 @@ git_req() {
 }
 
 # CSV set helpers
-for_csv() {
+function for_csv() {
   IFS=$'\n'
   for field in $(echo $1 | tr ',' '\n'); do
     $2 $field
   done
 }
-csv_max_length() {
+
+function csv_max_length() {
   IFS=$'\n'
   max_field_len=0
   for field in $(printf $1 | tr ',' '\n'); do
@@ -333,7 +317,8 @@ csv_max_length() {
   done
   echo "$max_field_len"
 }
-join_by () {
+
+function join_by() {
   local d=${1-} f=${2-};
   if shift 2; then
     printf %s "$f" "${@/#/$d}" | sed "s/ $d/$d/g"
@@ -341,7 +326,8 @@ join_by () {
     #printf %s "$f" "${@/#/$d}" | sed "s/[^[:alnum:]]$d/$d/g" | sed 's/[^[:alnum:]]$//g'
   fi
 }
-contains() {
+
+function contains() {
   IFS=$'\n'
   check=$1
   shift
@@ -353,16 +339,17 @@ contains() {
   return 1
 }
 
-get_prefix() {
+function get_prefix() {
   printf "\t"
 }
 
-write_error() {
+function write_error() {
   echo -en $error_color
   echo "::error::$1"
   echo -en $noc
 }
-log() {
+
+function log() {
   debug && printf 'called_from_function: %s\n' "$(caller)"
 
   # echo -en "$log_color"
@@ -377,15 +364,17 @@ log() {
     in_log=1
   fi
 }
-log_result_set() {
+
+function log_result_set() {
   printf "$(get_prefix)%s\n" $(echo -e $1 | tr ',' '\n')
 }
 
-command_log_which() {
+function command_log_which() {
   printf "%s\t%s\n" $1 "$(which $1)"
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
 }
-write_result_set() {
+
+function write_result_set() {
   IFS=$'\n'
   result=$(echo -e "$1" | sed 's/"//g')
   [ -z "$result" ] && return 1
@@ -402,10 +391,12 @@ write_result_set() {
   # [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }
-print_field() {
+
+function print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
 }
-print_field_table() {
+
+function print_field_table() {
   IFS=$'\n'
   field_val=$(eval "echo \"\$$1\"" | tr ',' '\n' | sed 's/^[[:space:]]*//g' | sed '/^$/d' | sed 's/=/=\n/')
   field_val=($(echo "$field_val"))
@@ -426,7 +417,8 @@ print_field_table() {
   done
   # printf "$local_prefix%s\n" ${field_val[@]};
 }
-default_labels() {
+
+function default_labels() {
   cat $(dirname $0)/default_labels.json
   # printf "%s" '[{"name":":beer:","description":"Somehow related to homebrew","color":"F28E1C"},{"name":":bug:","description":"Literally a bug","color":"ffd438"},{"name":":alien:","description":"Something is unknown","color":"ffd438"},{"name":":robot:","description":"Robots are working on it!","color":"814fff"},{"name":":zap:","description":"A robot fixed something","color":"24a0ff"}]'
   # _jq() { echo ${row} | base64 --decode | jq -r ${1}; }
@@ -437,6 +429,20 @@ default_labels() {
   # DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq --arg name "$name" '. | . + [{"name": "demo1", "description": "demo description", "color": "F28E1C"}]')
   # CURRENT_LABELS
 }
+
+
+
+
+pre_args $@
+
+if [ -z "$template" ]; then
+  [ ! -z "$1" ] && template="$1"
+  if [ ! -z "$template" ]; then
+    HAS_TEMPLATE=0
+  fi
+else
+  HAS_TEMPLATE=0
+fi
 
 if debug; then
   [ $silent_mode -eq 1 ] && echo -en "\033c\n"
@@ -463,3 +469,20 @@ if debug; then
   log sample_log
   ferpf
 fi
+
+
+
+# export GITHUB_REPOSITORY_OWNER=tatehanawalt
+# export GITHUB_REPOSITORY=homebrew-devtools
+# Parse args for silent, debug etc...
+# for arg in $@; do
+#   case $arg in
+#     # Print debug logging
+#     -d) debug_mode=0;;
+#     # silent mode - disables output (including debug messages)
+#     -s)
+#       silent_mode=0
+#       eval "exec 2> /dev/null"
+#       ;;
+#   esac
+# done
