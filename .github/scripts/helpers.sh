@@ -247,6 +247,9 @@ before_exit() {
 # Shared github api helper method
 git_req() {
   pre_args $@
+
+  can_exec=0
+  
   IFS=$'\n'
   positional=()
   args=()
