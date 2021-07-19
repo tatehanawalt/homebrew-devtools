@@ -25,7 +25,7 @@ print_debug_header=1
 HELPERS_LOG_TOPICS=()
 
 function test_local() {
-  GITHUB_WORKSPACE='blablabla'
+  GITHUB_WORKSPACE='/Users/tatehanawalt/Documents/dev/homebrew-devtools'
 }
 
 

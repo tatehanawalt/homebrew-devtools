@@ -1,7 +1,12 @@
 #!/bin/bash
 
+# DIFF_OUT=DIFF_FILES,DIFF_DIRS,DIFF_EXT,DIFF_ADD_LABEL_SET
+
+
 my_path=$0
 . "$(dirname $my_path)/helpers.sh"
+
+test_local
 
 can_exec=0
 add_label_set=()
@@ -19,7 +24,16 @@ git branch "$GITHUB_BASE_REF" FETCH_HEAD &>/dev/null
 
 [ -z $(git branch --list "$GITHUB_BASE_REF") ] && write_error "$(basename $0) FETCH_HEAD for branch $GITHUB_BASE_REF - line $LINENO" && exit 1
 
+
+
 diff_files=($(git diff --name-only $GITHUB_BASE_REF | sed 's/[[:space:]]$//g' | sed 's/^[[:space:]]//g' | sort -u))
+
+
+echo $diff_files
+
+exit 0
+
+
 diff_files_csv=$(join_by , ${diff_files[@]})
 write_result_set "$diff_files_csv" diff_files
 
