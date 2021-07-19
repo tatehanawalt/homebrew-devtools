@@ -1,7 +1,7 @@
-name: lintruby
+name: codelinter
 on: [pull_request]
 jobs:
-  lint-ruby:
+  lint-all:
     runs-on: ubuntu-latest
     steps:
       # Github provided action to check out the source code
