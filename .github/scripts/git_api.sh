@@ -250,13 +250,19 @@ function exec_template() {
   results=$(git_req ${args[@]})
   [ ! -z "$search_string" ] && results=$(echo "$results" | jq --arg field_name "$field_val" -r "$search_string")
 
+
   echo $results
+
+  write_result_set $results RESULT
 }
 
 [ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
 [ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined" && exit 1
-result="$(exec_template $TEMPLATE)"
-write_result_set $result RESULT
+
+exec_template $TEMPLATE
+
+# result="$(exec_template $TEMPLATE)"
+# write_result_set $result RESULT
 
 # ferpf "exec_template:\n"
 # ferpf "%s\n" ${@}
