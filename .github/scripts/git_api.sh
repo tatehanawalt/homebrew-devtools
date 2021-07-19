@@ -256,9 +256,9 @@ function exec_template() {
 [ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
 [ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined" && exit 1
 
-result=$(exec_template $TEMPLATE)
+result="$(exec_template $TEMPLATE)"
 
-write_result_set "$result" RESULT
+write_result_set $result RESULT
 
 # ferpf "exec_template:\n"
 # ferpf "%s\n" ${@}
