@@ -249,7 +249,7 @@ git_req() {
   pre_args $@
 
   can_exec=0
-  
+
   IFS=$'\n'
   positional=()
   args=()
@@ -463,18 +463,3 @@ if debug; then
   log sample_log
   ferpf
 fi
-
-
-
-# printf "%s\n" $(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-# echo "$response" | sed -e 's/HTTPSTATUS\:.*//g' | jq
-# results=($(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g'))
-# results+=($(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://'))
-# printf "${response[@]}\n"
-# printf "%s\n" $(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')
-# echo ${results[@]}
-# printf "$(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')\n"
-# printf "$(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')\n"
-
-# printf "args: ${#args[@]}\n"
-# printf "\t%s\n" ${args[@]}
