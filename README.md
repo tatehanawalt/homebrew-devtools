@@ -15,8 +15,6 @@ Nothing is actually stable right now. Even if indicated by the following documen
 
 [![flush-all-completed-workflow-runs Actions Status](https://github.com/tatehanawalt/homebrew-devtools/workflows/flush-all-completed-workflow-runs/badge.svg)](https://github.com/tatehanawalt/homebrew-devtools/actions)
 
-<br>
-
 ## Installing ##
 
 #### 1. Tap the repo: ####
@@ -60,10 +58,7 @@ brew tap tatehanawalt/devtools
 
 </details>
 
-<br>
-
 ## Tools ##
-
 
 <details>
   <br>
@@ -71,6 +66,8 @@ brew tap tatehanawalt/devtools
   <summary>democ</summary>
 
   Description: C cli built as part of the homebrew demo/dev tools project
+
+  [democ source](https://github.com/tatehanawalt/th_sys/tree/main/democ")
 
   Usage: Usage cominig soon...
 
@@ -201,3 +198,4 @@ brew tap tatehanawalt/devtools
 </details>
 
 
+<br>**Generate readme with `./.github/scripts/gen_readme.sh`**
