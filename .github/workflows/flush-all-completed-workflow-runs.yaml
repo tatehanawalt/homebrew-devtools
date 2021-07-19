@@ -8,10 +8,8 @@ jobs:
 
       - name: repo_workflow_completed_run_ids # Get the repository workflow id for the passed NAME
         id: repo_workflow_completed_run_ids
-        run: ./.github/scripts/git_api.sh
+        run: ./.github/scripts/git_api.sh repo_workflow_completed_run_ids
         shell: bash
-        args:
-          - 'repo_workflow_completed_run_ids'
 
       # Inspect the parameters and environment before deleting each workflow run
       # THIS IS NOT MANDATORY - this step could be omitted entirely
