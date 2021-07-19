@@ -8,12 +8,11 @@ add_label_set=()
 
 [ -z "$GITHUB_BASE_REF" ] && GITHUB_BASE_REF=main # original ref
 [ -z "$GITHUB_HEAD_REF" ] && GITHUB_HEAD_REF=main # current ref
-
 # Using the BASE branch
-[ -z "$GITHUB_BASE_REF" ] && write_error "$(basename $0) GITHUB_BASE_REF length is 0... set GITHUB_BASE_REF=<branch_name> - line $LINENO" && can_exec=1
-[ -z "$GITHUB_WORKSPACE" ] && write_error "$(basename $0) GITHUB_WORKSPACE length is 0 - line $LINENO" && can_exec=1
-[ ! -d "$GITHUB_WORKSPACE" ] && write_error "$(basename $0) GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE - line $LINENO" && can_exec=1
-[ $can_exec -ne 0 ] && write_error "can_exec -ne 0... can_exec=$can_exec - line $LINENO" && exit 1
+[ -z "$GITHUB_BASE_REF" ]     && write_error "$(basename $0) GITHUB_BASE_REF length is 0... set GITHUB_BASE_REF=<branch_name> - line $LINENO" && can_exec=1
+[ -z "$GITHUB_WORKSPACE" ]    && write_error "$(basename $0) GITHUB_WORKSPACE length is 0 - line $LINENO" && can_exec=1
+[ ! -d "$GITHUB_WORKSPACE" ]  && write_error "$(basename $0) GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE - line $LINENO" && can_exec=1
+[ $can_exec -ne 0 ]           && write_error "can_exec -ne 0... can_exec=$can_exec - line $LINENO" && exit 1
 
 git fetch origin "$GITHUB_BASE_REF" &>/dev/null
 git branch "$GITHUB_BASE_REF" FETCH_HEAD &>/dev/null

@@ -8,8 +8,8 @@ jobs:
       - uses: actions/checkout@v2
 
       # Lists the files, directories modified in HEAD vs BASE
-      - id: diff
-        name: diff
+      - name: diff
+        id: diff
         run: ./.github/scripts/diff_files.sh
         shell: bash
 

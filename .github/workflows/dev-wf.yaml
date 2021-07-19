@@ -11,10 +11,16 @@ jobs:
         run: ./.github/scripts/git_api.sh repo_workflow_completed_run_ids
         shell: bash
 
+      # Lists the files, directories modified in HEAD vs BASE
+      - name: diff
+        id: diff
+        run: ./.github/scripts/diff_files.sh
+        shell: bash
+
       # Inspect the parameters and environment before deleting each workflow run
       - name: show_env
-        id: show_env
         run: ./.github/scripts/introspect.sh show_env
         shell: bash
         env:
           RUN_IDS: "${{ steps.repo_workflow_completed_run_ids.outputs.RESULT }}"
+          DIFF_OUT: "${{ steps.diff.outputs.OUTPUTS }}"
