@@ -76,7 +76,6 @@ brew tap tatehanawalt/devtools
 "
 
 
-
 for name in $(formula_names);
 do
   desc="$(formula_description $name)"
@@ -100,3 +99,5 @@ do
 done
 
 printf "%s\n" "$formulas_readme" > $readme_path
+
+printf "<br>**Generate readme with \`./.github/scripts/gen_readme.sh\`**\n" >> $readme_path
