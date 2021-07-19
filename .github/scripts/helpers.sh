@@ -406,6 +406,156 @@ function default_labels() {
 }
 
 
+# Git repo helpers
+function git_repo_root() {
+  local root_dir="$(git rev-parse --show-toplevel)"
+  [ ! -d "$root_dir" ] && write_error "git_repo_root root_dir not a directory - line $LINENO" && return 1
+  printf "%s" $root_dir
+}
+
+# Formula Functions:
+# ==============================================================================
+function formulas_dir() {
+  [ ! -z "$FORMULAS_DIR" ] && [ -d "$FORMULAS_DIR" ] && printf "%s" "$FORMULAS_DIR" && return 0
+  if [ ! -z "$GITHUB_WORKSPACE" ] && [ -d "$GITHUB_WORKSPACE/Formula" ];
+  then
+    FORMULAS_DIR="$GITHUB_WORKSPACE/Formula"
+    printf "%s" "$FORMULAS_DIR"
+    return 0
+  fi
+  local_git_root=$(git_repo_root)
+  [ $? -ne 0 ] && write_error "formulas_dir local_git_root error - line $LINENO" && return 1
+  [ ! -d "$local_git_root/Formula" ] && write_error "formulas_dir local_git_root error - line $LINENO" && return 1
+  FORMULAS_DIR="$local_git_root/Formula"
+  printf "%s" "$FORMULAS_DIR"
+}
+
+function formula_names() {
+  f_dir=$(formulas_dir)
+  [ $? -ne 0 ] && write_error "formula_names error - line $LINENO" && return 1
+  find "$f_dir" \
+    -maxdepth 1 \
+    -type f \
+    -name '*.rb' \
+    -exec basename {} \; | \
+    sed 's/\..*//' | \
+    sort -u
+}
+
+function formula_path() {
+  f_dir=$(formulas_dir)
+  [ $? -ne 0 ] && write_error "formulas_dir error - line $LINENO" && return 1
+  [ ! -d "$f_dir" ] && write_error "FORMULA_DIR not a directory - line $LINENO" && return 1
+  [ ! -f "$f_dir/$1.rb" ] && write_error "$f_dir/$1.rb not a file - line $LINENO" && return 1
+  printf "$f_dir/$1.rb"
+}
+function formula_paths() {
+  for item in $(formula_names); do
+    val=$(formula_path $item)
+    [ -z "$val" ] && continue
+    printf "${item} ${val}\n"
+  done
+}
+
+function formula_file() {
+  formula_path=$(formula_path $1)
+  [ $? -ne 0 ] && printf "$1 formula path not found\n" && return 1
+  cat $formula_path
+}
+
+function formula_header() {
+  formula_file $1 | sed -n '/#/,/^$/{/^$/q;p;}'
+}
+function formula_description() {
+  formula_header $1 | grep "^# desc.*$" | sed 's/^.*://g'
+}
+function formula_method_signatures() {
+  IFS=$'\n'
+  slim_file=$(formula_file $1 | \
+    sed 's/#.*//' | \
+    grep -o '.*[[:alnum:]].*' | \
+    sed 's/.*".*//' | \
+    sed "s/.*'.*//" | \
+    sed '/^$/d')
+  signatures_prefix=$(printf "${slim_file}\n" | head -n 2 | tail -n 1 | sed 's/[[:alnum:]].*//')
+  file_body=$(printf "$slim_file" | grep "^$signatures_prefix[^ ].*")
+  prev=""
+  for row in $file_body; do
+    [[ "$row" =~ ^[[:space:]]+end ]] && printf "%s\n" "$prev"
+    prev=$row
+  done
+}
+function formula_method_body() {
+  IFS=$'\n'
+  slim_file=$(formula_file $1 | sed '/#.*/d')
+  sub_slim_file=$(echo "$slim_file" | \
+    sed 's/.*".*//' | \
+    sed "s/.*'.*//" | \
+    sed '/^$/d')
+  echo "$sub_slim_file"
+  # Standard padding for a method signature
+  signatures_prefix=$(echo "$sub_slim_file" | head -n 2 | tail -n 1 | sed 's/[[:alnum:]].*//')
+  # printf "|%s|\n\n" $signatures_prefix
+  echo "$slim_file" | awk "/$2/,/^${signatures_prefix}end/"
+}
+function formula_sha() {
+  formula_method_body $1 $2 | \
+    grep "sha256.*" | \
+    tr \' \" | \
+    cut -d '"' -f 2
+}
+function formula_url() {
+  IFS=$'\n'
+  formula_method_body "$1" "$2" | \
+    grep 'url.*' | \
+    tr \' \" | \
+    cut -d '"' -f 2
+}
+
+function formula_stable_shas() {
+  for item in $(formula_names); do
+    val=$(formula_sha $item stable)
+    [ -z "$val" ] && continue
+    printf "${item} ${val}\n"
+  done
+}
+function formula_stable_urls() {
+  for item in $(formula_names); do
+    val=$(formula_url "$item" "stable")
+    [ -z "$val" ] && continue
+    printf "${item} ${val}\n"
+  done
+}
+
+function formula_head_shas() {
+  for item in $(formula_names); do
+    val=$(formula_sha $item head)
+    [ -z "$val" ] && continue
+    printf "${item} ${val}\n"
+  done
+}
+function formula_head_urls() {
+  for item in $(formula_names); do
+    val=$(formula_url "$item" "head")
+    [ -z "$val" ] && continue
+    printf "${item} ${val}\n"
+  done
+}
+
+function formula_signatures() {
+  IFS=$'\n'
+  for item in $(formula_names); do
+    printf "%s\n" $item
+    formula_method_signatures $item
+  done
+}
+
+
+
+
+
+
+
 
 function test_local() {
   GITHUB_WORKSPACE='/Users/tatehanawalt/Documents/dev/homebrew-devtools'

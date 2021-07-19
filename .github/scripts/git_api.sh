@@ -1,10 +1,13 @@
 #!/bin/bash
 
-my_path=$0
-. "$(dirname $my_path)/helpers.sh"
+# git_api can be invoked directly to retrieve metadata from git through the
+# git api
 
 [ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
 [ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined - line $LINENO" && exit 1
+
+my_path=$0
+. "$(dirname $my_path)/helpers.sh"
 
 function usage() {
   ferpf "git_api.sh usage:\n"

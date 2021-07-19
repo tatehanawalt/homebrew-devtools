@@ -1,3 +1,0 @@
-# Formula
-
-# Markdown change

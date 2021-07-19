@@ -26,7 +26,6 @@
 # 2. Somewhere in your .zshrc file add `~/.gem/bin` to yor PATH with
 #    `export PATH=$GEM_HOME/bin:$PATH`
 #==============================================================================
-printf "LINT AND FORMAT the ruby files in the (r)homebrew-devtools/Formula path\n"
 
 #------------------------------------------------------------------------------
 # 1. Verify the script was executed from in the homebrew-devtools repository
@@ -36,12 +35,14 @@ if [ -z "$ROOT_PROJECT_PATH" ]; then
   printf "ERROR - devtools gen_tap_readme.zsh got nothing from git rev-parse --show-toplevel\n"
   return 1
 fi
+
 REPO_NAME=$(basename "$ROOT_PROJECT_PATH")
 printf "REPO_NAME=%s\n" "$REPO_NAME"
 if [[ "$REPO_NAME" != "homebrew-devtools" ]]; then
   printf "ERROR - devtools gen_tap_readme.zsh repo name is not the homebrew-devtools repo\n"
   return 1
 fi
+
 # Expected Formulas directory
 FORMULA_DIR="$ROOT_PROJECT_PATH/Formula"
 if [ ! -d "$FORMULA_DIR" ]; then
