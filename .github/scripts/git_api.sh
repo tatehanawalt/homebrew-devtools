@@ -258,9 +258,7 @@ function exec_template() {
 
 result=$(exec_template $TEMPLATE)
 
-echo "$result"
-
-write_result_set "$result"
+write_result_set "$result" RESULT
 
 # ferpf "exec_template:\n"
 # ferpf "%s\n" ${@}
