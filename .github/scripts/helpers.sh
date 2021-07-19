@@ -43,8 +43,6 @@ function in_ci() {
   [ "$CI" = "true" ] && return 0
   return 1
 }
-
-
 function pre_args() {
   # Parse args for silent, debug etc...
   for arg in $@; do
@@ -57,8 +55,6 @@ function pre_args() {
     esac
   done
 }
-
-
 function case_signatures() {
   div_bar=$(printf '=%.0s' {1..123} | sed 's/=/-/g' | sed "s/^/$decorate_color/")
   div_wall=$(echo -e "$decorate_color|$ferpf_color")
@@ -145,8 +141,6 @@ function case_signatures() {
 function search_file() {
   case_signatures $1
 }
-
-
 function ferpf() { # Write to standard error
   if [ ${#@} -lt 1 ]; then
     echo 1>&2
@@ -156,7 +150,6 @@ function ferpf() { # Write to standard error
   printf $* 1>&2
   printf "%b" $noc
 }
-
 function set_fg() {
   if [ $1 -eq -1 ]; then
     echo -en '\033[0m'
@@ -337,7 +330,6 @@ function contains() {
 function get_prefix() {
   printf "\t"
 }
-
 function write_error() {
   echo -en $error_color
   echo "::error::$1"
@@ -365,7 +357,6 @@ function command_log_which() {
   printf "%s\t%s\n" $1 "$(which $1)"
   printf "%s\n" "$2" | sed "s/^.*divider-bin-\([0-9.]*\).*/\1/"
 }
-
 function write_result_set() {
   IFS=$'\n'
   result=$(echo -e "$1" | sed 's/"//g')
@@ -378,17 +369,8 @@ function write_result_set() {
   result="${result//$'\n'/'%0A'}"
   result="${result//$'\r'/'%0D'}"
   echo "::set-output name=$key::$(echo -e $result)"
-
-  # log $key
-  # printf "$(get_prefix)%s\n" $(echo -e "$result" | tr ',' '\n')
-  # printf "$key='$result'\n"
-  # if [ in_ci ]
-  # then
-  # else
-  # [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }
-
 function print_field() {
   printf "%s=$(eval "echo \"\$$1\"")\n" $1
 }
@@ -424,9 +406,6 @@ function default_labels() {
   # DEFAULT_LABELS=$(echo $DEFAULT_LABELS | jq --arg name "$name" '. | . + [{"name": "demo1", "description": "demo description", "color": "F28E1C"}]')
   # CURRENT_LABELS
 }
-
-
-
 
 pre_args $@
 if [ -z "$template" ]; then
@@ -465,7 +444,13 @@ if debug; then
 fi
 
 
-
+# log $key
+# printf "$(get_prefix)%s\n" $(echo -e "$result" | tr ',' '\n')
+# printf "$key='$result'\n"
+# if [ in_ci ]
+# then
+# else
+# [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
 # export GITHUB_REPOSITORY_OWNER=tatehanawalt
 # export GITHUB_REPOSITORY=homebrew-devtools
 # Parse args for silent, debug etc...
