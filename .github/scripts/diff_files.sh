@@ -25,9 +25,6 @@ function on_label() {
   [ -z "$1" ] && write_error "on_label \$1 length is zero - line $LINENO" && return 1
   diff_labels+=("$1")
   case "$1" in
-    "brew")
-      diff_labels+=(":beer:")
-      ;;
     "formula")
       on_label "brew"
       ;;

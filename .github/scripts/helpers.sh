@@ -26,6 +26,9 @@ HELPERS_LOG_TOPICS=()
 
 function test_local() {
   GITHUB_WORKSPACE='/Users/tatehanawalt/Documents/dev/homebrew-devtools'
+  GITHUB_REPOSITORY_OWNER=tatehanawalt
+  GITHUB_REPOSITORY=homebrew-devtools
+  ID=22
 }
 
 

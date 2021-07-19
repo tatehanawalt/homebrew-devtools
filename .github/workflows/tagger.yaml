@@ -34,5 +34,5 @@ jobs:
         shell: bash
         env:
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LABELS: ${{ steps.diff.outputs.LABELS }}
+          LABELS_CSV: ${{ steps.diff.outputs.LABELS }}
           ID: ${{ steps.action.outputs.ID }}
