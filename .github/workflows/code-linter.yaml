@@ -14,7 +14,7 @@ jobs:
         shell: bash
 
       - id: ext
-        run: echo ::set-output name=RB::$(echo ${{steps.diff.outputs.DIFF_EXT}} | grep -o 'rb')
+        run: echo ::set-output name=RB::$(echo ${{steps.diff.outputs.EXTENSIONS}} | grep -o 'rb')
 
       - if: steps.ext.outputs.RB == 'rb'
         uses: actions/setup-ruby@v1

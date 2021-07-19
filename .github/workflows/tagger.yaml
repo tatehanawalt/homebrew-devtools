@@ -15,8 +15,8 @@ jobs:
       - uses: actions/checkout@v2
 
       # Get PR ID
-      - name: action_data
-        id: action_data
+      - name: action
+        id: action
         run: ./.github/scripts/action_data.sh
         shell: bash
 
@@ -26,10 +26,11 @@ jobs:
         run: ./.github/scripts/diff_files.sh
         shell: bash
 
-      - name: label_pr    # Attach labels to the pr where $ID = The PR ID
+      # Attach labels to the pr where $ID = The PR ID
+      - name: label_pr
         run: ./.github/scripts/label_pr.sh
         shell: bash
         env:
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LABELS: ${{ steps.diff.outputs.DIFF_ADD_LABEL_SET }}
-          ID: ${{ steps.action_data.outputs.ID }}
+          LABELS: ${{ steps.diff.outputs.LABELS }}
+          ID: ${{ steps.action.outputs.ID }}
