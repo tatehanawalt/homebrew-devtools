@@ -60,13 +60,13 @@ jobs:
             '
 
       # For debugging and troubleshooting - introspective environment audit
-      - name: create_label
-        run: ./.github/scripts/create_labels.sh
-        shell: bash
-        env:
-          ADD_LABELS: "${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }}"
-          CURRENT_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
-          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: create_label
+      #   run: ./.github/scripts/create_labels.sh
+      #   shell: bash
+      #   env:
+      #     ADD_LABELS: "${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }}"
+      #     CURRENT_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
+      #     GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         # USER: ${{ steps.vcs_info.outputs.USER }}
         # OWNER: ${{ steps.vcs_info.outputs.OWNER }}
