@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. "$(dirname $0)/helpers.sh"
+my_path=$0
+. "$(dirname $my_path)/helpers.sh"
 
 DEFAULT_LABELS="$(default_labels)"
 
@@ -30,3 +31,5 @@ for row in $(echo "${DEFAULT_LABELS}" | jq -r '.[] | @base64'); do
   echo "${results[@]:1}" | jq
   printf "\n"
 done
+
+before_exit

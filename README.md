@@ -1,9 +1,7 @@
 
-<!-- documentation for the devtools project -->
-
 <div align="center">
 
-  # TATE HANAWALT DEVTOOLS #
+  # TATE HANAWALT DEVTOOLS
 
   <br>
 
@@ -11,15 +9,9 @@
 
 </div>
 
-
-
-<br>
-
 ***Everything is currently in development.***
 
 Nothing is actually stable right now. Even if indicated by the following documentation.
-
-<!-- ![](./hello_world.svg) -->
 
 [![flush-all-completed-workflow-runs Actions Status](https://github.com/tatehanawalt/homebrew-devtools/workflows/flush-all-completed-workflow-runs/badge.svg)](https://github.com/tatehanawalt/homebrew-devtools/actions)
 
@@ -28,13 +20,16 @@ Nothing is actually stable right now. Even if indicated by the following documen
 ## Installing ##
 
 #### 1. Tap the repo: ####
+
 ```shell
 brew tap tatehanawalt/devtools
 ```
 
 #### 2. Install any tools using either the **STABLE** or **HEAD** methods outlined below. ####
 <details>
+
   <br>
+
   <summary>STABLE Install</summary>
 
   Install stable distribution with the standard brew install command:
@@ -42,11 +37,15 @@ brew tap tatehanawalt/devtools
   ```shell
   brew install <package_name>
   ```
+
   <br>
+
 </details>
 
 <details>
+
   <br>
+
   <summary>HEAD Install</summary>
 
   Head deploys the latest code directly from the projects source. You will get the latest elements of the tools but the tools may not always work to the standards offered from the stable installatioin method
@@ -56,39 +55,22 @@ brew tap tatehanawalt/devtools
   ```shell
   brew install --HEAD <package_name>
   ```
-  <br>
-</details>
 
+  <br>
+
+</details>
 
 <br>
 
-
 ## Tools ##
 
-<details>
-  <br>
-  <summary>Demogolang</summary>
-
-  Description: Tool details on the way...
-
-  Written In: `golang`
-
-  Usage: Usage cominig soon...
-
-  Install Stable:
-  ```shell
-  brew intstall demogolang
-  ```
-  <br>
-</details>
 
 <details>
   <br>
-  <summary>Democ</summary>
 
-  Description: Tool details on the way...
+  <summary>democ</summary>
 
-  Written In: `c`
+  Description: C cli built as part of the homebrew demo/dev tools project
 
   Usage: Usage cominig soon...
 
@@ -99,30 +81,81 @@ brew tap tatehanawalt/devtools
   <br>
 </details>
 
+
 <details>
   <br>
-  <summary>Democpp</summary>
 
-  Description: Tool details on the way...
+  <summary>democpp</summary>
 
-  Written In: `cpp`
+  Description: C++ cli built as part of the homebrew demo/dev tools project
 
   Usage: Usage cominig soon...
 
   Install Stable:
   ```shell
   brew intstall democpp
-  ````
+  ```
   <br>
 </details>
 
+
 <details>
   <br>
-  <summary>Demozsh</summary>
 
-  Description: Tool details on the way...
+  <summary>demogolang</summary>
 
-  Written In: `zsh`
+  Description: golang cli built as part of the homebrew demo/dev tools project
+
+  Usage: Usage cominig soon...
+
+  Install Stable:
+  ```shell
+  brew intstall demogolang
+  ```
+  <br>
+</details>
+
+
+<details>
+  <br>
+
+  <summary>demonodejs</summary>
+
+  Description: nodejs cli built as part of the homebrew demo/dev tools project
+
+  Usage: Usage cominig soon...
+
+  Install Stable:
+  ```shell
+  brew intstall demonodejs
+  ```
+  <br>
+</details>
+
+
+<details>
+  <br>
+
+  <summary>demopython</summary>
+
+  Description: python cli built as part of the homebrew demo/dev tools project
+
+  Usage: Usage cominig soon...
+
+  Install Stable:
+  ```shell
+  brew intstall demopython
+  ```
+  <br>
+</details>
+
+
+<details>
+  <br>
+
+  <summary>demozsh</summary>
+
+  Description: zsh cli built as part of the homebrew demo/dev tools project
 
   Usage: Usage cominig soon...
 
@@ -133,19 +166,38 @@ brew tap tatehanawalt/devtools
   <br>
 </details>
 
+
 <details>
   <br>
-  <summary>Demonodejs</summary>
 
-  Description: Tool details on the way...
+  <summary>devenv</summary>
 
-  Written In: `nodejs`
+  Description: Configure a dev environment
 
   Usage: Usage cominig soon...
 
   Install Stable:
   ```shell
-  brew intstall demonodejs
+  brew intstall devenv
   ```
   <br>
 </details>
+
+
+<details>
+  <br>
+
+  <summary>gaffer</summary>
+
+  Description: zsh cli built as part of the homebrew demo/dev tools project
+
+  Usage: Usage cominig soon...
+
+  Install Stable:
+  ```shell
+  brew intstall gaffer
+  ```
+  <br>
+</details>
+
+

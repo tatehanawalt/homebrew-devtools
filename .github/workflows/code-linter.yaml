@@ -4,17 +4,18 @@ jobs:
   lint-all:
     runs-on: ubuntu-latest
     steps:
-      # Github provided action to check out the source code
+
+      # Check out the repo
       - uses: actions/checkout@v2
 
       # Lists the files, directories modified in HEAD vs BASE
-      - id: diff
-        name: diff
+      - name: diff
+        id: diff
         run: ./.github/scripts/diff_files.sh
         shell: bash
 
       - id: ext
-        run: echo ::set-output name=RB::$(echo ${{steps.diff.outputs.DIFF_EXT}} | grep -o 'rb')
+        run: echo ::set-output name=RB::$(echo ${{steps.diff.outputs.EXTENSIONS}} | grep -o 'rb')
 
       - if: steps.ext.outputs.RB == 'rb'
         uses: actions/setup-ruby@v1

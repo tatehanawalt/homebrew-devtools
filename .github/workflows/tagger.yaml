@@ -1,7 +1,12 @@
-name: tagger
-on: [pull_request]
-jobs:
+# Assigns
+# - PR author
+# - PR labels
 
+name: tagger
+
+on: pull_request
+
+jobs:
   assign-author:
     runs-on: ubuntu-latest
     steps:
@@ -10,33 +15,30 @@ jobs:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
         # if: github.event_name == 'pull_request' && github.event.action == 'opened'
 
-  label:
+  assign-labels:
     runs-on: ubuntu-latest
     steps:
+
+      # Check out the repo
       - uses: actions/checkout@v2
 
-      - name: action_data # Get id of this pr
-        id: action_data
+      # Get PR ID
+      - name: action
+        id: action
         run: ./.github/scripts/action_data.sh
         shell: bash
 
-      - name: label_names # Set of existing label names
-        id: label_names
-        run: ./.github/scripts/git_api.sh
-        shell: bash
-        env:
-          template: label_names
-
-      - name: diff        # Get various different changes from the commits making up the pr
+      # Get various changes from the PR commits
+      - name: diff
         id: diff
         run: ./.github/scripts/diff_files.sh
         shell: bash
 
-      - name: label_pr    # Actually attach labels to the pr
-        id: label_pr
+      # Attach labels to the pr where $ID = The PR ID
+      - name: label_pr
         run: ./.github/scripts/label_pr.sh
         shell: bash
         env:
           GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LABELS: ${{ steps.diff.outputs.DIFF_ADD_LABEL_SET }}
-          ID: ${{ steps.action_data.outputs.ID }}
+          LABELS_CSV: ${{ steps.diff.outputs.LABELS }}
+          ID: ${{ steps.action.outputs.ID }}

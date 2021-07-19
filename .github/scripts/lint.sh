@@ -5,6 +5,7 @@ my_path=$0
 
 echo -e "\n\nmy_path: $my_path\n\n"
 exit 0
+
 # Make sure we are in the github workspace
 # if [ -z "$GITHUB_WORKSPACE" ]; then
 #   printf "\$GITHUB_WORKSPACE length is 0..." 1>&2;

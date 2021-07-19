@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# git_api can be invoked directly to retrieve metadata from git through the
+# git api
+
+[ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
+[ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined - line $LINENO" && exit 1
+
 my_path=$0
 . "$(dirname $my_path)/helpers.sh"
 
@@ -8,7 +14,6 @@ function usage() {
   # Generate usage by running the search_file function against the path
   # to this file
 }
-
 function exec_template() {
   args=()          # args forwarded to the git api helper method
   request_url=''   # url request path
@@ -51,7 +56,7 @@ function exec_template() {
       ;;
     pull_request_labels)
       request_url='repos/{owner}/{repo}/pulls/{id}'
-      write_error "todo - specify search string for .labels field"
+      write_error "todo - specify search string for .labels field - line $LINENO"
       exit 1
       ;;
     pull_request_label_names)
@@ -84,12 +89,12 @@ function exec_template() {
       ;;
     release_latest_id)
       request_url='repos/{owner}/{repo}/releases/latest'
-      write_error "todo - specify search string for .id field"
+      write_error "todo - specify search string for .id field - line $LINENO"
       exit 1
       ;;
     release_latest_tag)
       request_url='repos/{owner}/{repo}/releases/latest'
-      write_error "todo - specify search string for .tag_name field"
+      write_error "todo - specify search string for .tag_name field - line $LINENO"
       exit 1
       ;;
     tagged)
@@ -108,7 +113,7 @@ function exec_template() {
       ;;
     repo_contributors)
       request_url='repos/{owner}/{repo}/contributors'
-      write_error "todo - specify search string for .name field"
+      write_error "todo - specify search string for .name field - line $LINENO"
       exit 1
       ;;
     repo_contributor_names)
@@ -140,7 +145,7 @@ function exec_template() {
     repo_workflow_id)
       request_url='repos/{owner}/{repo}/actions/workflows'
       # field_val=$NAME
-      write_error "todo - fix name dependency"
+      write_error "todo - fix name dependency - line $LINENO"
       exit 1
       # search_string='.workflows | .[] | select(.name == $field_name) | .id'
       ;;
@@ -225,14 +230,14 @@ function exec_template() {
       'owner')
         if [ -z "$GITHUB_REPOSITORY_OWNER" ]; then
           can_exec=1
-          write_error "GITHUB_REPOSITORY_OWNER not set in git_api"
+          write_error "GITHUB_REPOSITORY_OWNER not set in git_api - line $LINENO"
         fi
         args+=(--owner $GITHUB_REPOSITORY_OWNER)
         ;;
       'repo')
         if [ -z "$GITHUB_REPOSITORY" ]; then
           can_exec=1
-          write_error "GITHUB_REPOSITORY not set in git_api"
+          write_error "GITHUB_REPOSITORY not set in git_api - line $LINENO"
         fi
         args+=(--repo $(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'))
         ;;
@@ -243,22 +248,17 @@ function exec_template() {
         args+=(--id $ID)
         ;;
       *)
-        write_error "unrecognized dependency $dep\n"
+        write_error "unrecognized dependency $dep - line $LINENO"
         return 1
         ;;
     esac
   done
-
-  [ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
+  [ $can_exec -ne 0 ] && write_error "can_exec -ne 0 - line $LINENO" && exit 1
   results=$(git_req ${args[@]})
   [ ! -z "$search_string" ] && results=$(echo "$results" | jq --arg field_name "$field_val" -r "$search_string")
   echo $results
   write_result_set $results RESULT
 }
-
-[ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
-[ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined" && exit 1
-
 function for_each_id() {
   id_count=$((id_count + 1))
   ID=$1 exec_template $TEMPLATE
@@ -268,76 +268,4 @@ id_count=0
 for_csv "$ID" for_each_id
 [ $id_count -eq 0 ] && exec_template $TEMPLATE
 
-exit 0
-
-
-
-
-
-# result="$(exec_template $TEMPLATE)"
-# write_result_set $result RESULT
-# ferpf "exec_template:\n"
-# ferpf "%s\n" ${@}
-# function git_api() {
-#   while [ $# -gt 0 ]; do
-#     result=$(exec_template $1)
-#     echo "$result"
-#     write_result_set "$result" $1
-#     shift
-#   done
-# }
-# git_api $(echo $@ | sed 's/,/ /g' | tr -s ' ')
-# if [ $debug_mode -eq 0 ]; then
-#   ferpf "args:\n"
-#   IFS=$'\n'
-#   ferpf " • %s\n" ${args[@]}
-#   ferpf "\n"
-# fi
-# results=($(git_req ${args[@]}))
-# exit_code=$(echo "${results[0]}")
-# response_body="${results[@]:1}"
-# if [ ! -z "$search_string" ]; then
-#   response_body=$(echo "$response_body" | jq --arg field_name "$field_val" -r "$search_string")
-# fi
-# echo "$response_body"
-# my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
-# [ "$CI" != "true" ] && my_path=$(readlink $0)
-# . $(dirname $my_path)/helpers.sh
-# test data:
-# export TEMPLATE=repo_workflow_completed_run_ids
-# cmds=($(echo "$TEMPLATE" | tr ',' '\n'))
-# for cmd in ${cmds[@]}; do
-#   exec_template $cmd
-# done
-# return $exit_code
-# return $response_body
-# exit_code=0
-# if in_ci; then
-#   for cmd in $(echo "$template" | tr ',' '\n'); do
-#     ferpf "command: %s\n" ${cmd}
-#     results=($(exec_template $cmd))
-#     echo $results
-#     echo "${results[@]:1}"
-#   done
-# else
-#   results=($(exec_template $1))
-#   exit_code=$?
-#   if [ $exit_code -eq 0 ]; then
-#     exit_code=$results
-#     echo "${results[@]:1}" | jq
-#   else
-#     printf "%s\n" "${results[@]}"
-#   fi
-# fi
-# before_exit
-# exit $exit_code
-# git_req ${args[@]}
-# echo "${results[0]}"
-# return 1
-# exit_code=${results[0]}
-# echo $exit_code
-# if [ ! -z "$search_string" ]; then
-  # echo "${results[@]:1}" | jq --arg field_name "$field_val" -r $search_string
-# else
-  # echo "${results[@]:1}" | jq
-# fi
+before_exit
