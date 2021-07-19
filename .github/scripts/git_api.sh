@@ -261,7 +261,6 @@ function exec_template() {
 
 function for_each_id() {
   id_count=$((id_count + 1))
-  echo "ID=$1"
   ID=$1 exec_template $TEMPLATE
 }
 
