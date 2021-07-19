@@ -1,5 +1,11 @@
+# Assigns
+# - PR author
+# - PR labels
+
 name: tagger
-on: [pull_request]
+
+on: pull_request
+
 jobs:
   assign-author:
     runs-on: ubuntu-latest
