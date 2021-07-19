@@ -1,4 +1,4 @@
-name: pr-formula-tag
+name: labeler
 on: [pull_request]
 jobs:
   assignAuthor:
@@ -9,7 +9,7 @@ jobs:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
         # if: github.event_name == 'pull_request' && github.event.action == 'opened'
 
-  inspect-env:
+  assignLabels:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,8 +23,8 @@ jobs:
         shell: bash
         env:
           template: label_names
-      - id: diff          # Get various different changes from the commits making up the pr
-        name: diff
+      - name: diff        # Get various different changes from the commits making up the pr
+        id: diff
         run: ./.github/scripts/diff_files.sh
         shell: bash
       - name: show_env    # show the environment variables and inspect diffs/outputs
@@ -47,8 +47,8 @@ jobs:
               action=${{ steps.action_data.outputs.OUTPUTS }}
               diff=${{ steps.diff.outputs.OUTPUTS }}
               '
-      - id: label_pr      # Actually attach labels to the pr
-        name: label_pr
+      - name: label_pr    # Actually attach labels to the pr
+        id: label_pr
         run: ./.github/scripts/label_pr.sh
         shell: bash
         env:
