@@ -61,15 +61,13 @@ brew tap tatehanawalt/devtools
 ## Tools ##
 
 <details>
-  <br>
-
   <summary>democ</summary>
 
-  Description: C cli built as part of the homebrew demo/dev tools project
+  <br>
 
-  [democ source](https://github.com/tatehanawalt/th_sys/tree/main/democ)
+  C cli built as part of the homebrew demo/dev tools project
 
-  Usage: Usage cominig soon...
+  [source](https://github.com/tatehanawalt/th_sys/tree/main/democ)
 
   Install Stable:
   ```shell
@@ -80,13 +78,13 @@ brew tap tatehanawalt/devtools
 
 
 <details>
-  <br>
-
   <summary>democpp</summary>
 
-  Description: C++ cli built as part of the homebrew demo/dev tools project
+  <br>
 
-  Usage: Usage cominig soon...
+  C++ cli built as part of the homebrew demo/dev tools project
+
+  [source](https://github.com/tatehanawalt/th_sys/tree/main/democpp)
 
   Install Stable:
   ```shell
@@ -97,13 +95,13 @@ brew tap tatehanawalt/devtools
 
 
 <details>
-  <br>
-
   <summary>demogolang</summary>
 
-  Description: golang cli built as part of the homebrew demo/dev tools project
+  <br>
 
-  Usage: Usage cominig soon...
+  golang cli built as part of the homebrew demo/dev tools project
+
+  [source](https://github.com/tatehanawalt/th_sys/tree/main/demogolang)
 
   Install Stable:
   ```shell
@@ -114,13 +112,13 @@ brew tap tatehanawalt/devtools
 
 
 <details>
-  <br>
-
   <summary>demonodejs</summary>
 
-  Description: nodejs cli built as part of the homebrew demo/dev tools project
+  <br>
 
-  Usage: Usage cominig soon...
+  nodejs cli built as part of the homebrew demo/dev tools project
+
+  [source](https://github.com/tatehanawalt/th_sys/tree/main/demonodejs)
 
   Install Stable:
   ```shell
@@ -131,13 +129,13 @@ brew tap tatehanawalt/devtools
 
 
 <details>
-  <br>
-
   <summary>demopython</summary>
 
-  Description: python cli built as part of the homebrew demo/dev tools project
+  <br>
 
-  Usage: Usage cominig soon...
+  python cli built as part of the homebrew demo/dev tools project
+
+  [source](https://github.com/tatehanawalt/th_sys/tree/main/demopython)
 
   Install Stable:
   ```shell
@@ -148,13 +146,13 @@ brew tap tatehanawalt/devtools
 
 
 <details>
-  <br>
-
   <summary>demozsh</summary>
 
-  Description: zsh cli built as part of the homebrew demo/dev tools project
+  <br>
 
-  Usage: Usage cominig soon...
+  zsh cli built as part of the homebrew demo/dev tools project
+
+  [source](https://github.com/tatehanawalt/th_sys/tree/main/demozsh)
 
   Install Stable:
   ```shell
@@ -165,13 +163,13 @@ brew tap tatehanawalt/devtools
 
 
 <details>
-  <br>
-
   <summary>devenv</summary>
 
-  Description: Configure a dev environment
+  <br>
 
-  Usage: Usage cominig soon...
+  Configure a dev environment
+
+  [source](https://github.com/tatehanawalt/th_sys/tree/main/devenv)
 
   Install Stable:
   ```shell
@@ -182,13 +180,13 @@ brew tap tatehanawalt/devtools
 
 
 <details>
-  <br>
-
   <summary>gaffer</summary>
 
-  Description: zsh cli built as part of the homebrew demo/dev tools project
+  <br>
 
-  Usage: Usage cominig soon...
+  zsh cli built as part of the homebrew demo/dev tools project
+
+  [source](https://github.com/tatehanawalt/th_sys/tree/main/gaffer)
 
   Install Stable:
   ```shell

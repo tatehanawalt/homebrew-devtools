@@ -75,18 +75,17 @@ brew tap tatehanawalt/devtools
 ## Tools ##
 "
 
-
 for name in $(formula_names);
 do
   desc="$(formula_description $name)"
   tool_desc="<details>
-  <br>
-
   <summary>${name}</summary>
 
-  Description: ${desc}
+  <br>
 
-  Usage: Usage cominig soon...
+  ${desc}
+
+  [source](https://github.com/tatehanawalt/th_sys/tree/main/$name)
 
   Install Stable:
   \`\`\`shell
