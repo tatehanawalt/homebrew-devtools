@@ -10,8 +10,8 @@ jobs:
         id: repo_workflow_completed_run_ids
         run: ./.github/scripts/git_api.sh
         shell: bash
-        env:
-          template: repo_workflow_completed_run_ids
+        args:
+          - repo_workflow_completed_run_ids
 
       # Inspect the parameters and environment before deleting each workflow run
       # THIS IS NOT MANDATORY - this step could be omitted entirely
