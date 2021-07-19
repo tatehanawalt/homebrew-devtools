@@ -1,10 +1,14 @@
 #!/bin/bash
 
+# Introspection generates / parses data related to the contents of the
+# specific repository by parsing the local filesystem resources
+
 my_path=$0
 . $(dirname $my_path)/helpers.sh
 
-# Introspection generates / parses data related to the contents of the
-# specific repository by parsing the local filesystem resources
+[ -z "$FORMULA_DIR" ] && FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
+[ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
+[ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined - line $LINENO" && exit 1
 
 function formula_path() {
   [ ! -d "$FORMULA_DIR" ] && printf "FORMULA_DIR not a directory\n" && exit 1
@@ -148,7 +152,6 @@ function all() {
     write_result_set "$(join_by , $($method))" $method
   done
 }
-
 function exec_template() {
   case $1 in
     all)
@@ -184,11 +187,6 @@ function exec_template() {
       ;;
   esac
 }
-
-[ -z "$FORMULA_DIR" ] && FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
-
-[ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
-[ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined - line $LINENO" && exit 1
 
 exec_template $TEMPLATE
 

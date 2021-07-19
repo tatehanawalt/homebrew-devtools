@@ -1,9 +1,10 @@
 #!/bin/bash
 
-id_count=0
-
 my_path=$0
 . "$(dirname $my_path)/helpers.sh"
+
+[ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
+[ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined - line $LINENO" && exit 1
 
 function usage() {
   ferpf "git_api.sh usage:\n"
@@ -260,9 +261,7 @@ function for_each_id() {
   ID=$1 exec_template $TEMPLATE
 }
 
-[ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
-[ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined - line $LINENO" && exit 1
-
+id_count=0
 for_csv "$ID" for_each_id
 [ $id_count -eq 0 ] && exec_template $TEMPLATE
 
