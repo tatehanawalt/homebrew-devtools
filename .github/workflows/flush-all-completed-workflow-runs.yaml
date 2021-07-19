@@ -11,7 +11,7 @@ jobs:
         run: ./.github/scripts/git_api.sh
         shell: bash
         args:
-          - repo_workflow_completed_run_ids
+          - 'repo_workflow_completed_run_ids'
 
       # Inspect the parameters and environment before deleting each workflow run
       # THIS IS NOT MANDATORY - this step could be omitted entirely
