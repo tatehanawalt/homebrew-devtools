@@ -52,6 +52,8 @@ fi
 
 git_req ${args[@]}
 
+exit 1
+
 # Test Data
 #
 # export GITHUB_REPOSITORY=homebrew-devtools
