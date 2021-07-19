@@ -1,4 +1,4 @@
-name: codelinter
+name: code-linter
 on: [pull_request]
 jobs:
   lint-all:
