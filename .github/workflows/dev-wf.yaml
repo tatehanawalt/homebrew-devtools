@@ -19,3 +19,11 @@ jobs:
         shell: bash
         env:
           RUN_IDS: "${{ steps.repo_workflow_completed_run_ids.outputs.RESULT }}"
+
+      - name: delete_workflow_run
+        id: delete_workflow_run
+        run: ./.github/scripts/git_api.sh delete_workflow_run
+        shell: bash
+        env:
+          ID: "${{ steps.repo_workflow_completed_run_ids.outputs.RESULT }}"
+          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
