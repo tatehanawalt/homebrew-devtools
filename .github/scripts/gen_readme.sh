@@ -29,8 +29,6 @@ Nothing is actually stable right now. Even if indicated by the following documen
 
 [![flush-all-completed-workflow-runs Actions Status](https://github.com/tatehanawalt/homebrew-devtools/workflows/flush-all-completed-workflow-runs/badge.svg)](https://github.com/tatehanawalt/homebrew-devtools/actions)
 
-<br>
-
 ## Installing ##
 
 #### 1. Tap the repo: ####
@@ -74,10 +72,7 @@ brew tap tatehanawalt/devtools
 
 </details>
 
-<br>
-
 ## Tools ##
-
 "
 
 
