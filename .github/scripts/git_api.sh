@@ -255,6 +255,7 @@ function exec_template() {
 function git_api() {
   while [ $# -gt 0 ]; do
     result=$(exec_template $1)
+    ferpf "$result\n"
     write_result_set "$result" $1
     shift
   done
