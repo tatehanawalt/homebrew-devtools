@@ -15,10 +15,9 @@ jobs:
       # THIS IS NOT MANDATORY - this step could be omitted entirely
       - name: show_env
         id: show_env
-        run: ./.github/scripts/introspect.sh
+        run: ./.github/scripts/introspect.sh show_env
         shell: bash
         env:
-          template: show_env
           RUN_IDS: "${{ steps.repo_workflow_completed_run_ids.outputs.RESULT }}"
 
       #     INSPECT_GROUPS: '

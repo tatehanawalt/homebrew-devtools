@@ -14,20 +14,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - name: action_data # Get id of this pr
         id: action_data
         run: ./.github/scripts/action_data.sh
         shell: bash
+
       - name: label_names # Set of existing label names
         id: label_names
         run: ./.github/scripts/git_api.sh
         shell: bash
         env:
           template: label_names
+
       - name: diff        # Get various different changes from the commits making up the pr
         id: diff
         run: ./.github/scripts/diff_files.sh
         shell: bash
+
       - name: label_pr    # Actually attach labels to the pr
         id: label_pr
         run: ./.github/scripts/label_pr.sh

@@ -14,20 +14,19 @@ jobs:
         shell: bash
         env:
           template: label_names
+
       # Get formula related metadata
       - name: formula_data
         id: formula_data
-        run: ./.github/scripts/introspect.sh
+        run: ./.github/scripts/introspect.sh all
         shell: bash
-        env:
-          template: all
+
       # For debugging and troubleshooting - introspective environment audit
       - name: show_env
         id: show_env
-        run: ./.github/scripts/introspect.sh
+        run: ./.github/scripts/introspect.sh show_env
         shell: bash
         env:
-          template: show_env
           FORMULA_NAMES: "${{ steps.formula_data.outputs.FORMULA_NAMES }}"
           FORMULA_PATHS: "${{ steps.formula_data.outputs.FORMULA_PATHS }}"
           FORMULA_STABLE_SHAS: "${{ steps.formula_data.outputs.FORMULA_STABLE_SHAS }}"
