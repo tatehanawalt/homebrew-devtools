@@ -269,6 +269,7 @@ id_count=0
 for_csv "$ID" for_each_id
 [ $id_count -eq 0 ] && exec_template $TEMPLATE
 
+exit 0
 
 
 
