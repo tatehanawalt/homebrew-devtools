@@ -31,7 +31,6 @@ function test_local() {
   ID=22
 }
 
-
 function debug() {
   if [ -z "$debug_mode" ];
   then

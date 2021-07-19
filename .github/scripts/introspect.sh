@@ -166,13 +166,13 @@ function exec_template() {
       for entry in ${groups[@]}; do
         kv=($(echo "$entry" | tr -d '[[:space:]]' | tr '=' '\n'))
         log ${kv[0]}
-        for_csv ${kv[1]} print_field
+        for_csv "${kv[1]}" print_field
       done
       for entry in ${groups[@]}; do
         kv=($(echo "$entry" | tr -d '[[:space:]]' | tr '=' '\n'))
         max_field_len=$(csv_max_length ${kv[1]})
         log ${kv[0]}_table
-        for_csv ${kv[1]} print_field_table
+        for_csv "${kv[1]}" print_field_table
       done
       ;;
     test)
