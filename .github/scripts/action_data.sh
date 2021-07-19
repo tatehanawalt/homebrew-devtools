@@ -48,5 +48,3 @@ case $GITHUB_EVENT_NAME in
 esac
 
 before_exit
-
-exit 0

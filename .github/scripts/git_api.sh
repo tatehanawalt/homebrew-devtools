@@ -267,4 +267,4 @@ function for_each_id() {
 for_csv "$ID" for_each_id
 [ $id_count -eq 0 ] && exec_template $TEMPLATE
 
-exit 0
+before_exit

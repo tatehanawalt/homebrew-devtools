@@ -79,4 +79,3 @@ diff_add_label_set=($(printf "%s\n" ${add_label_set[@]} | sed 's/.*\.//' | sort 
 write_result_set $(join_by , ${diff_add_label_set[@]}) diff_add_label_set
 
 before_exit
-exit 0

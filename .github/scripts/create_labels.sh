@@ -31,3 +31,5 @@ for row in $(echo "${DEFAULT_LABELS}" | jq -r '.[] | @base64'); do
   echo "${results[@]:1}" | jq
   printf "\n"
 done
+
+before_exit

@@ -46,4 +46,4 @@ function exec_template() {
 
 exec_template $TEMPLATE $@
 
-exit 0
+before_exit

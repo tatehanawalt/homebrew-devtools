@@ -26,7 +26,6 @@ HELPERS_LOG_TOPICS=()
 
 function test_local() {
   # GITHUB_WORKSPACE=
-
 }
 
 
@@ -220,6 +219,7 @@ function before_exit() {
   [ -z "$HELPERS_LOG_TOPICS" ] && return
   write_result_set "$(join_by , ${HELPERS_LOG_TOPICS[@]})" outputs
   log
+  return 0
 }
 
 # Shared github api helper method

@@ -193,5 +193,3 @@ function exec_template() {
 exec_template $TEMPLATE
 
 before_exit
-
-exit 0

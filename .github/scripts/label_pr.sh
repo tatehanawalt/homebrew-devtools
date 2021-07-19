@@ -47,3 +47,5 @@ args+=($(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'))
 [ $can_exec -ne 0 ] && write_error "can_exec -ne 0 - line $LINENO" && exit 1
 
 git_req ${args[@]}
+
+before_exit
