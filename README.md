@@ -67,7 +67,7 @@ brew tap tatehanawalt/devtools
 
   Description: C cli built as part of the homebrew demo/dev tools project
 
-  [democ source](https://github.com/tatehanawalt/th_sys/tree/main/democ")
+  [democ source](https://github.com/tatehanawalt/th_sys/tree/main/democ)
 
   Usage: Usage cominig soon...
 
