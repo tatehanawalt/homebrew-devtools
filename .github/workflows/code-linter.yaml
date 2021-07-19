@@ -4,7 +4,8 @@ jobs:
   lint-all:
     runs-on: ubuntu-latest
     steps:
-      # Github provided action to check out the source code
+
+      # Check out the repo
       - uses: actions/checkout@v2
 
       # Lists the files, directories modified in HEAD vs BASE

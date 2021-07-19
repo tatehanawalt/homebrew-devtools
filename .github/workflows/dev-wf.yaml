@@ -4,9 +4,12 @@ jobs:
   inspect-env:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2 # Check out the repo
 
-      - name: repo_workflow_completed_run_ids # Get the repository workflow id for the passed NAME
+      # Check out the repo
+      - uses: actions/checkout@v2
+
+      # Get the repository workflow id for the passed NAME
+      - name: repo_workflow_completed_run_ids
         id: repo_workflow_completed_run_ids
         run: ./.github/scripts/git_api.sh repo_workflow_completed_run_ids
         shell: bash

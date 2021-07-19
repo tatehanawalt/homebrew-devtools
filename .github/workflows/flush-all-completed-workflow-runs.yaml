@@ -4,13 +4,17 @@ jobs:
   inspect-env:
     runs-on: ubuntu-latest
     steps:
+
+      # Check out the repo
       - uses: actions/checkout@v2
 
+      # Get the set of completed workflow run id's
       - name: repo_workflow_completed_run_ids
         id: repo_workflow_completed_run_ids
         run: ./.github/scripts/git_api.sh repo_workflow_completed_run_ids
         shell: bash
 
+      # ONLY FOR TROUBLESHOOTING
       - name: show_env
         id: show_env
         run: ./.github/scripts/introspect.sh show_env
@@ -18,6 +22,7 @@ jobs:
         env:
           RUN_IDS: "${{ steps.repo_workflow_completed_run_ids.outputs.RESULT }}"
 
+      # delete the workflow runs with ids found in 'repo_workflow_completed_run_ids'
       - name: delete_workflow_run
         run: ./.github/scripts/git_api.sh delete_workflow_run
         shell: bash
