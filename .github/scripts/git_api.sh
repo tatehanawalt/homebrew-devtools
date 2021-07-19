@@ -15,8 +15,8 @@ function exec_template() {
   search_string='' # a jq search expression for successful response data
   can_exec=0
 
-  ferpf "exec_template:\n"
-  ferpf "%s\n" ${@}
+  # ferpf "exec_template:\n"
+  # ferpf "%s\n" ${@}
 
   case $1 in
     artifacts)
@@ -255,7 +255,7 @@ function exec_template() {
 function git_api() {
   while [ $# -gt 0 ]; do
     result=$(exec_template $1)
-    echo "$result\n"
+    echo "$result"
     write_result_set "$result" $1
     shift
   done

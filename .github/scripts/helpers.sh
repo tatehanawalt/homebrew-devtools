@@ -148,7 +148,7 @@ function ferpf() { # Write to standard error
   fi
   printf "%b" $ferpf_color
   printf $* 1>&2
-  printf "%b" $noc
+  # printf "%b" $noc
 }
 function set_fg() {
   if [ $1 -eq -1 ]; then
