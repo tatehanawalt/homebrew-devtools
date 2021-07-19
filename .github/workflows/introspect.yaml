@@ -4,8 +4,10 @@ jobs:
   inspect-env:
     runs-on: ubuntu-latest
     steps:
+
       # Check out the repo
       - uses: actions/checkout@v2
+
       # Get the workflow id from the workflow name=$NAME
       - name: label_names
         id: label_names
@@ -13,6 +15,7 @@ jobs:
         shell: bash
         env:
           template: label_names
+
       # Get formula related metadata
       - name: formula_data
         id: formula_data
@@ -20,6 +23,7 @@ jobs:
         shell: bash
         env:
           template: all
+
       # For debugging and troubleshooting - introspective environment audit
       - name: show_env
         id: show_env
