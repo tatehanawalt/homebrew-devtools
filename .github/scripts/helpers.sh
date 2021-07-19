@@ -246,23 +246,18 @@ before_exit() {
 
 # Shared github api helper method
 git_req() {
-
-  printf "\t• %s\n" $@
-
-  # pre_args $@
-
+  pre_args $@
   IFS=$'\n'
   positional=()
-  args=()
-  req_url=""
-
+  local args=()
+  local req_url=""
   while [ $# -gt 0 ]; do
     key="$1"
     shift
     case $key in
       --auth)
         if [ -z "$GITHUB_AUTH_TOKEN" ]; then
-          write_error "GITHUB_AUTH_TOKEN not set in git_Req\n"
+          write_error "GITHUB_AUTH_TOKEN not set in git_Req"
           can_exec=1
         else
           args+=(-H "Authorization: token $GITHUB_AUTH_TOKEN")
@@ -303,28 +298,21 @@ git_req() {
   done
 
   args+=(-s)
+
+  # Output Format - see https://curl.se/docs/manpage.html
   args+=(-w)
   args+=("HTTPSTATUS:%{http_code}")
+
+  # Headers:
   args+=(-H)
   args+=("Accept: application/vnd.github.v3+json")
   args+=("https://api.github.com/$req_url")
 
-  printf "args:\n"
-  printf "\t%s\n" ${args[@]}
-
   [ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
 
-  curl ${args[@]}
-  # response=$(curl ${args[@]})
-  # printf "%s\n" $(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-  # echo "$response" | sed -e 's/HTTPSTATUS\:.*//g' | jq
-  # results=($(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g'))
-  # results+=($(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://'))
-  #printf "${response[@]}\n"
-  #printf "%s\n" $(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')
-  # echo ${results[@]}
-  # printf "$(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')\n"
-  # printf "$(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')\n"
+  response=$(curl ${args[@]})
+  local status_code=$(echo "$response" | tail -n 1 | sed 's/.*HTTPSTATUS://g')
+  echo "$response"| sed 's/HTTPSTATUS.*//g'
 }
 
 # CSV set helpers
@@ -472,3 +460,18 @@ if debug; then
   log sample_log
   ferpf
 fi
+
+
+
+# printf "%s\n" $(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+# echo "$response" | sed -e 's/HTTPSTATUS\:.*//g' | jq
+# results=($(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g'))
+# results+=($(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://'))
+# printf "${response[@]}\n"
+# printf "%s\n" $(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')
+# echo ${results[@]}
+# printf "$(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')\n"
+# printf "$(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')\n"
+
+# printf "args: ${#args[@]}\n"
+# printf "\t%s\n" ${args[@]}
