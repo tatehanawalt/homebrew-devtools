@@ -251,15 +251,16 @@ function exec_template() {
   [ ! -z "$search_string" ] && results=$(echo "$results" | jq --arg field_name "$field_val" -r "$search_string")
 
   echo $results
-
-  write_result_set "$results"
 }
 
 [ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
 [ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined" && exit 1
 
-exec_template $TEMPLATE
+result=$(exec_template $TEMPLATE)
 
+echo "$result"
+
+write_result_set "$result"
 
 # ferpf "exec_template:\n"
 # ferpf "%s\n" ${@}
