@@ -4,7 +4,7 @@ my_path=$0
 . "$(dirname $my_path)/helpers.sh"
 
 function usage() {
-  ferpf "giit_api.sh usage:\n"
+  ferpf "git_api.sh usage:\n"
   # Generate usage by running the search_file function against the path
   # to this file
 }
@@ -218,10 +218,8 @@ function exec_template() {
       exit 1
       ;;
   esac
-
   args+=(--url)
   args+=($request_url)
-
   depts=($(echo "$request_url" | grep -o '{[[:alpha:]]*}' | grep -o '[^{][[:alpha:]]*[^}]'))
   for dep in ${depts[@]}; do
     case $dep in
@@ -248,21 +246,16 @@ function exec_template() {
         ;;
     esac
   done
-
   [ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
-
   results=$(git_req ${args[@]})
-
   [ ! -z "$search_string" ] && results=$(echo "$results" | jq --arg field_name "$field_val" -r "$search_string")
-
-  # write RESULT
   echo $results
 }
 
 function git_api() {
   while [ $# -gt 0 ]; do
     result=$(exec_template $1)
-    write_result_set "$result" RESULT
+    write_result_set "$result" $1
     shift
   done
 }

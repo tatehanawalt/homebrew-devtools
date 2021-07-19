@@ -154,6 +154,7 @@ function ferpf() { # Write to standard error
   fi
   printf "%b" $ferpf_color
   printf $* 1>&2
+  printf "%b" $noc
 }
 
 function set_fg() {
@@ -369,16 +370,21 @@ function write_result_set() {
   IFS=$'\n'
   result=$(echo -e "$1" | sed 's/"//g')
   [ -z "$result" ] && return 1
-  key=$2
+  shift
+  key=$1
   [ -z "$key" ] && key="result"
   key=$(echo $key | tr [[:lower:]] [[:upper:]])
-  log $key
-  printf "$(get_prefix)%s\n" $(echo -e "$result" | tr ',' '\n')
   result="${result//'%'/'%25'}"
   result="${result//$'\n'/'%0A'}"
   result="${result//$'\r'/'%0D'}"
-  printf "$key='$result'\n"
-  in_ci && echo "::set-output name=$key::$(echo -e $result)"
+  echo "::set-output name=$key::$(echo -e $result)"
+
+  # log $key
+  # printf "$(get_prefix)%s\n" $(echo -e "$result" | tr ',' '\n')
+  # printf "$key='$result'\n"
+  # if [ in_ci ]
+  # then
+  # else
   # [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
   HELPERS_LOG_TOPICS+=($key)
 }
@@ -423,7 +429,6 @@ function default_labels() {
 
 
 pre_args $@
-
 if [ -z "$template" ]; then
   [ ! -z "$1" ] && template="$1"
   if [ ! -z "$template" ]; then
