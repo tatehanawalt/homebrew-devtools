@@ -67,13 +67,12 @@ jobs:
       #     ADD_LABELS: "${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }}"
       #     CURRENT_LABELS: "${{ steps.vcs_info.outputs.LABEL_NAMES }}"
       #     GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-        # USER: ${{ steps.vcs_info.outputs.USER }}
-        # OWNER: ${{ steps.vcs_info.outputs.OWNER }}
-        # REPO: ${{ steps.vcs_info.outputs.REPO }}
-        # LABEL_NAMES: ${{ steps.vcs_info.outputs.LABEL_NAMES }}
-        # COLLABORATOR_NAMES: ${{ steps.vcs_info.outputs.COLLABORATOR_NAMES }}
-        # REPO_LANGUAGE_NAMES: ${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }}
-        # REPO_BRANCH_NAMES: ${{ steps.vcs_info.outputs.REPO_BRANCH_NAMES }}
-        # VCS_INFO_TEMPLATE: ${{ steps.vcs_info.outputs.VCS_INFO_TEMPLATE }}
-        # vcs_info=${{ steps.vcs_info.outputs.OUTPUTS }}
+      #   USER: ${{ steps.vcs_info.outputs.USER }}
+      #   OWNER: ${{ steps.vcs_info.outputs.OWNER }}
+      #   REPO: ${{ steps.vcs_info.outputs.REPO }}
+      #   LABEL_NAMES: ${{ steps.vcs_info.outputs.LABEL_NAMES }}
+      #   COLLABORATOR_NAMES: ${{ steps.vcs_info.outputs.COLLABORATOR_NAMES }}
+      #   REPO_LANGUAGE_NAMES: ${{ steps.vcs_info.outputs.REPO_LANGUAGE_NAMES }}
+      #   REPO_BRANCH_NAMES: ${{ steps.vcs_info.outputs.REPO_BRANCH_NAMES }}
+      #   VCS_INFO_TEMPLATE: ${{ steps.vcs_info.outputs.VCS_INFO_TEMPLATE }}
+      #   vcs_info=${{ steps.vcs_info.outputs.OUTPUTS }}

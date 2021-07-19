@@ -249,7 +249,7 @@ git_req() {
   pre_args $@
   IFS=$'\n'
   positional=()
-  local args=()
+  args=()
   local req_url=""
   while [ $# -gt 0 ]; do
     key="$1"

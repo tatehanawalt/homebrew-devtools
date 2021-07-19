@@ -3,7 +3,7 @@
 my_path=$0
 . "$(dirname $my_path)/helpers.sh"
 
-local can_exec=0
+can_exec=0
 args=(--url)
 args+=('repos/{owner}/{repo}/issues/{id}/labels')
 args+=(--method)
