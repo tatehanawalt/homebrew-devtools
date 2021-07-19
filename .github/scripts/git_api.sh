@@ -15,9 +15,6 @@ function exec_template() {
   search_string='' # a jq search expression for successful response data
   can_exec=0
 
-  # ferpf "exec_template:\n"
-  # ferpf "%s\n" ${@}
-
   case $1 in
     artifacts)
       request_url='repos/{owner}/{repo}/actions/artifacts'
@@ -218,9 +215,11 @@ function exec_template() {
       exit 1
       ;;
   esac
+
   args+=(--url)
   args+=($request_url)
   depts=($(echo "$request_url" | grep -o '{[[:alpha:]]*}' | grep -o '[^{][[:alpha:]]*[^}]'))
+
   for dep in ${depts[@]}; do
     case $dep in
       'owner')
@@ -246,27 +245,33 @@ function exec_template() {
         ;;
     esac
   done
+
   [ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
   results=$(git_req ${args[@]})
   [ ! -z "$search_string" ] && results=$(echo "$results" | jq --arg field_name "$field_val" -r "$search_string")
+
   echo $results
+
+  write_result_set "$results"
 }
 
-function git_api() {
-  while [ $# -gt 0 ]; do
-    result=$(exec_template $1)
-    echo "$result"
-    write_result_set "$result" $1
-    shift
-  done
-}
+[ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
+[ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined" && exit 1
 
-git_api $(echo $@ | sed 's/,/ /g' | tr -s ' ')
+exec_template $TEMPLATE
 
 
-
-
-
+# ferpf "exec_template:\n"
+# ferpf "%s\n" ${@}
+# function git_api() {
+#   while [ $# -gt 0 ]; do
+#     result=$(exec_template $1)
+#     echo "$result"
+#     write_result_set "$result" $1
+#     shift
+#   done
+# }
+# git_api $(echo $@ | sed 's/,/ /g' | tr -s ' ')
 # if [ $debug_mode -eq 0 ]; then
 #   ferpf "args:\n"
 #   IFS=$'\n'
@@ -281,7 +286,6 @@ git_api $(echo $@ | sed 's/,/ /g' | tr -s ' ')
 #   response_body=$(echo "$response_body" | jq --arg field_name "$field_val" -r "$search_string")
 # fi
 # echo "$response_body"
-
 
 # my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
 # [ "$CI" != "true" ] && my_path=$(readlink $0)
