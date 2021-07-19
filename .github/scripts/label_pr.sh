@@ -12,22 +12,22 @@ args+=(--auth)
 
 if [ -z "$GITHUB_REPOSITORY" ]; then
   can_exec=1
-  write_error "GITHUB_REPOSITORY not set in label_pr"
+  write_error "GITHUB_REPOSITORY not set in label_pr - line $LINENO"
 fi
 
 if [ -z "$GITHUB_REPOSITORY_OWNER" ]; then
   can_exec=1
-  write_error "GITHUB_REPOSITORY_OWNER not set in label_pr"
+  write_error "GITHUB_REPOSITORY_OWNER not set in label_pr - line $LINENO"
 fi
 
 if [ -z "$ID" ]; then
   can_exec=1
-  write_error "ID not set in label_pr"
+  write_error "ID not set in label_pr - line $LINENO"
 fi
 
 if [ -z "$LABELS" ]; then
   can_exec=1
-  write_error "LABELS not set in label_pr"
+  write_error "LABELS not set in label_pr - line $LINENO"
 fi
 
 args+=(--id)
@@ -44,6 +44,6 @@ args+=($GITHUB_REPOSITORY_OWNER)
 args+=(--repo)
 args+=($(printf %s $GITHUB_REPOSITORY | sed 's/.*\///'))
 
-[ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
+[ $can_exec -ne 0 ] && write_error "can_exec -ne 0 - line $LINENO" && exit 1
 
 git_req ${args[@]}

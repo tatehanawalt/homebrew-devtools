@@ -3,31 +3,22 @@
 my_path=$0
 . "$(dirname $my_path)/helpers.sh"
 
+can_exec=0
 add_label_set=()
+
 [ -z "$GITHUB_BASE_REF" ] && GITHUB_BASE_REF=main # original ref
 [ -z "$GITHUB_HEAD_REF" ] && GITHUB_HEAD_REF=main # current ref
 
 # Using the BASE branch
-if [ -z "$GITHUB_BASE_REF" ]; then
-  write_error "$(basename $0) GITHUB_BASE_REF length is 0... set GITHUB_BASE_REF=<branch_name> - line $LINENO"
-  exit 1
-fi
-if [ -z "$GITHUB_WORKSPACE" ]; then
-  write_error "$(basename $0) GITHUB_WORKSPACE length is 0 - line $LINENO"
-  exit 1
-fi
-if [ ! -d "$GITHUB_WORKSPACE" ]; then
-  write_error "$(basename $0) GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE - line $LINENO"
-  exit 1
-fi
+[ -z "$GITHUB_BASE_REF" ] && write_error "$(basename $0) GITHUB_BASE_REF length is 0... set GITHUB_BASE_REF=<branch_name> - line $LINENO" && can_exec=1
+[ -z "$GITHUB_WORKSPACE" ] && write_error "$(basename $0) GITHUB_WORKSPACE length is 0 - line $LINENO" && can_exec=1
+[ ! -d "$GITHUB_WORKSPACE" ] && write_error "$(basename $0) GITHUB_WORKSPACE is not a directory at GITHUB_WORKSPACE=$GITHUB_WORKSPACE - line $LINENO" && can_exec=1
+[ $can_exec -ne 0 ] && write_error "can_exec -ne 0... can_exec=$can_exec - line $LINENO" && exit 1
 
 git fetch origin "$GITHUB_BASE_REF" &>/dev/null
 git branch "$GITHUB_BASE_REF" FETCH_HEAD &>/dev/null
 
-if [ -z $(git branch --list "$GITHUB_BASE_REF") ]; then
-  write_error "$(basename $0) FETCH_HEAD for branch $GITHUB_BASE_REF - line $LINENO"
-  exit 1
-fi
+[ -z $(git branch --list "$GITHUB_BASE_REF") ] && write_error "$(basename $0) FETCH_HEAD for branch $GITHUB_BASE_REF - line $LINENO" && exit 1
 
 diff_files=($(git diff --name-only $GITHUB_BASE_REF | sed 's/[[:space:]]$//g' | sed 's/^[[:space:]]//g' | sort -u))
 diff_files_csv=$(join_by , ${diff_files[@]})
@@ -37,6 +28,7 @@ diff_dirs=($(for_csv "$diff_files_csv" dirname | sort -u))
 write_result_set $(join_by , ${diff_dirs[@]}) diff_dirs
 
 diff_ext=()
+
 for f_path in ${diff_files[@]}; do
   filename="${f_path##*/}"
   ext_name="$(echo $filename | sed 's/^[^\.]*//')"
@@ -45,6 +37,7 @@ for f_path in ${diff_files[@]}; do
   [ -z "$ext_name" ] && continue
   diff_ext+=("$ext_name")
 done
+
 diff_ext=($(printf "%s\n" ${diff_ext[@]} | sort -u))
 write_result_set $(join_by , ${diff_ext[@]}) diff_ext
 
@@ -87,11 +80,3 @@ write_result_set $(join_by , ${diff_add_label_set[@]}) diff_add_label_set
 
 before_exit
 exit 0
-
-# has_diff_branch=$(git branch --list "$GITHUB_BASE_REF")
-# IFS=$'\n'
-# diff_files_csv=$(join_by , ${diff_files[@]})
-# diff_dirs_csv=$(join_by , ${diff_dirs[@]})
-# diff_add_label_set_csv=$(join_by , ${diff_add_label_set[@]})
-# echo "GITHUB_BASE_REF=$GITHUB_BASE_REF"
-#  Compare against the main branch

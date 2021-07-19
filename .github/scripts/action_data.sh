@@ -1,11 +1,9 @@
 #!/bin/bash
 
-. "$(dirname $0)/helpers.sh"
+my_path=$0
+. "$(dirname $my_path)/helpers.sh"
 
-if [ ! -f "$GITHUB_EVENT_PATH" ]; then
-  write_error "$(basename $0) GITHUB_EVENT_PATH file not found at $GITHUB_EVENT_PATH - line $LINENO"
-  exit 1
-fi
+[ ! -f "$GITHUB_EVENT_PATH" ] && write_error "$(basename $0) GITHUB_EVENT_PATH file not found at $GITHUB_EVENT_PATH - line $LINENO" && exit 1
 
 event_file_attributes=($(cat $GITHUB_EVENT_PATH | jq -r 'keys | join("\n")'))
 event_file_attributes_csv=$(join_by , ${event_file_attributes[@]})
@@ -48,29 +46,7 @@ case $GITHUB_EVENT_NAME in
     exit 1
     ;;
 esac
+
 before_exit
+
 exit 0
-
-# printf "event_file_attributes: %d\n" ${#event_file_attributes[@]}
-# printf "\t%s\n" ${event_file_attributes[@]}
-# printf "%s" $event_file_attributes_csv
-
-#printf "\n\nPUSH\n\n"
-# "after",
-# "base_ref",
-# "before",
-# "commits",
-# "compare",
-# "created",
-# "deleted",
-# "forced",
-# "head_commit",
-# "pusher",
-# "ref",
-# "repository",
-# "sender"
-
-# log PULL_REQUEST
-# AFTER -> NEW COMMIT
-# BEFORE -> OLD COMMIT
-# printf "GITHUB_REF=%s\n" "$GITHUB_REF"

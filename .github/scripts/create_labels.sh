@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. "$(dirname $0)/helpers.sh"
+my_path=$0
+. "$(dirname $my_path)/helpers.sh"
 
 DEFAULT_LABELS="$(default_labels)"
 

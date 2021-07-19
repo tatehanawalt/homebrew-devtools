@@ -131,8 +131,6 @@ function test_all() {
     echo "$item"
     formula_method_signatures "$item"
   done
-  # test_all
-  # log_result_set "$(join_by , ${call_fns[@]})" call_fns "FORMULA_FUNCTIONS"
 }
 function all() {
   IFS=$'\n'
@@ -187,25 +185,13 @@ function exec_template() {
   esac
 }
 
-
 [ -z "$FORMULA_DIR" ] && FORMULA_DIR="$GITHUB_WORKSPACE/Formula"
+
 [ -z "$TEMPLATE" ] && [ ! -z "$1" ] && TEMPLATE="$1" && shift
-[ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined" && exit 1
+[ -z "$TEMPLATE" ] && write_error "\$TEMPLATE undefined - line $LINENO" && exit 1
 
 exec_template $TEMPLATE
 
-
-# write_result_set $result RESULT
-
-
-
-
 before_exit
-exit 0
 
-# my_path="$GITHUB_WORKSPACE/.github/scripts/git_api.sh"
-# if [ "$CI" != "true" ]; then
-#   my_path=$(readlink $0)
-# fi
-# [ $HAS_TEMPLATE -ne 0 ] && echo "NO TEMPLATE SPECIFIED" && exit 1
-# IFS=$'\n'
+exit 0

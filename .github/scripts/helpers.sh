@@ -24,8 +24,11 @@ table_indent=''
 print_debug_header=1
 HELPERS_LOG_TOPICS=()
 
-# env var template specified
-HAS_TEMPLATE=1
+function test_local() {
+  # GITHUB_WORKSPACE=
+
+}
+
 
 function debug() {
   if [ -z "$debug_mode" ];
@@ -235,7 +238,7 @@ function git_req() {
     case $key in
       --auth)
         if [ -z "$GITHUB_AUTH_TOKEN" ]; then
-          write_error "GITHUB_AUTH_TOKEN not set in git_Req"
+          write_error "GITHUB_AUTH_TOKEN not set in git_Req - line $LINENO"
           can_exec=1
         else
           args+=(-H "Authorization: token $GITHUB_AUTH_TOKEN")
@@ -260,8 +263,8 @@ function git_req() {
         req_url=$(echo "$req_url" | sed s/{repo}/$1/)
         ;;
       --url)
-        [[ "$1" =~ ^/ ]] && write_error "git_req url invalid format. url must not start witha /. url=${1}" exit 1
-        [ ! -z "$req_url" ] && write_error "Attempted to set req_url twice. this can only be done once." && exit 1
+        [[ "$1" =~ ^/ ]] && write_error "git_req url invalid format. url must not start witha /. url=${1} - line $LINENO" exit 1
+        [ ! -z "$req_url" ] && write_error "Attempted to set req_url twice. this can only be done once. - line $LINENO" && exit 1
         req_url="$1"
         ;;
       --user)
@@ -286,7 +289,7 @@ function git_req() {
   args+=("Accept: application/vnd.github.v3+json")
   args+=("https://api.github.com/$req_url")
 
-  [ $can_exec -ne 0 ] && write_error "can_exec -ne 0..." && exit 1
+  [ $can_exec -ne 0 ] && write_error "can_exec -ne 0... - line $LINENO" && exit 1
 
   response=$(curl ${args[@]})
   local status_code=$(echo "$response" | tail -n 1 | sed 's/.*HTTPSTATUS://g')
@@ -408,14 +411,6 @@ function default_labels() {
 }
 
 pre_args $@
-if [ -z "$template" ]; then
-  [ ! -z "$1" ] && template="$1"
-  if [ ! -z "$template" ]; then
-    HAS_TEMPLATE=0
-  fi
-else
-  HAS_TEMPLATE=0
-fi
 
 if debug; then
   [ $silent_mode -eq 1 ] && echo -en "\033c\n"
@@ -437,31 +432,8 @@ if debug; then
   echo -e "silent_mode=$silent_mode" 1>&2
   echo 1>&2
   [ $silent_mode -eq 1 ] && pallette 'clr' && echo 1>&2
-  write_error "test error"
+  write_error "test error - line $LINENO"
   echo 1>&2
   log sample_log
   ferpf
 fi
-
-
-# log $key
-# printf "$(get_prefix)%s\n" $(echo -e "$result" | tr ',' '\n')
-# printf "$key='$result'\n"
-# if [ in_ci ]
-# then
-# else
-# [ $IN_CI -eq 0 ] && echo "::set-output name=$key::$(echo -e $result)"
-# export GITHUB_REPOSITORY_OWNER=tatehanawalt
-# export GITHUB_REPOSITORY=homebrew-devtools
-# Parse args for silent, debug etc...
-# for arg in $@; do
-#   case $arg in
-#     # Print debug logging
-#     -d) debug_mode=0;;
-#     # silent mode - disables output (including debug messages)
-#     -s)
-#       silent_mode=0
-#       eval "exec 2> /dev/null"
-#       ;;
-#   esac
-# done
