@@ -4,9 +4,12 @@ my_path=$0
 . "$(dirname $my_path)/helpers.sh"
 IFS=$'\n'
 
+printf -v readme_path '%s/README.md' "$(git_repo_root)"
+printf -v repo_name '%s' "$(git_repo_name)"
 
 # Title / Header
-content=($(just_wrap '#' ' ' 'TATE HANAWALT DEVTOOLS'))
+# content=($(just_wrap '#' ' ' 'TATE HANAWALT DEVTOOLS'))
+content=($(just_wrap '#' ' ' $(echo $repo_name | tr a-z A-Z)))
 content+=("$(link_me Tools '#Tools') and Projects available through $(link_me Brew 'https://brew.sh/')")
 page_content+=($(html_wrap div 'align="center"' ${content[@]}))
 page_content+=($(just_wrap '***' '' 'Everything in development. No LTS.'))
@@ -42,13 +45,14 @@ page_content+=($(just_wrap '##' ' ' 'Tools'))
 for name in $(formula_names); do
   content=("<summary>$name</summary>")
   content+=('<br>')
-  content+=($(just_wrap '**' '' 'Description'))
+  # content+=($(just_wrap '**' '' 'Description'))
   content+=($(formula_description $name))
   content+=($(just_wrap '**' '' 'Install STABLE'))
   content+=($(code 'shell' "brew install $name"))
   content+=($(just_wrap '**' '' 'Install HEAD'))
   content+=($(code 'shell' "brew install --HEAD $name"))
   content+=($(link_me "$name source" "https://github.com/tatehanawalt/th_sys/tree/main/$name"))
+  content+=('<br>')
   page_content+=($(html_wrap details '' ${content[@]}))
 done
 
@@ -69,10 +73,9 @@ page_content+=($(code 'shell' './.github/scripts/gen_readme.sh'))
 
 
 # Write the readme
-printf -v readme_path "%s/README.md" $(git_repo_root)
-printf "" > $readme_path
+printf "" > "$readme_path"
 for row in "${page_content[@]}"; do
-  printf "$row\n\n" >> $readme_path
+  printf "$row\n\n" >> "$readme_path"
 done
 
 # brew ls --full-name --formula | grep '^your/tap/' | xargs brew uninstall

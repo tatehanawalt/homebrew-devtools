@@ -1,6 +1,6 @@
 <div align="center">
 
-# TATE HANAWALT DEVTOOLS #
+# HOMEBREW-DEVTOOLS #
 
 [Tools](#Tools) and Projects available through [Brew](https://brew.sh/)
 
@@ -58,8 +58,6 @@ brew install --HEAD <package_name>
 
 <br>
 
-**Description**
-
 C cli built as part of the homebrew demo/dev tools project
 
 **Install STABLE**
@@ -76,6 +74,8 @@ brew install --HEAD democ
 
 [democ source](https://github.com/tatehanawalt/th_sys/tree/main/democ)
 
+<br>
+
 </details>
 
 <details>
@@ -83,8 +83,6 @@ brew install --HEAD democ
 <summary>democpp</summary>
 
 <br>
-
-**Description**
 
 C++ cli built as part of the homebrew demo/dev tools project
 
@@ -102,6 +100,8 @@ brew install --HEAD democpp
 
 [democpp source](https://github.com/tatehanawalt/th_sys/tree/main/democpp)
 
+<br>
+
 </details>
 
 <details>
@@ -109,8 +109,6 @@ brew install --HEAD democpp
 <summary>demogolang</summary>
 
 <br>
-
-**Description**
 
 golang cli built as part of the homebrew demo/dev tools project
 
@@ -128,6 +126,8 @@ brew install --HEAD demogolang
 
 [demogolang source](https://github.com/tatehanawalt/th_sys/tree/main/demogolang)
 
+<br>
+
 </details>
 
 <details>
@@ -135,8 +135,6 @@ brew install --HEAD demogolang
 <summary>demonodejs</summary>
 
 <br>
-
-**Description**
 
 nodejs cli built as part of the homebrew demo/dev tools project
 
@@ -154,6 +152,8 @@ brew install --HEAD demonodejs
 
 [demonodejs source](https://github.com/tatehanawalt/th_sys/tree/main/demonodejs)
 
+<br>
+
 </details>
 
 <details>
@@ -161,8 +161,6 @@ brew install --HEAD demonodejs
 <summary>demopython</summary>
 
 <br>
-
-**Description**
 
 python cli built as part of the homebrew demo/dev tools project
 
@@ -180,6 +178,8 @@ brew install --HEAD demopython
 
 [demopython source](https://github.com/tatehanawalt/th_sys/tree/main/demopython)
 
+<br>
+
 </details>
 
 <details>
@@ -187,8 +187,6 @@ brew install --HEAD demopython
 <summary>demozsh</summary>
 
 <br>
-
-**Description**
 
 zsh cli built as part of the homebrew demo/dev tools project
 
@@ -206,6 +204,8 @@ brew install --HEAD demozsh
 
 [demozsh source](https://github.com/tatehanawalt/th_sys/tree/main/demozsh)
 
+<br>
+
 </details>
 
 <details>
@@ -213,8 +213,6 @@ brew install --HEAD demozsh
 <summary>devenv</summary>
 
 <br>
-
-**Description**
 
 Configure a dev environment
 
@@ -232,6 +230,8 @@ brew install --HEAD devenv
 
 [devenv source](https://github.com/tatehanawalt/th_sys/tree/main/devenv)
 
+<br>
+
 </details>
 
 <details>
@@ -239,8 +239,6 @@ brew install --HEAD devenv
 <summary>gaffer</summary>
 
 <br>
-
-**Description**
 
 zsh cli built as part of the homebrew demo/dev tools project
 
@@ -257,6 +255,8 @@ brew install --HEAD gaffer
 ```
 
 [gaffer source](https://github.com/tatehanawalt/th_sys/tree/main/gaffer)
+
+<br>
 
 </details>
 

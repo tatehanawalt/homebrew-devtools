@@ -13,9 +13,11 @@ class Devenv < Formula
   homepage 'https://www.TateHanawalt.com' # my website
   revision 0                              # force compile with no version changes
   version '0.0.0'                         # Formulae version
+
   head do
     url 'https://github.com/tatehanawalt/.th_sys.git', branch: 'main'
   end
+
   def install
     puts "install DEVENV brew formula install:\n"
     puts "name:         #{name}\n"
@@ -29,6 +31,7 @@ class Devenv < Formula
       pkgshare.install "zshrc"
     end
   end
+
   def caveats
     <<~EOS
       To activate devtools, add the following:
@@ -41,6 +44,7 @@ class Devenv < Formula
 
     EOS
   end
+
   test do
     # (testpath/".zshrc").write "source #{HOMEBREW_PREFIX}/share/#{name}/#{name}.zsh\n"
     # system "zsh", "--login", "-i", "-c", "${#name} help"

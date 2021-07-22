@@ -412,6 +412,11 @@ function git_repo_root() {
   [ ! -d "$root_dir" ] && write_error "git_repo_root root_dir not a directory - line $LINENO" && return 1
   printf "%s" $root_dir
 }
+function git_repo_name() {
+  local root_dir="$(git rev-parse --show-toplevel)"
+  [ ! -d "$root_dir" ] && write_error "git_repo_root root_dir not a directory - line $LINENO" && return 1
+  basename $root_dir
+}
 
 # Formula Functions:
 # ==============================================================================
