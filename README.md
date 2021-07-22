@@ -1,199 +1,286 @@
-
 <div align="center">
 
-  # TATE HANAWALT DEVTOOLS
+# TATE HANAWALT DEVTOOLS #
 
-  <br>
-
-  [Tools](#Tools) and Projects available through [BREW](https://brew.sh/)
+[Tools](#Tools) and Projects available through [Brew](https://brew.sh/)
 
 </div>
 
-***Everything is currently in development.***
-
-Nothing is actually stable right now. Even if indicated by the following documentation.
+***Everything in development. No LTS.***
 
 [![flush-all-completed-workflow-runs Actions Status](https://github.com/tatehanawalt/homebrew-devtools/workflows/flush-all-completed-workflow-runs/badge.svg)](https://github.com/tatehanawalt/homebrew-devtools/actions)
 
-## Installing ##
+## Install ##
 
-#### 1. Tap the repo: ####
+#### 1. Tap the repository: ####
 
 ```shell
 brew tap tatehanawalt/devtools
 ```
 
-#### 2. Install any tools using either the **STABLE** or **HEAD** methods outlined below. ####
+#### 2. Install a tool usinig either the **HEAD** or **STABLE** method below. ####
+
 <details>
 
-  <br>
+<br>
 
-  <summary>STABLE Install</summary>
+<summary>STABLE</summary>
 
-  Install stable distribution with the standard brew install command:
+Install stable distribution with the standard brew install command:
 
-  ```shell
-  brew install <package_name>
-  ```
-
-  <br>
+```shell
+brew install <package_name>
+```
 
 </details>
 
 <details>
 
-  <br>
+<br>
 
-  <summary>HEAD Install</summary>
+<summary>HEAD</summary>
 
-  Head deploys the latest code directly from the projects source. You will get the latest elements of the tools but the tools may not always work to the standards offered from the stable installatioin method
+Head deploys the latest code directly from the projects source. You will get the latest elements of the tools but the tools may contain bugs.
 
-  Install tools using the **head** method by adding the `--HEAD` flag in the install command just before the `<package_name>`. For example:
+Install **HEAD** by adding the \`--HEAD\` flag in the install command just before the \`<package_name>\`. For example:
 
-  ```shell
-  brew install --HEAD <package_name>
-  ```
-
-  <br>
+```shell
+brew install --HEAD <package_name>
+```
 
 </details>
 
 ## Tools ##
 
 <details>
-  <summary>democ</summary>
 
-  <br>
+<summary>democ</summary>
 
-  C cli built as part of the homebrew demo/dev tools project
+<br>
 
-  [source](https://github.com/tatehanawalt/th_sys/tree/main/democ)
+**Description**
 
-  Install Stable:
-  ```shell
-  brew intstall democ
-  ```
-  <br>
+C cli built as part of the homebrew demo/dev tools project
+
+**Install STABLE**
+
+```shell
+brew install democ
+```
+
+**Install HEAD**
+
+```shell
+brew install --HEAD democ
+```
+
+[democ source](https://github.com/tatehanawalt/th_sys/tree/main/democ)
+
 </details>
-
 
 <details>
-  <summary>democpp</summary>
 
-  <br>
+<summary>democpp</summary>
 
-  C++ cli built as part of the homebrew demo/dev tools project
+<br>
 
-  [source](https://github.com/tatehanawalt/th_sys/tree/main/democpp)
+**Description**
 
-  Install Stable:
-  ```shell
-  brew intstall democpp
-  ```
-  <br>
+C++ cli built as part of the homebrew demo/dev tools project
+
+**Install STABLE**
+
+```shell
+brew install democpp
+```
+
+**Install HEAD**
+
+```shell
+brew install --HEAD democpp
+```
+
+[democpp source](https://github.com/tatehanawalt/th_sys/tree/main/democpp)
+
 </details>
-
 
 <details>
-  <summary>demogolang</summary>
 
-  <br>
+<summary>demogolang</summary>
 
-  golang cli built as part of the homebrew demo/dev tools project
+<br>
 
-  [source](https://github.com/tatehanawalt/th_sys/tree/main/demogolang)
+**Description**
 
-  Install Stable:
-  ```shell
-  brew intstall demogolang
-  ```
-  <br>
+golang cli built as part of the homebrew demo/dev tools project
+
+**Install STABLE**
+
+```shell
+brew install demogolang
+```
+
+**Install HEAD**
+
+```shell
+brew install --HEAD demogolang
+```
+
+[demogolang source](https://github.com/tatehanawalt/th_sys/tree/main/demogolang)
+
 </details>
-
 
 <details>
-  <summary>demonodejs</summary>
 
-  <br>
+<summary>demonodejs</summary>
 
-  nodejs cli built as part of the homebrew demo/dev tools project
+<br>
 
-  [source](https://github.com/tatehanawalt/th_sys/tree/main/demonodejs)
+**Description**
 
-  Install Stable:
-  ```shell
-  brew intstall demonodejs
-  ```
-  <br>
+nodejs cli built as part of the homebrew demo/dev tools project
+
+**Install STABLE**
+
+```shell
+brew install demonodejs
+```
+
+**Install HEAD**
+
+```shell
+brew install --HEAD demonodejs
+```
+
+[demonodejs source](https://github.com/tatehanawalt/th_sys/tree/main/demonodejs)
+
 </details>
-
 
 <details>
-  <summary>demopython</summary>
 
-  <br>
+<summary>demopython</summary>
 
-  python cli built as part of the homebrew demo/dev tools project
+<br>
 
-  [source](https://github.com/tatehanawalt/th_sys/tree/main/demopython)
+**Description**
 
-  Install Stable:
-  ```shell
-  brew intstall demopython
-  ```
-  <br>
+python cli built as part of the homebrew demo/dev tools project
+
+**Install STABLE**
+
+```shell
+brew install demopython
+```
+
+**Install HEAD**
+
+```shell
+brew install --HEAD demopython
+```
+
+[demopython source](https://github.com/tatehanawalt/th_sys/tree/main/demopython)
+
 </details>
-
 
 <details>
-  <summary>demozsh</summary>
 
-  <br>
+<summary>demozsh</summary>
 
-  zsh cli built as part of the homebrew demo/dev tools project
+<br>
 
-  [source](https://github.com/tatehanawalt/th_sys/tree/main/demozsh)
+**Description**
 
-  Install Stable:
-  ```shell
-  brew intstall demozsh
-  ```
-  <br>
+zsh cli built as part of the homebrew demo/dev tools project
+
+**Install STABLE**
+
+```shell
+brew install demozsh
+```
+
+**Install HEAD**
+
+```shell
+brew install --HEAD demozsh
+```
+
+[demozsh source](https://github.com/tatehanawalt/th_sys/tree/main/demozsh)
+
 </details>
-
 
 <details>
-  <summary>devenv</summary>
 
-  <br>
+<summary>devenv</summary>
 
-  Configure a dev environment
+<br>
 
-  [source](https://github.com/tatehanawalt/th_sys/tree/main/devenv)
+**Description**
 
-  Install Stable:
-  ```shell
-  brew intstall devenv
-  ```
-  <br>
+Configure a dev environment
+
+**Install STABLE**
+
+```shell
+brew install devenv
+```
+
+**Install HEAD**
+
+```shell
+brew install --HEAD devenv
+```
+
+[devenv source](https://github.com/tatehanawalt/th_sys/tree/main/devenv)
+
 </details>
-
 
 <details>
-  <summary>gaffer</summary>
 
-  <br>
+<summary>gaffer</summary>
 
-  zsh cli built as part of the homebrew demo/dev tools project
+<br>
 
-  [source](https://github.com/tatehanawalt/th_sys/tree/main/gaffer)
+**Description**
 
-  Install Stable:
-  ```shell
-  brew intstall gaffer
-  ```
-  <br>
+zsh cli built as part of the homebrew demo/dev tools project
+
+**Install STABLE**
+
+```shell
+brew install gaffer
+```
+
+**Install HEAD**
+
+```shell
+brew install --HEAD gaffer
+```
+
+[gaffer source](https://github.com/tatehanawalt/th_sys/tree/main/gaffer)
+
 </details>
 
+## Uninstall ##
 
-<br>**Generate readme with `./.github/scripts/gen_readme.sh`**
+#### 1. Show installed tools with: ####
+
+```shell
+brew search tatehanawalt
+```
+
+#### 2. Uninstall a specific tool with: ####
+
+```shell
+brew uninstall <package_name>
+```
+
+## Development ##
+
+**Generate Project README**
+
+The readme is generated by running the script below with no arguments.
+
+```shell
+./.github/scripts/gen_readme.sh
+```
+

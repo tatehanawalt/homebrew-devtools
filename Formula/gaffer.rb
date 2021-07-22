@@ -14,15 +14,19 @@ class Gaffer < Formula
   homepage 'https://www.TateHanawalt.com'
   version '0.0.0'
   revision 0
+
   head do
     url 'https://github.com/tatehanawalt/.th_sys.git', branch: 'main'
   end
+
   bottle :unneeded
+
   def install_common
     zsh_completion.install '_gaffer'
     lib.install ['gaffer.zsh', 'config.zsh']
     bin.install_symlink lib/"gaffer.zsh" => "gaffer"
   end
+
   def install
     if build.head?
       cd 'gaffer' do
@@ -32,6 +36,7 @@ class Gaffer < Formula
     end
     install_common
   end
+
   test do
     assert true
   end

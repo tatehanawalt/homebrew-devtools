@@ -552,8 +552,44 @@ function formula_signatures() {
 
 
 
-
-
+# README gen functions:
+# ------------------------------------------------------------------------------
+# args:
+# 1 - html item i.e 'div', 'span' etc...
+# 2 - html fields i.e 'id', 'class' etc...
+# 3 - content to wrap
+function html_wrap() {
+  item="$1"
+  shift
+  printf '<%s' "$item"
+  [ ! -z "$1" ] && printf ' %s' "$1"
+  printf '>\n'
+  shift
+  IFS=$'\n'
+  while [ $# -gt 0 ]; do
+    printf "%s\n" $1
+    shift
+  done
+  printf '</%s>' "$item"
+}
+function just_wrap() {
+  printf '%s%s%s%s%s' "$1" "$2" "$3" "$2" "$1"
+}
+function code() {
+  printf '```%s\\n' "$1"
+  shift
+  while [ $# -gt 0 ]; do
+    printf '%s\\n' "$1"
+    shift
+  done
+  printf '```'
+}
+function link_me() {
+  printf '[%s]' $1
+  shift
+  printf '(%s)' $1
+}
+# ------------------------------------------------------------------------------
 
 
 

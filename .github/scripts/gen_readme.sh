@@ -2,101 +2,79 @@
 
 my_path=$0
 . "$(dirname $my_path)/helpers.sh"
-
-# repo_root=$(git_repo_root)
-
-printf -v readme_path "%s/README.md" $(git_repo_root)
-printf "readme_path: %s\n" ${readme_path}
+IFS=$'\n'
 
 
-title="TATE HANAWALT DEVTOOLS"
-desc="[Tools](#Tools) and Projects available through [BREW](https://brew.sh/)"
+# Title / Header
+content=($(just_wrap '#' ' ' 'TATE HANAWALT DEVTOOLS'))
+content+=("$(link_me Tools '#Tools') and Projects available through $(link_me Brew 'https://brew.sh/')")
+page_content+=($(html_wrap div 'align="center"' ${content[@]}))
+page_content+=($(just_wrap '***' '' 'Everything in development. No LTS.'))
 
-printf -v formulas_readme "
-<div align=\"center\">
 
-  # ${title}
+# Badges
+content=('[![flush-all-completed-workflow-runs Actions Status](https://github.com/tatehanawalt/homebrew-devtools/workflows/flush-all-completed-workflow-runs/badge.svg)](https://github.com/tatehanawalt/homebrew-devtools/actions)')
+page_content+=(${content[@]})
 
-  <br>
 
-  ${desc}
+# Install
+page_content+=($(just_wrap '##' ' ' 'Install'))
+page_content+=($(just_wrap '####' ' ' '1. Tap the repository:'))
+content=('<br>')
+content=($(code 'shell' 'brew tap tatehanawalt/devtools'))
+page_content+=(${content[@]})
+page_content+=($(just_wrap '####' ' ' '2. Install a tool usinig either the **HEAD** or **STABLE** method below.'))
+content=('<br>')
+content+=('<summary>STABLE</summary>')
+content+=('Install stable distribution with the standard brew install command:')
+content+=($(code 'shell' 'brew install <package_name>'))
+page_content+=($(html_wrap details '' ${content[@]}))
+content=('<br>')
+content+=('<summary>HEAD</summary>')
+content+=('Head deploys the latest code directly from the projects source. You will get the latest elements of the tools but the tools may contain bugs.')
+content+=('Install **HEAD** by adding the \`--HEAD\` flag in the install command just before the \`<package_name>\`. For example:')
+content+=($(code 'shell' 'brew install --HEAD <package_name>'))
+page_content+=($(html_wrap details '' ${content[@]}))
 
-</div>
 
-***Everything is currently in development.***
-
-Nothing is actually stable right now. Even if indicated by the following documentation.
-
-[![flush-all-completed-workflow-runs Actions Status](https://github.com/tatehanawalt/homebrew-devtools/workflows/flush-all-completed-workflow-runs/badge.svg)](https://github.com/tatehanawalt/homebrew-devtools/actions)
-
-## Installing ##
-
-#### 1. Tap the repo: ####
-
-\`\`\`shell
-brew tap tatehanawalt/devtools
-\`\`\`
-
-#### 2. Install any tools using either the **STABLE** or **HEAD** methods outlined below. ####
-<details>
-
-  <br>
-
-  <summary>STABLE Install</summary>
-
-  Install stable distribution with the standard brew install command:
-
-  \`\`\`shell
-  brew install <package_name>
-  \`\`\`
-
-  <br>
-
-</details>
-
-<details>
-
-  <br>
-
-  <summary>HEAD Install</summary>
-
-  Head deploys the latest code directly from the projects source. You will get the latest elements of the tools but the tools may not always work to the standards offered from the stable installatioin method
-
-  Install tools using the **head** method by adding the \`--HEAD\` flag in the install command just before the \`<package_name>\`. For example:
-
-  \`\`\`shell
-  brew install --HEAD <package_name>
-  \`\`\`
-
-  <br>
-
-</details>
-
-## Tools ##
-"
-
-for name in $(formula_names);
-do
-  desc="$(formula_description $name)"
-  tool_desc="<details>
-  <summary>${name}</summary>
-
-  <br>
-
-  ${desc}
-
-  [source](https://github.com/tatehanawalt/th_sys/tree/main/$name)
-
-  Install Stable:
-  \`\`\`shell
-  brew intstall ${name}
-  \`\`\`
-  <br>
-</details>"
-
-  printf -v formulas_readme "%s\n%s\n\n" "$formulas_readme" "$tool_desc"
+# Tools:
+page_content+=($(just_wrap '##' ' ' 'Tools'))
+for name in $(formula_names); do
+  content=("<summary>$name</summary>")
+  content+=('<br>')
+  content+=($(just_wrap '**' '' 'Description'))
+  content+=($(formula_description $name))
+  content+=($(just_wrap '**' '' 'Install STABLE'))
+  content+=($(code 'shell' "brew install $name"))
+  content+=($(just_wrap '**' '' 'Install HEAD'))
+  content+=($(code 'shell' "brew install --HEAD $name"))
+  content+=($(link_me "$name source" "https://github.com/tatehanawalt/th_sys/tree/main/$name"))
+  page_content+=($(html_wrap details '' ${content[@]}))
 done
 
-printf "%s\n" "$formulas_readme" > $readme_path
 
-printf "<br>**Generate readme with \`./.github/scripts/gen_readme.sh\`**\n" >> $readme_path
+# Uninstall
+page_content+=($(just_wrap '##' ' ' 'Uninstall'))
+page_content+=($(just_wrap '####' ' ' '1. Show installed tools with:'))
+page_content+=($(code 'shell' 'brew search tatehanawalt'))
+page_content+=($(just_wrap '####' ' ' '2. Uninstall a specific tool with:'))
+page_content+=($(code 'shell' 'brew uninstall <package_name>'))
+
+
+# Development
+page_content+=($(just_wrap '##' ' ' 'Development'))
+page_content+=($(just_wrap '**' '' 'Generate Project README'))
+page_content+=('The readme is generated by running the script below with no arguments.')
+page_content+=($(code 'shell' './.github/scripts/gen_readme.sh'))
+
+
+# Write the readme
+printf -v readme_path "%s/README.md" $(git_repo_root)
+printf "" > $readme_path
+for row in "${page_content[@]}"; do
+  printf "$row\n\n" >> $readme_path
+done
+
+# brew ls --full-name --formula | grep '^your/tap/' | xargs brew uninstall
+# link_me $name https://github.com/tatehanawalt/th_sys/tree/main/$name
+# printf -v entry '%s [source](%s)\n' "$entry" "$source_url"
